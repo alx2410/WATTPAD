@@ -1,12 +1,18 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Explorar from "./paginas/Explorar";
+import Comunidad from "./paginas/Comunidad";
+import "./App.css";
 
 export default function App() {
   return (
-    <>
+    <Router>
       <Navbar />
-      <div className="p-6">
-        <h2>Contenido principal aquí</h2>
-      </div>
-    </>
+      <Routes>
+        
+        <Route path="/explorar" element={<Explorar />} />
+        <Route path="/comunidad" element={<Comunidad />} />
+      </Routes>
+    </Router>
   );
 }
