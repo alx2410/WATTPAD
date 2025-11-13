@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthContext"
 
 export function ZonaUsuario ({ onAbrirLogin}){
     //VARIABLE PARA LA AUTENTICACION
-    const { user. logout} = useAuth();
+    const { user, logout} = useAuth();
 
     //USUARIO AUTENTICADO
     if (user) {

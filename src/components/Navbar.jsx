@@ -34,6 +34,7 @@ export default function Navbar() {
         <li><Link to="/escribir">Escribir</Link></li>
         <li><Link to="/biblioteca">Biblioteca</Link></li>
         <li ><Link to="/mundolector">MundoLector</Link></li>
+         <li ><Link to="/perfil">Perfil</Link></li>
       </ul>
 
      <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
