@@ -7,6 +7,8 @@ body {
   scroll-behavior: smooth;
 }
 
+
+
 /* === NAVBAR === */
 nav {
   background: linear-gradient(90deg, #ff6b6b, #ff8c42);
@@ -129,11 +131,11 @@ a, button {
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: white;
-  border-radius: 25px;
+  background: transparent;
+  border: 1.5px solid #fff;
+  border-radius: 0;
   overflow: hidden;
   margin: 0 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .search-bar input {
@@ -142,7 +144,13 @@ a, button {
   padding: 6px 10px;
   font-size: 0.95rem;
   width: 150px;
+  color: #fff;
+  background: transparent;
   transition: width 0.3s ease;
+}
+
+.search-bar input::placeholder {
+  color: #ffe1d6;
 }
 
 .search-bar input:focus {
@@ -150,18 +158,30 @@ a, button {
 }
 
 .search-bar button {
-  background-color: #ff6b6b;
+  background: none;
   border: none;
-  color: white;
+  color: #fff;
   padding: 6px 10px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
 }
 
 .search-bar button:hover {
-  background-color: #ff4040;
+  transform: scale(1.15);
 }
+
+.icon-search {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+
+
+
+
 
 /* Ajuste en el nav para que no se rompa */
 nav {

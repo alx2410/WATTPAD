@@ -1,0 +1,60 @@
+.home-container {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, #fff8f7, #fff);
+  color: #222;
+  text-align: center;
+  padding: 50px 20px;
+}
+
+/* === HERO === */
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #ff6b6b, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+/* === CARRUSELES === */
+.categoria {
+  margin-bottom: 50px;
+  text-align: left;
+}
+
+.categoria h2 {
+  margin-left: 10px;
+  color: #ff6b6b;
+  font-size: 1.8rem;
+}
+
+.carrusel-libros {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px;
+}
+
+.libro-card {
+  min-width: 180px;
+  height: 250px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+}
+
+.libro-card:hover {
+  transform: scale(1.05);
+}

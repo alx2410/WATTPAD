@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar"
 import Explorar from "./paginas/Explorar";
 import Comunidad from "./paginas/Comunidad";
 import Escribir from "./paginas/Escribir";
@@ -7,6 +7,8 @@ import Biblioteca from "./paginas/Biblioteca";
 import "./App.css";
 import MundoLector from "./paginas/MundoLector";
 import Perfil from "./paginas/Perfil";
+import MiniWattpad from "./paginas/MiniWattpad";
+
 
 export default function App() {
   return (
@@ -20,6 +22,7 @@ export default function App() {
         <Route path="/biblioteca" element={<Biblioteca/>}/>
         <Route path="/mundolector" element={<MundoLector/>}/>
         <Route path="/perfil" element={<Perfil/>}/>
+        <Route path="/miniwattpad" element={<MiniWattpad/>}/>
       </Routes>
     </Router>
   );
