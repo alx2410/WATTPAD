@@ -15,7 +15,6 @@ export default function Navbar() {
     <nav>
       <h1>MiniWattpad</h1>
       <ul>
-        <li><Link to="/">Inicio</Link></li>
         <li><Link to="/explorar">Explorar</Link></li>
         <li><Link to="/comunidad">Comunidad</Link></li>
       </ul>
@@ -30,6 +29,12 @@ export default function Navbar() {
         />
         <button type="submit">🔍</button>
       </form>
+
+      <ul>
+        <li><Link to="/escribir">Escribir</Link></li>
+        <li><Link to="/biblioteca">Biblioteca</Link></li>
+        <li ><Link to="/mundolector">MundoLector</Link></li>
+      </ul>
 
      <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
 
