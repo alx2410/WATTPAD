@@ -1,44 +1,22 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import AuthModal from "./AuthModal";
+import { ZonaUsuario } from "./ZonaUsuario";
 
 export default function Navbar() {
-  const [showAuth, setShowAuth] = useState(false); // 👈 controla el modal
-  const [searchTerm, setSearchTerm] = useState("")
+  const [showAuth, setShowAuth] = useState(false);
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    if (searchTerm.trim() === "") return;
-    console.log("Buscando:", searchTerm);
-  }
   return (
-    <nav>
+    <nav className="navbar">
       <h1>MiniWattpad</h1>
-      <ul>
+
+      <ul className="nav-links">
         <li><Link to="/explorar">Explorar</Link></li>
         <li><Link to="/comunidad">Comunidad</Link></li>
       </ul>
 
-      {/*BARRA DE BUSQUEDA*/}
-       <form className="search-bar" onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Buscar historias..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit">🔍</button>
-      </form>
+      <ZonaUsuario onAbrirLogin={() => setShowAuth(true)} />
 
-      <ul>
-        <li><Link to="/escribir">Escribir</Link></li>
-        <li><Link to="/biblioteca">Biblioteca</Link></li>
-        <li ><Link to="/mundolector">MundoLector</Link></li>
-      </ul>
-
-     <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
-
-      {/* 👇 aquí el modal aparece solo cuando showAuth es true */}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </nav>
   );

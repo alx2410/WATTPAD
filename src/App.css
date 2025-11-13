@@ -392,3 +392,191 @@ nav {
     align-items: flex-start;
   }
 }
+
+/* Fondo del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+
+/* Contenedor del modal */
+.modal-contenido {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* Botón de cerrar */
+.modal-cerrar {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Formularios */
+input {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  background-color: #1d4ed8;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.4rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.link {
+  background: none;
+  color: #2563eb;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* === NAVBAR GENERAL === */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  padding: 10px 20px;
+}
+
+.navbar h1 {
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links li a:hover {
+  color: #ffa500;
+}
+
+/* === ZONA USUARIO === */
+.zona-usuario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zona-usuario-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.usuario-nombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.usuario-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  transition: transform 0.2s;
+}
+
+.usuario-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Si el usuario no tiene foto */
+.usuario-avatar-placeholder {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+}
+
+/* === PERFIL === */
+.perfil-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background: #1f1f1f;
+  color: #fff;
+}
+
+.perfil-card {
+  background-color: #2a2a2a;
+  padding: 30px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 100%;
+}
+
+.perfil-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #ff6b00;
+}
+
+.perfil-card h2 {
+  margin-bottom: 5px;
+  font-size: 1.4rem;
+}
+
+.perfil-card p {
+  margin-bottom: 20px;
+  color: #bbb;
+  font-size: 0.95rem;
+}
