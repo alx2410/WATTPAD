@@ -1,17 +1,19 @@
 import { useState, useRef } from "react";
-import VistaPrevia from  "../components/VistaPrevia.jsx";
-
-
-
+import { useAuth } from "../Context/AuthContext"; // <-- PARA OBTENER AUTOR
+import { db, storage } from "../firebase/config"; // <-- TU RUTA CORRECTA
+import { collection, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function Escribir() {
+  const { user } = useAuth(); // Datos del usuario LOGEADO
+
   const [titulo, setTitulo] = useState("");
   const [genero, setGenero] = useState("");
-  const [portada, setPortada] = useState(null);
+  const [portadaArchivo, setPortadaArchivo] = useState(null);
+  const [portadaPreview, setPortadaPreview] = useState(null);
   const [contenido, setContenido] = useState("");
   const [permitirCalificacion, setPermitirCalificacion] = useState(true);
   const textareaRef = useRef(null);
-
 
   // === FORMATO DE TEXTO ===
   const aplicarFormato = (formato) => {
@@ -20,9 +22,7 @@ export default function Escribir() {
     const fin = textarea.selectionEnd;
     const textoSeleccionado = contenido.substring(inicio, fin);
 
-
     let nuevoTexto = contenido;
-
 
     if (formato === "bold") {
       nuevoTexto =
@@ -41,45 +41,69 @@ export default function Escribir() {
         contenido.substring(fin);
     }
 
-
     setContenido(nuevoTexto);
     setTimeout(() => textarea.focus(), 0);
   };
-
 
   // === SUBIR PORTADA ===
   const manejarPortada = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPortada(url);
+      setPortadaArchivo(file);
+      setPortadaPreview(URL.createObjectURL(file));
     }
   };
 
-
-  // === PUBLICAR ===
-  const publicarHistoria = (e) => {
+  // === PUBLICAR HISTORIA A FIREBASE ===
+  const publicarHistoria = async (e) => {
     e.preventDefault();
-    if (!titulo.trim() || !genero || !contenido.trim()) {
-      alert("Por favor completa todos los campos obligatorios.");
+
+    if (!titulo.trim() || !genero || !contenido.trim() || !portadaArchivo) {
+      alert("Por favor completa todos los campos y sube una portada.");
       return;
     }
 
+    try {
+      // 1️⃣ SUBIR PORTADA A STORAGE
+      const portadaRef = ref(
+        storage,
+        `portadas/${Date.now()}-${portadaArchivo.name}`
+      );
 
-    alert("📚 Historia publicada correctamente (simulación).");
-    setTitulo("");
-    setGenero("");
-    setContenido("");
-    setPortada(null);
-    setPermitirCalificacion(true);
+      await uploadBytes(portadaRef, portadaArchivo);
+      const portadaURL = await getDownloadURL(portadaRef);
+
+      // 2️⃣ GUARDAR LIBRO EN FIRESTORE
+      await addDoc(collection(db, "libros"), {
+        titulo,
+        genero,
+        contenido,
+        permitirCalificacion,
+        portada: portadaURL,
+        autor: user?.displayName || "Autor desconocido",
+        autorId: user?.uid || null,
+        fecha: new Date(),
+      });
+
+      alert("📚 Historia publicada correctamente");
+
+      // 3️⃣ REINICIAR FORMULARIO
+      setTitulo("");
+      setGenero("");
+      setContenido("");
+      setPortadaArchivo(null);
+      setPortadaPreview(null);
+      setPermitirCalificacion(true);
+    } catch (error) {
+      console.error(error);
+      alert("❌ Error al publicar la historia.");
+    }
   };
-
 
   return (
     <div className="escribir-container">
       <div className="escribir-card">
         <h2>✍️ Escribir nueva historia</h2>
-
 
         <form onSubmit={publicarHistoria}>
           {/* === TÍTULO === */}
@@ -88,13 +112,12 @@ export default function Escribir() {
             <input
               id="titulo"
               type="text"
-              placeholder="Escribe el título de tu historia"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
+              placeholder="Escribe el título de tu historia"
               required
             />
           </div>
-
 
           {/* === GÉNERO === */}
           <div>
@@ -117,7 +140,6 @@ export default function Escribir() {
             </select>
           </div>
 
-
           {/* === PORTADA === */}
           <div>
             <label htmlFor="portada">Portada</label>
@@ -127,15 +149,15 @@ export default function Escribir() {
               accept="image/*"
               onChange={manejarPortada}
             />
-            {portada && (
+
+            {portadaPreview && (
               <img
-                src={portada}
+                src={portadaPreview}
                 alt="Vista previa portada"
                 className="portada-preview"
               />
             )}
           </div>
-
 
           {/* === BOTONES DE FORMATO === */}
           <div className="format-buttons">
@@ -150,7 +172,6 @@ export default function Escribir() {
             </button>
           </div>
 
-
           {/* === CONTENIDO === */}
           <div>
             <label htmlFor="contenido">Contenido</label>
@@ -164,8 +185,7 @@ export default function Escribir() {
             />
           </div>
 
-
-          {/* === OPCIÓN DE CALIFICACIÓN === */}
+          {/* === CALIFICACIÓN === */}
           <div className="checkbox-calificacion">
             <input
               type="checkbox"
@@ -178,65 +198,11 @@ export default function Escribir() {
             </label>
           </div>
 
-
-          {/* === BOTÓN PUBLICAR === */}
           <button type="submit" className="boton-publicar">
             Publicar historia
           </button>
         </form>
-
-
-        {/* === VISTA PREVIA === */}
-        <div className="vista-previa">
-          <h3>📖 Vista previa</h3>
-
-
-          {portada && (
-            <img
-              src={portada}
-              alt="Vista previa portada"
-              className="portada-preview"
-            />
-          )}
-          <h4>{titulo || "Título de la historia"}</h4>
-          <p style={{ fontWeight: "600", color: "#555" }}>
-            {genero ? `Género: ${genero}` : "Sin género seleccionado"}
-          </p>
-
-
-          <div
-            style={{ marginTop: "10px", lineHeight: "1.6" }}
-            dangerouslySetInnerHTML={{
-              __html: contenido
-                .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-                .replace(/\*(.*?)\*/g, "<i>$1</i>")
-                .replace(/<u>(.*?)<\/u>/g, "<u>$1</u>"),
-            }}
-          />
-
-
-          <p style={{ marginTop: "15px", fontSize: "0.95rem" }}>
-            {permitirCalificacion
-              ? "⭐ Los lectores podrán calificar este libro."
-              : "🚫 Calificaciones desactivadas para este libro."}
-          </p>
-        </div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

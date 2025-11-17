@@ -3,7 +3,8 @@
 // 👇 Contexto de autenticación unificado: Auth + Firestore + Storage
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, googleProvider, db, storage } from "../lib/firebase"; // 🔹 CAMBIO: asegurarse de importar db y storage
+import { auth } from "../firebase/auth";
+import { db, storage, googleProvider } from "../firebase/config";
 
 import {
   onAuthStateChanged,
