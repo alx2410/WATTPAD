@@ -6,20 +6,17 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
 
-  const { user } = useAuth(); // 👈 AQUÍ USAMOS EL CONTEXT
+  const { user, logout } = useAuth(); // <-- agregado logout
   console.log("USER EN NAVBAR:", user);
   
   const [showAuth, setShowAuth] = useState(false);
 
-  // 🔥 Estado de la barra de búsqueda
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 🔥 Función para manejar la búsqueda
   function handleSearch(e) {
     e.preventDefault();
-    if (!searchTerm.trim()) return; // evita búsquedas vacías
-    console.log("Buscando:", searchTerm); 
-    // aquí puedes redirigir o filtrar
+    if (!searchTerm.trim()) return;
+    console.log("Buscando:", searchTerm);
   }
 
   return (
@@ -33,7 +30,7 @@ export default function Navbar() {
         <li><Link to="/comunidad">Comunidad</Link></li>
       </ul>
 
-      {/* 🔎 Barra de búsqueda 100% funcional */}
+      {/* 🔎 Barra de búsqueda */}
       <form className="search-bar" onSubmit={handleSearch}>
         <input
           type="text"
@@ -61,26 +58,31 @@ export default function Navbar() {
 
       <ul>
         <li>
-  <button
-    onClick={() => {
-      if (!user) {
-        setShowAuth(true); // abre modal
-        return;
-      }
-      window.location.href = "/escribir"; // deja entrar normal
-    }}
-    className="btn-link"
-  >
-    Escribir
-  </button>
-</li>
+          <button
+            onClick={() => {
+              if (!user) {
+                setShowAuth(true);
+                return;
+              }
+              window.location.href = "/escribir";
+            }}
+            className="btn-link"
+          >
+            Escribir
+          </button>
+        </li>
 
         <li><Link to="/biblioteca">Biblioteca</Link></li>
         <li><Link to="/mundolector">MundoLector</Link></li>
         <li><Link to="/perfil">Perfil</Link></li>
       </ul>
 
-      <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
+      {/* 🔥 Botón LOGIN → LOGOUT automático */}
+      {user ? (
+        <button onClick={logout}>Cerrar sesión</button>
+      ) : (
+        <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
+      )}
 
       {/* Modal */}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
