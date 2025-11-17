@@ -1,14 +1,17 @@
-import { Navigate } from "react-router-dom";
+// src/components/RutaProtegida.jsx
+
 import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
-// Este componente envuelve las rutas que necesitan sesión iniciada
-export function RutaProtegida({ children }) {
-  const { user, loading } = useAuth();
+export function RutaProtegida({ children, onNeedLogin }) {
+  const { user } = useAuth();
 
-  if (loading) return <p>Cargando...</p>;
+  // Si NO está logueado → abre modal y redirige
+  if (!user) {
+    if (onNeedLogin) onNeedLogin();
+    return <Navigate to="/miniwattpad" replace />;
+  }
 
-  // Si no hay usuario, lo manda al inicio o al login
-  if (!user) return <Navigate to="/" replace />;
-
+  // Si está logueado → deja entrar
   return children;
 }

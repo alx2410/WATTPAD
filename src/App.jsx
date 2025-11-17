@@ -7,7 +7,6 @@ import Biblioteca from "./paginas/Biblioteca";
 import MundoLector from "./paginas/MundoLector";
 import Perfil from "./paginas/Perfil";
 import MiniWattpad from "./paginas/MiniWattpad";
-
 import { RutaProtegida } from "./components/RutaProtegida";
 import "./App.css";
 
@@ -18,11 +17,20 @@ export default function App() {
       <Routes>
         <Route path="/explorar" element={<Explorar />} />
         <Route path="/comunidad" element={<Comunidad />} />
-        <Route path="/escribir" element={<Escribir />} />
+        
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/mundolector" element={<MundoLector />} />
         <Route path="/miniwattpad" element={<MiniWattpad/>}/>
 
+{/*RUTA PROTEGIDA PARA ESCRIBIR*/}
+<Route
+path="/escribir"
+element={
+  <RutaProtegida>
+    <Escribir />
+  </RutaProtegida>
+}
+/>
         {/* RUTA PROTEGIDA */}
         <Route
           path="/perfil"
@@ -31,6 +39,7 @@ export default function App() {
               <Perfil />
             </RutaProtegida>
           }
+          
         />
       </Routes>
     </Router>

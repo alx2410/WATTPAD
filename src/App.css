@@ -600,3 +600,12 @@ button:hover {
   color: #bbb;
   font-size: 0.95rem;
 }
+
+.btn-link {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}

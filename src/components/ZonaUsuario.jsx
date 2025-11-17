@@ -1,14 +1,9 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-<<<<<<< HEAD
 export function ZonaUsuario ({ onAbrirLogin}){
     //VARIABLE PARA LA AUTENTICACION
     const { user, logout} = useAuth();
-=======
-export function ZonaUsuario({ onAbrirLogin }) {
-  const { user, logout } = useAuth();
->>>>>>> 0fa67559f97e0be5ac9ebf54138a3ee9ec0cee13
 
   if (!user) {
     return (
