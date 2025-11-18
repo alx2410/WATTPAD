@@ -131,3 +131,55 @@
   font-size: 13px;
   opacity: 0.7;
 }
+
+
+.footer-redes {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin: 20px 0;
+}
+
+.footer-redes a {
+  color: #ccc;
+  font-size: 15px;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.footer-redes a:hover {
+  color: white;
+}
+
+
+
+.inicio-imagen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.caja-mensaje {
+  width: 260px;
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+  position: relative;
+  color: #333;
+}
+
+.comilla {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 40px;
+  color: #ff7f50;
+  opacity: 0.4;
+  font-family: serif;
+}
+
+

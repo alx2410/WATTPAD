@@ -1,0 +1,133 @@
+.recomendacion-container {
+  max-width: 600px;
+  margin: 90px auto;
+  padding: 40px;
+  background: #fff8f3;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.recomendacion-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.recomendacion-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recomendacion-form label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.recomendacion-form input,
+.recomendacion-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+  background: white;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.recomendacion-form input:focus,
+.recomendacion-form textarea:focus {
+  border-color: #ff8a4d;
+  box-shadow: 0 0 6px rgba(255, 138, 77, 0.4);
+  outline: none;
+}
+
+.recomendacion-form textarea {
+  resize: none;
+  height: 120px;
+}
+
+.recomendacion-btn {
+  background: #000;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+
+.recomendacion-btn:hover {
+  opacity: 0.85;
+}
+
+
+.recomendacion-container {
+  max-width: 600px;
+  margin: 90px auto;
+  padding: 40px 35px;
+  background: #fff8f3;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.recomendacion-container h3 {
+  font-size: 34px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 25px;
+}
+
+.recomendacion-form {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.recomendacion-form input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+  background: white;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.recomendacion-form input:focus {
+  border-color: #ff8a4d;
+  box-shadow: 0 0 6px rgba(255, 138, 77, 0.4);
+  outline: none;
+}
+
+.recomendacion-form button {
+  padding: 14px 22px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+
+.recomendacion-form button:hover {
+  opacity: 0.85;
+}
+
+.ok-msg {
+  color: #008000;
+  margin-top: 18px;
+  font-weight: 600;
+}
+
+.error-msg {
+  color: #d00000;
+  margin-top: 18px;
+  font-weight: 600;
+}

@@ -1,10 +1,9 @@
 // src/firebase/config.js
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { GoogleAuthProvider } from "firebase/auth";
 
-// ⚙️ Configuración con variables de entorno
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -14,14 +13,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-
-// 🔥 Exportar los servicios principales
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-// También puedes exportar el app por si lo necesitas en otro archivo
-export default app;
+export const googleProvider = new GoogleAuthProvider();

@@ -1,5 +1,3 @@
-
-
 // src/components/Registro.jsx
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import AuthModal from "./AuthModal";
 import { ZonaUsuario } from "./ZonaUsuario";
 import { useAuth } from "../context/AuthContext";
+import AuthModal from "./AuthModal";
 
 export default function Navbar() {
 
@@ -60,23 +60,10 @@ export default function Navbar() {
       </form>
 
       <ul>
-        <li>
-  <button
-    onClick={() => {
-      if (!user) {
-        setShowAuth(true); // abre modal
-        return;
-      }
-      window.location.href = "/escribir"; // deja entrar normal
-    }}
-    className="btn-link"
-  >
-    Escribir
-  </button>
-</li>
+        <li><Link to="/escribir">Escribir</Link></li>
 
         <li><Link to="/biblioteca">Biblioteca</Link></li>
-        <li><Link to="/mundolector">MundoLector</Link></li>
+        
         <li><Link to="/perfil">Perfil</Link></li>
       </ul>
 
