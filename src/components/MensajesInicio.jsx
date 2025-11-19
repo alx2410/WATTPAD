@@ -23,7 +23,7 @@ export default function MensajesInicio() {
 
     const timer = setInterval(() => {
       setIndex(prev => (prev + 1) % mensajes.length);
-    }, 8000);
+    }, 6000);
 
     return () => clearInterval(timer);
   }, [mensajes]);

@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID,
+  apiKey: "AIzaSyD_2xLTbF3dO3NPoGKEzYLIxFgxZMp_7-w",
+  authDomain: "fir-ximena-ded0a.firebaseapp.com",
+  projectId: "fir-ximena-ded0a",
+  storageBucket: "fir-ximena-ded0a.firebasestorage.app",
+  messagingSenderId: "482020343287",
+  appId: "1:482020343287:web:e994e3a7771515836982f2",
 };
 
 export const app = initializeApp(firebaseConfig);
