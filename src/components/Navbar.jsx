@@ -11,10 +11,10 @@ export default function Navbar() {
   
   const [showAuth, setShowAuth] = useState(false);
 
-  // 🔥 Estado de la barra de búsqueda
+  //  Estado de la barra de búsqueda
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 🔥 Función para manejar la búsqueda
+  //  Función para manejar la búsqueda
   function handleSearch(e) {
     e.preventDefault();
     if (!searchTerm.trim()) return; // evita búsquedas vacías

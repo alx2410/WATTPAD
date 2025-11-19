@@ -1,5 +1,5 @@
 body {
-  background-color: #fdc6b3; /* color naranja wattpad */
+ background: linear-gradient(180deg, #fff8f7, #fff);
   margin: 0;
   padding: 0;
 }
@@ -9,7 +9,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 80px 120px;
-  background: #fdc6b3;
+ background: linear-gradient(180deg, #fff8f7, #fff);
 }
 
 .inicio-texto {
@@ -20,7 +20,7 @@ body {
   font-size: 64px;
   font-weight: 700;
   line-height: 1.1;
-  color: #000;
+  color: #ff8c42;
 }
 
 .descripcion {

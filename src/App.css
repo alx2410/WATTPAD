@@ -151,13 +151,13 @@ nav button:hover {
   padding: 6px 10px;
   font-size: 0.95rem;
   width: 150px;
-  color: #fff;
+  color: #000;
   background: transparent;
   transition: width 0.3s ease;
 }
 
 .search-bar input::placeholder {
-  color: #ffe1d6;
+  color: #ff8c42;
 }
 
 .search-bar input:focus {
