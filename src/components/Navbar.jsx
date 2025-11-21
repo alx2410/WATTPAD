@@ -63,6 +63,7 @@ export default function Navbar() {
         <li><Link to="/escribir">Escribir</Link></li>
 
         <li><Link to="/biblioteca">Biblioteca</Link></li>
+        <li><Link to="/intranet">Intranet</Link></li>
         
         <li><Link to="/perfil">Perfil</Link></li>
       </ul>

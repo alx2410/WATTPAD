@@ -1,5 +1,5 @@
 body {
- background: linear-gradient(180deg, #fff8f7, #fff);
+  background: linear-gradient(180deg, #bed8e4, #fff);
   margin: 0;
   padding: 0;
 }
@@ -9,8 +9,9 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 80px 120px;
- background: linear-gradient(180deg, #fff8f7, #fff);
+  background: transparent; /* o simplemente quítalo */
 }
+
 
 .inicio-texto {
   max-width: 520px;
@@ -20,7 +21,7 @@ body {
   font-size: 64px;
   font-weight: 700;
   line-height: 1.1;
-  color: #ff8c42;
+  color: black;
 }
 
 .descripcion {
