@@ -1,0 +1,82 @@
+.mega-menu {
+  position: absolute;
+  top: 70px; /* ajusta según tu navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  background: white;
+  border-radius: 8px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+  z-index: 40;
+}
+
+.mega-menu h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.columnas-menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.categoria-opcion {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 6px 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.categoria-opcion:hover {
+  color: #ff6c2f;
+}
+
+.grid-libros {
+  margin-top: 30px;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+
+.mega-menu {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background: white;
+  width: 350px;
+  padding: 18px 20px;
+  border-radius: 6px;
+  box-shadow: 0 3px 18px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.mega-menu h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.columnas-menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.categoria-opcion {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 3px;
+}
+
+.categoria-opcion:hover {
+  color: #ff6c2f;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
-import "./Explorar.css";
+import "../styles/Explorar.css";
 
 export default function Explorar() {
   const [libros, setLibros] = useState([]);
@@ -37,14 +37,14 @@ export default function Explorar() {
           onChange={(e) => setFiltroGenero(e.target.value)}
         >
           <option value="">Todos los géneros</option>
-          <option value="romance">💞 Romance</option>
-          <option value="fantasia">🧚 Fantasía</option>
-          <option value="ciencia-ficcion">🚀 Ciencia ficción</option>
-          <option value="misterio">🕵️ Misterio</option>
-          <option value="drama">🎭 Drama</option>
-          <option value="terror">👻 Terror</option>
-          <option value="comedia">😂 Comedia</option>
-          <option value="aventura">🌍 Aventura</option>
+          <option value="romance"> Romance</option>
+          <option value="fantasia"> Fantasía</option>
+          <option value="ciencia-ficcion"> Ciencia ficción</option>
+          <option value="misterio"> Misterio</option>
+          <option value="drama"> Drama</option>
+          <option value="terror"> Terror</option>
+          <option value="comedia"> Comedia</option>
+          <option value="aventura"> Aventura</option>
         </select>
       </div>
 

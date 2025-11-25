@@ -1,7 +1,7 @@
 // src/componentes/Perfil.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import "./Perfil.css";
+import "../styles/Perfil.css";
 
 const mockHistorias = [
   {
@@ -126,7 +126,7 @@ export default function Perfil() {
               </div>
 
               <button className="btn-editar" onClick={() => setEditMode(true)}>
-                ✏ Editar perfil
+                 Editar perfil
               </button>
             </>
           ) : (

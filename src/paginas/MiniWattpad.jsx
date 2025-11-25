@@ -1,4 +1,4 @@
-import "./MiniWattpad.css";
+import "../styles/MiniWattpad.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
 import RecomendacionInicio from "../components/RecomendacionInicio.jsx";
 

@@ -1,77 +1,151 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ZonaUsuario } from "./ZonaUsuario";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
+import "../styles/Explorar.css"; // NUEVO
 
 export default function Navbar() {
-
-  const { user } = useAuth(); // 👈 AQUÍ USAMOS EL CONTEXT
-  console.log("USER EN NAVBAR:", user);
-  
+  const { user, logout } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
-
-  //  Estado de la barra de búsqueda
+  const [showMenu, setShowMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  //  Función para manejar la búsqueda
+  const [showCategories, setShowCategories] = useState(false); // NUEVO
+  const navigate = useNavigate(); // NUEVO
+
+  const categorias = [ // NUEVO
+    "romance", "fantasía", "ciencia ficcion",
+    "misterio", "drama", "terror",
+    "comedia", "aventura"
+    
+  ];
+
+  function seleccionar(cat) { // NUEVO
+    navigate(`/explorar?genero=${cat}`);
+    setShowCategories(false);
+  }
+
   function handleSearch(e) {
     e.preventDefault();
-    if (!searchTerm.trim()) return; // evita búsquedas vacías
-    console.log("Buscando:", searchTerm); 
-    // aquí puedes redirigir o filtrar
+    if (!searchTerm.trim()) return;
+    console.log("Buscando:", searchTerm);
   }
 
   return (
-    <nav>
-  <div className="logo-container">
-    <Link to="/miniwattpad">
-      <img src={logo} alt="MiniWattpad Logo" className="logo" />
-    </Link>
-  </div>
-  <ul>
-    <li><Link to="/explorar">Explorar</Link></li>
-    <li><Link to="/comunidad">Comunidad</Link></li>
-  </ul>
+    <nav className="navbar">
+      
+      {/* LOGO */}
+      <div className="logo-container">
+        <Link to="/miniwattpad">
+          <img src={logo} alt="MiniWattpad Logo" className="logo" />
+        </Link>
+      </div>
 
-  {/* SEARCH */}
-  <form className="search-bar" onSubmit={handleSearch}>
-    <input
-      type="text"
-      placeholder="Buscar historias..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-    <button type="submit" aria-label="Buscar">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="icon-search"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+      {/* LINKS IZQUIERDA */}
+      <ul className="links-left">
+        
+        {/* EXPLORAR CON MENÚ NUEVO */}
+        <li
+          className="explorar-wrapper"
+          style={{ position: "relative" }} // Necesario para posicionar el menú
+        >
+          <Link
+            to="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowCategories(!showCategories);
+            }}
+          >
+            Explorar
+          </Link>
+
+          {showCategories && (
+            <div className="mega-menu">
+              <h3>Categorías</h3>
+
+              <div className="columnas-menu">
+                {categorias.map((cat) => (
+                  <button
+                    key={cat}
+                    className="categoria-opcion"
+                    onClick={() => seleccionar(cat)}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </li>
+
+        <li><Link to="/comunidad">Comunidad</Link></li>
+      </ul>
+
+      {/* BUSCADOR */}
+      <form className="search-bar" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Buscar historias..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </svg>
-    </button>
-  </form>
+        <button type="submit" aria-label="Buscar">
+          🔍
+        </button>
+      </form>
 
-  <ul>
-    <li><Link to="/escribir">Escribir</Link></li>
-    <li><Link to="/biblioteca">Biblioteca</Link></li>
-    <li><Link to="/intranet">Intranet</Link></li>
-    <li><Link to="/perfil">Perfil</Link></li>
-  </ul>
+      {/* LINKS DERECHA */}
+      <ul className="links-right">
+        <li><Link to="/escribir">Escribir</Link></li>
+        <li><Link to="/biblioteca">Biblioteca</Link></li>
+        <li><Link to="/intranet">Intranet</Link></li>
+      </ul>
 
-  <button onClick={() => setShowAuth(true)}>Iniciar sesión</button>
+      {/* BOTÓN O FOTO (USUARIO) */}
+      {!user ? (
+        <button
+          onClick={() => setShowAuth(true)}
+          className="boton-navbar"
+        >
+          Iniciar sesión
+        </button>
+      ) : (
+        <div className="user-toolkit">
+          <img
+            src={user.photoURL || "https://via.placeholder.com/40"}
+            alt="avatar"
+            className="avatar"
+            onClick={() => setShowMenu(!showMenu)}
+          />
 
-  {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
-</nav>
+          {showMenu && (
+            <div className="dropdown-menu">
+              <div className="user-info">
+                <img
+                  src={user.photoURL || "https://via.placeholder.com/50"}
+                  className="avatar-big"
+                  alt="avatar"
+                />
+                <p className="user-name">Hola, {user.displayName || "Usuario"} 👋</p>
+              </div>
 
+              <ul className="menu-options">
+                <li><Link to="/perfil">Mi perfil</Link></li>
+                <li><Link to="/cuenta">Mi cuenta</Link></li>
+                <li><Link to="/biblioteca">Mi biblioteca</Link></li>
+                <li><Link to="/notificaciones">Mis notificaciones</Link></li>
+
+                <li className="cerrar-sesion" onClick={logout}>
+                  Cerrar sesión
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
+    </nav>
   );
 }

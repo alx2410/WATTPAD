@@ -14,7 +14,7 @@ import {
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
 import { StarRating } from "../components/StarRating";
-import "./Comunidad.css";
+import "../styles/Comunidad.css";
 
 /* ============================
    COMPONENTE COMENTARIO
