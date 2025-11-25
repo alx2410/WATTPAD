@@ -27,7 +27,10 @@ import {
   query,
   where,
   orderBy,
+  deleteDoc, // 👈 FALTABA
 } from "firebase/firestore";
+
+
 
 import {
   ref,
@@ -228,6 +231,40 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+
+  // ============================================
+// 🟢 SEGUIR
+// ============================================
+const seguirUsuario = async (miUid, uidObjetivo) => {
+  await setDoc(
+    doc(db, "usuarios", uidObjetivo, "seguidores", miUid),
+    { fecha: Date.now() }
+  );
+
+  await setDoc(
+    doc(db, "usuarios", miUid, "siguiendo", uidObjetivo),
+    { fecha: Date.now() }
+  );
+};
+
+// ============================================
+// 🟢 DEJAR DE SEGUIR
+// ============================================
+const dejarSeguirUsuario = async (miUid, uidObjetivo) => {
+  await deleteDoc(doc(db, "usuarios", uidObjetivo, "seguidores", miUid));
+  await deleteDoc(doc(db, "usuarios", miUid, "siguiendo", uidObjetivo));
+};
+
+// ============================================
+// 🟢 VERIFICAR SI LO SIGO
+// ============================================
+const yaLoSigo = async (miUid, uidObjetivo) => {
+  const ref = doc(db, "usuarios", miUid, "siguiendo", uidObjetivo);
+  const snap = await getDoc(ref);
+  return snap.exists();
+};
+
+
   // ============================================
   // 🔥 CONTEXTO FINAL
   // ============================================
@@ -242,6 +279,9 @@ export function AuthProvider({ children }) {
     updateProfileData,
     publicarPost,
     getMuro,
+      seguirUsuario,
+  dejarSeguirUsuario,
+  yaLoSigo,
   };
 
   return (

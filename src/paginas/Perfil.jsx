@@ -1,8 +1,12 @@
 // src/componentes/Perfil.jsx
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 import "../styles/Perfil.css";
 
+// ===== MOCKS =====
 const mockHistorias = [
   {
     id: 1,
@@ -40,34 +44,94 @@ const mockSeguidores = [
 ];
 
 export default function Perfil() {
+  const { uid: uidPerfil } = useParams(); // uid del perfil a visitar
+  const { user, updateProfileData, getMuro, publicarPost, seguirUsuario, dejarDeSeguirUsuario, obtenerSiguiendo } = useAuth();
 
-  const { user, updateProfileData, getMuro, publicarPost } = useAuth();
+  // si uidPerfil existe → estamos viendo un perfil ajeno
+  // si no existe → es nuestro perfil normal
+  const esPerfilAjeno = Boolean(uidPerfil);
+  const uidObjetivo = esPerfilAjeno ? uidPerfil : user.uid;
+
+  // ===== DATOS DEL PERFIL =====
+  const [datosPerfil, setDatosPerfil] = useState(null);
+  const [esPropio, setEsPropio] = useState(false);
+  const [yaSigo, setYaSigo] = useState(false);
+
+  // ===== TU ESTADO ORIGINAL =====
   const [tab, setTab] = useState("info");
-
-  // ===== MURO =====
   const [posts, setPosts] = useState([]);
   const [nuevoPost, setNuevoPost] = useState("");
 
-  // ===== EDITAR PERFIL =====
   const [editMode, setEditMode] = useState(false);
-  const [displayName, setDisplayName] = useState(user.displayName || "");
-  const [bio, setBio] = useState(user.bio || "");
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
   const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(user.photoURL);
+  const [preview, setPreview] = useState("");
 
-  // === CARGAR MURO DESDE FIRESTORE ===
+  // =========================
+  // 1. Cargar Perfil Objetivo
+  // =========================
   useEffect(() => {
-    if (!user) return;
+    async function fetchPerfil() {
+      const ref = doc(db, "usuarios", uidObjetivo);
+      const snap = await getDoc(ref);
 
-    async function cargarMuro() {
-      const data = await getMuro(user.uid);
-      setPosts(data);
+      if (snap.exists()) {
+        const data = snap.data();
+        setDatosPerfil(data);
+        setDisplayName(data.username || "Sin nombre");
+        setBio(data.bio || "");
+        setPreview(data.avatar || data.photoURL || "");
+
+      }
+
+      setEsPropio(!esPerfilAjeno || user?.uid === uidPerfil);
     }
 
-    cargarMuro();
-  }, [user, getMuro]);
+    fetchPerfil();
+  }, [uidObjetivo, uidPerfil, user]);
 
-  // Cambiar foto
+  // =============================
+  // 2. Saber si YA SIGO al usuario
+  // =============================
+  useEffect(() => {
+    if (!user || !esPerfilAjeno) return;
+
+    async function checkFollow() {
+      const siguiendo = await obtenerSiguiendo(user.uid);
+      setYaSigo(siguiendo.includes(uidPerfil));
+    }
+
+    checkFollow();
+  }, [user, uidPerfil, esPerfilAjeno]);
+
+  // =============================
+  // 3. Cargar Muro del usuario
+  // =============================
+  useEffect(() => {
+    async function cargarMuro() {
+      const data = await getMuro(uidObjetivo);
+      setPosts(data);
+    }
+    cargarMuro();
+  }, [uidObjetivo, getMuro]);
+
+  // =============================
+  // 4. Alternar seguimiento
+  // =============================
+  const toggleFollow = async () => {
+    if (yaSigo) {
+      await dejarDeSeguirUsuario(uidPerfil);
+      setYaSigo(false);
+    } else {
+      await seguirUsuario(uidPerfil);
+      setYaSigo(true);
+    }
+  };
+
+  // =============================
+  // 5. Editar perfil (si es mío)
+  // =============================
   const handleFileChange = (e) => {
     const img = e.target.files[0];
     if (img) {
@@ -76,58 +140,69 @@ export default function Perfil() {
     }
   };
 
-  // Guardar perfil
   const guardarCambios = async () => {
     try {
-      await updateProfileData({
-        displayName,
-        bio,
-        file,
-      });
-
+      await updateProfileData({ displayName, bio, file });
       alert("Perfil actualizado ✔");
       setEditMode(false);
     } catch (error) {
-      console.error(error);
       alert("Error al actualizar perfil");
     }
   };
 
-  // Publicar en muro
+  // =============================
+  // 6. Publicar en muro (solo propio)
+  // =============================
   const publicarEnMuro = async () => {
     if (!nuevoPost.trim()) return;
 
     const nuevo = await publicarPost(nuevoPost);
-
     setPosts((prev) => [nuevo, ...prev]);
     setNuevoPost("");
   };
 
+  if (!datosPerfil) return <p>Cargando perfil...</p>;
+
+  // ====================================================================================
+  // ===========================   HTML DEL PERFIL (el tuyo)   ===========================
+  // ====================================================================================
+
   return (
     <div className="perfil-container">
-
       {/* ===================== ENCABEZADO ===================== */}
       <div className="perfil-header">
 
-        {/* FOTO */}
         <img src={preview} alt="avatar" className="perfil-avatar" />
 
         <div>
           {!editMode ? (
             <>
-              <h2 className="perfil-nombre">{user.displayName}</h2>
-              <p className="perfil-username">@{user.email.split("@")[0]}</p>
+              <h2 className="perfil-nombre">{datosPerfil.username}</h2>
+              <p className="perfil-username">@{datosPerfil.email?.split("@")[0]}</p>
 
               <div className="perfil-stats">
                 <span><strong>Historias:</strong> 2</span>
                 <span><strong>Listas:</strong> 1</span>
-                <span><strong>Seguidores:</strong> 120</span>
-                <span><strong>Siguiendo:</strong> 45</span>
+                <span><strong>Seguidores:</strong> {datosPerfil.seguidores?.length || 0}</span>
+                <span><strong>Siguiendo:</strong> {datosPerfil.siguiendo?.length || 0}</span>
               </div>
 
-              <button className="btn-editar" onClick={() => setEditMode(true)}>
-                 Editar perfil
-              </button>
+              {/* === BOTÓN SEGUIR SOLO SI ES PERFIL AJENO === */}
+              {!esPropio && (
+                <button
+                  onClick={toggleFollow}
+                  className={`btn-follow ${yaSigo ? "siguiendo" : ""}`}
+                >
+                  {yaSigo ? "Siguiendo" : "Seguir"}
+                </button>
+              )}
+
+              {/* === BOTÓN EDITAR SOLO SI ES MI PERFIL === */}
+              {esPropio && (
+                <button className="btn-editar" onClick={() => setEditMode(true)}>
+                  Editar perfil
+                </button>
+              )}
             </>
           ) : (
             <>
@@ -194,7 +269,7 @@ export default function Perfil() {
           </div>
 
           <div className="info-col-2">
-            <h3>Historias de {user.displayName}</h3>
+            <h3>Historias de {datosPerfil.username}</h3>
 
             {mockHistorias.map((h) => (
               <div key={h.id} className="historia-card">
@@ -212,14 +287,17 @@ export default function Perfil() {
       {/* ===================== MURO ===================== */}
       {tab === "muro" && (
         <div className="muro">
-          <div className="muro-publicar">
-            <textarea
-              value={nuevoPost}
-              onChange={(e) => setNuevoPost(e.target.value)}
-              placeholder="Escribe algo en tu muro..."
-            ></textarea>
-            <button onClick={publicarEnMuro}>Publicar</button>
-          </div>
+
+          {esPropio && (
+            <div className="muro-publicar">
+              <textarea
+                value={nuevoPost}
+                onChange={(e) => setNuevoPost(e.target.value)}
+                placeholder="Escribe algo en tu muro..."
+              ></textarea>
+              <button onClick={publicarEnMuro} className="btn-editar">Publicar</button>
+            </div>
+          )}
 
           {posts
             .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
@@ -241,7 +319,6 @@ export default function Perfil() {
                   </span>
                 </div>
               </div>
-
             ))}
 
           {posts.length === 0 && <p>No hay publicaciones aún.</p>}

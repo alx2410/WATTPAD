@@ -29,6 +29,12 @@ main {
   margin: auto;
 }
 
+hr {
+  border: none;
+  height: 1px;
+  background: rgba(180, 180, 180, 0.7);
+}
+
 
 /* =========================================================
    NAVBAR (NUEVA VERSIÓN: fondo blanco + letras negras)
@@ -434,61 +440,6 @@ nav button:hover {
   cursor: pointer;
 }
 
-
-
-/* =========================================================
-   PERFIL
-========================================================= */
-
-.perfil-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  background: #1f1f1f;
-  color: #fff;
-}
-
-.perfil-card {
-  background-color: #2a2a2a;
-  padding: 30px 40px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  max-width: 400px;
-  width: 100%;
-}
-
-.perfil-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-  border: 3px solid #ff6b00;
-}
-
-.perfil-card h2 {
-  margin-bottom: 5px;
-  font-size: 1.4rem;
-}
-
-.perfil-card p {
-  margin-bottom: 20px;
-  color: #bbb;
-  font-size: 0.95rem;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
-}
-
-
 /* =========================================================
    BIBLIOTECA
 ========================================================= */
@@ -857,59 +808,6 @@ nav button:hover {
 
 
 /* =========================================================
-   PERFIL
-========================================================= */
-
-.perfil-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  background: #1f1f1f;
-  color: #fff;
-}
-
-.perfil-card {
-  background-color: #2a2a2a;
-  padding: 30px 40px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  max-width: 400px;
-  width: 100%;
-}
-
-.perfil-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-  border: 3px solid #ff6b00;
-}
-
-.perfil-card h2 {
-  margin-bottom: 5px;
-  font-size: 1.4rem;
-}
-
-.perfil-card p {
-  margin-bottom: 20px;
-  color: #bbb;
-  font-size: 0.95rem;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
-}
-
-
-/* =========================================================
    BIBLIOTECA
 ========================================================= */
 
@@ -984,25 +882,21 @@ nav button:hover {
 
 
 /* =========================================================
-   DROPDOWN DEL USUARIO (TOOLKIT)
+   DROPDOWN DEL USUARIO (TOOLKIT) — VERSIÓN REACT CORRECTA
 ========================================================= */
 
-/* Contenedor del avatar */
 .user-toolkit {
   position: relative;
 }
 
-/* Imagen pequeña del navbar */
 .user-toolkit .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  border: 2px solid #000;
   object-fit: cover;
 }
 
-/* Caja del dropdown */
 .dropdown-menu {
   position: absolute;
   right: 0;
@@ -1013,22 +907,25 @@ nav button:hover {
   border-radius: 12px;
   padding: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  animation: fadeIn 0.25s ease-out;
   z-index: 2000;
+
+  /* ANIMACIÓN SUAVE */
+  opacity: 1;
+  pointer-events: auto;
+  animation: fadeIn 0.25s ease-out;
 }
 
-/* Animación suave */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Parte superior: avatar y nombre */
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   border-bottom: 1px solid #eee;
+  
   padding-bottom: 12px;
 }
 
@@ -1036,8 +933,13 @@ nav button:hover {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 2px solid #000;
   object-fit: cover;
+  border: 2px solid #f1933b00;
+
+}
+
+.user-info .avatar-big:hover {
+  border: 2px solid #f1933b;
 }
 
 .user-info .user-name {
@@ -1047,7 +949,6 @@ nav button:hover {
   color: #111;
 }
 
-/* Opciones */
 .menu-options {
   margin-top: 12px;
   display: flex;
@@ -1068,14 +969,19 @@ nav button:hover {
   color: #ff6b00;
 }
 
-/* Cerrar sesión */
 .menu-options .cerrar-sesion {
   color: #d30000;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 .menu-options .cerrar-sesion:hover {
   color: #ff0000;
+}
+
+.dropdown-menu hr {
+  border: none;
+  height: 1px;
+  background-color: #d6c8c8;
+  margin: 1px 0;
 }
