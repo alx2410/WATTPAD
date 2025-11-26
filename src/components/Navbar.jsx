@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
 import logo from "../assets/logo.png";
 import "../styles/Explorar.css"; // NUEVO
+import BuscadorHistorias from "./BuscadorHistorias";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -83,14 +84,7 @@ export default function Navbar() {
       </ul>
 
       {/* BUSCADOR */}
-      <form className="search-bar" onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Buscar historias..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </form>
+      <BuscadorHistorias/>
 
       {/* LINKS DERECHA */}
       <ul className="links-right">

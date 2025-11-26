@@ -2,6 +2,7 @@ import "../styles/MiniWattpad.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
 import RecomendacionInicio from "../components/RecomendacionInicio.jsx";
 import CarruselPopular from "../components/CarruselPopular.jsx";
+import { useEffect } from "react";
 
 
  const librosPopulares = [
@@ -14,7 +15,30 @@ import CarruselPopular from "../components/CarruselPopular.jsx";
     { id:"harry", titulo:"Harry Potter", portada:"https://images.cdn2.buscalibre.com/fit-in/360x360/e6/5f/e65f54742ad7bbc41903d17f75b77d78.jpg" },
     
   ];
+
 export default function MiniWattpad() {
+    useEffect(() => {
+  const textos = ["Descubre tu nueva obsesión", "Historias que no te dejaran dormir",
+    "Lee como si nadie te estuviera viendo", "Un universo por deslizar"
+  ];
+  let i = 0, j = 0;
+  const speed = 80;
+  const el = document.getElementById("typing");
+
+  function type() {
+    el.textContent = textos[i].slice(0,j++);
+    if(j <= textos[i].length) setTimeout(type,speed);
+    else setTimeout(erase,1500);
+  }
+
+  function erase() {
+    el.textContent = textos[i].slice(0, j--);
+    if(j >= 0) setTimeout(erase,speed/2);
+    else { i = (i+1)%textos.length; setTimeout(type,speed); }
+  }
+
+  type();
+}, []);
   return (
     <div>
       {/* SECCIÓN PRINCIPAL */}
@@ -63,90 +87,49 @@ export default function MiniWattpad() {
 <CarruselPopular libros={librosPopulares}/>
 
 
+     <section className="generos-section">
 
-
-
-      {/* SECCIÓN: TODOS LOS GÉNEROS */}
-<section className="generos-section">
+  {/* IZQUIERDA: TITULO + TEXTO + BARRA ANIMADA */}
   <div className="generos-left">
+    
     <h1 className="generos-title">
       Todos los géneros. <br />
       Todos Tuyos.
-      </h1>
-    <p className="generos-desc">Explora historias para cada estado mental posible.</p>
-    <br />
-    <br />
-    <br />
+    </h1>
 
-   <div className="generos-container">
-  <div className="generos-grid">
+    <p className="generos-desc">
+      Explora historias para cada estado mental posible.
+    </p>
 
-    <div className="genero-item">
-      <img src="/romace.jpg" alt="Romance" />
-      Romance
-    </div>
+ 
 
-    <div className="genero-item">
-      <img src="/fantasia.jpg" alt="Fantasia" />
-      Fantasía
-    </div>
+    {/* GÉNEROS */}
+    <div className="generos-container">
+      <div className="generos-grid">
 
-    <div className="genero-item">
-      <img src="/drama.jpg" alt="Drama" />
-      Drama
-    </div>
+        <div className="genero-item"><img src="/romace.jpg"/><span>Romance</span></div>
+        <div className="genero-item"><img src="/fantasia.jpg"/><span>Fantasía</span></div>
+        <div className="genero-item"><img src="/drama.jpg"/><span>Drama</span></div>
+        <div className="genero-item"><img src="/comedia.jpg"/><span>Comedia</span></div>
+        <div className="genero-item"><img src="/aventura.jpg"/><span>Aventura</span></div>
+        <div className="genero-item"><img src="/terror.jpg"/><span>Terror</span></div>
+        <div className="genero-item"><img src="/misterio.jpg"/><span>Misterio</span></div>
+        <div className="genero-item"><img src="/terror.jpg"/><span>Ciencia Ficción</span></div>
 
-    <div className="genero-item">
-      <img src="/comedia.jpg" alt="Comedia" />
-      Comedia
-    </div>
-
-    <div className="genero-item">
-      <img src="/aventura.jpg" alt="Aventura" />
-      Aventura
-    </div>
-
-    <div className="genero-item">
-      <img src="/terror.jpg" alt="Terror" />
-      Terror
-    </div>
-
-     <div className="genero-item">
-      <img src="/misterio.jpg" alt="Misterio" />
-      Misterio
-    </div>
-
-     <div className="genero-item">
-      <img src="/terror.jpg" alt="Ciencia" />
-      Ciencia Ficción
+      </div>
     </div>
 
   </div>
-</div>
 
-
-
-  </div>
-
-  <div className="generos-right">
-    <div className="img-container">
-      <img
-        src="/src/assets/levi.jpg"
-        alt="persona leyendo"
-        className="generos-img"
-      />
-
-     
-    </div>
+  {/* DERECHA: IMAGEN GRANDE */}
+  {/* HERO EXACTO TIPO WATTPAD */}
+<section className="hero-wattpad">
+  <div className="hero-search-box">
+    <span id="typing"></span>
   </div>
 </section>
-
-
-      
-
-
-
-
+  
+</section>
 
       {/* FORMULARIO RECOMENDACIÓN */}
       <RecomendacionInicio />
