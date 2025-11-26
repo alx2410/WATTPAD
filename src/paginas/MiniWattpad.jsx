@@ -1,16 +1,30 @@
 import "../styles/MiniWattpad.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
 import RecomendacionInicio from "../components/RecomendacionInicio.jsx";
+import CarruselPopular from "../components/CarruselPopular.jsx";
 
+
+ const librosPopulares = [
+    { id:"harry", titulo:"Harry Potter", portada:"https://images.cdn2.buscalibre.com/fit-in/360x360/e6/5f/e65f54742ad7bbc41903d17f75b77d78.jpg" },
+    { id:"crepusculo", titulo:"Crepúsculo", portada:"https://images.cdn2.buscalibre.com/fit-in/360x360/d1/f5/d1f5c769f90ed607d8ac3281436f0c65.jpg" },
+    { id:"maze", titulo:"Maze Runner", portada:"https://images.cdn1.buscalibre.com/fit-in/360x360/59/6b/596b13d4e4c829e2c42f14d3a3f6bdbf.jpg" },
+    { id:"juegos", titulo:"Juegos del Hambre", portada:"https://www.crisol.com.pe/media/catalog/product/cache/85cf14d8514889c3aec4590f746b60f9/9/7/9789878120201_tlexbwzd0crmvl9w.jpg" },
+    { id:"sombra", titulo:"Cazadores de Sombras", portada:"https://images.cdn1.buscalibre.com/fit-in/360x360/5c/40/5c40c89a958606fd803898f4039a37a5.jpg" },
+    { id:"percy", titulo:"Percy Jackson", portada:"https://www.penguinlibros.com/pe/3008252-large_default/la-maldicion-del-titan-percy-jackson-y-los-dioses-del-olimpo-3.webp" },
+    { id:"harry", titulo:"Harry Potter", portada:"https://images.cdn2.buscalibre.com/fit-in/360x360/e6/5f/e65f54742ad7bbc41903d17f75b77d78.jpg" },
+    
+  ];
 export default function MiniWattpad() {
   return (
     <div>
       {/* SECCIÓN PRINCIPAL */}
       <div className="inicio-container">
         <div className="inicio-texto">
-          <h1>
-            Ven por la historia. <br />
-            Quédate por la conexión.
+          <h1 className="mi-titulo">
+            Ven por la <br />
+            historia. <br />
+            Quédate por la <br />
+             conexión.
           </h1>
 
           <p className="descripcion">
@@ -26,53 +40,109 @@ export default function MiniWattpad() {
             ¿Ya tienes una cuenta? <span>Inicia sesión</span>
           </p>
         </div>
+        
 
-        <div className="inicio-imagen">
-          <div className="caja-mensaje">
-            <span className="comilla"></span>
-            <MensajesInicio />
-          </div>
-        </div>
+       <div className="inicio-imagen">
+
+  {/* RECUADRO 1 (el que ya tenías) */}
+  <div className="caja-mensaje uno">
+    <span className="comilla"></span>
+    <MensajesInicio startIndex={0}/>
+  </div>
+
+  {/* RECUADRO 2 ABAJO EN ZIGZAG */}
+  <div className="caja-mensaje dos">
+    <span className="comilla"></span>
+    <MensajesInicio startIndex={3}/>
+  </div>
+
+</div>
+
       </div>
 
-      {/* MINI CARRUSEL */}
-      <div className="mini-carrusel-container">
-        <h2 className="mini-carrusel-title">Lo Mas Popular</h2>
-
-        <div className="mini-carrusel">
-          <button className="carrusel-btn">‹</button>
-
-          <div className="mini-carrusel-items">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM04Wu4kbkTnQb7l_uOFpwFWvJivWGxavtlw&s" alt="img1" />
-            <img src="https://images.cdn1.buscalibre.com/fit-in/360x360/87/ac/87ac05af4868b66b9520d3f84dbc886e.jpg" alt="img2" />
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTG9BxxJcDRsBabRy0I6hdrqAEsOekJpksRrw&s" alt="img3" />
-            <img src="https://images.cdn2.buscalibre.com/fit-in/360x360/8e/28/8e2808346ffb11afb7f118576999050a.jpg" alt="img4" />
-            <img src="https://images.cdn3.buscalibre.com/fit-in/360x360/49/42/4942b939de795b95d9c852609abe48df.jpg" alt="img5" />
-            <img src="https://images.cdn1.buscalibre.com/fit-in/520x520/11/d2/11d2f5cc990034a702c1846d57967bb4.jpg" alt="img6" />
-          </div>
-          <button className="carrusel-btn">›</button>
-        </div>
-      </div>
+<CarruselPopular libros={librosPopulares}/>
 
 
-       {/* MINI CARRUSEL */}
-      <div className="mini-carrusel-container">
-        <h2 className="mini-carrusel-title">Lee.Obsesionate</h2>
 
-        <div className="mini-carrusel">
-          <button className="carrusel-btn">‹</button>
 
-          <div className="mini-carrusel-items">
-            <img src="https://i.pinimg.com/736x/40/e7/07/40e7070cedada68db8a20ac3c371d480.jpg" alt="img1" />
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1MSV018_HeLS29CJUz9NQu7byQMTURZ7L_g&s" alt="img2" />
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZoffXYyVRJD_UX5W5XLJCHjHQRKS6TKb11A&s" alt="img3" />
-            <img src="https://ramenparados.com/wp-content/uploads/2015/09/normal_kaichou1.jpg" alt="img4" />
-            <img src="https://imagedelivery.net/mWv_TJsq38van820M8-SNQ/a16f5c0e-7581-45c0-8364-1102510dd600/original" alt="img5" />
-            <img src="https://shinsekai.com.mx/cdn/shop/products/126176-520x520_371x520.jpg?v=1580243410" alt="img6" />
-          </div>
-          <button className="carrusel-btn">›</button>
-        </div>
-      </div>
+
+      {/* SECCIÓN: TODOS LOS GÉNEROS */}
+<section className="generos-section">
+  <div className="generos-left">
+    <h1 className="generos-title">
+      Todos los géneros. <br />
+      Todos Tuyos.
+      </h1>
+    <p className="generos-desc">Explora historias para cada estado mental posible.</p>
+    <br />
+    <br />
+    <br />
+
+   <div className="generos-container">
+  <div className="generos-grid">
+
+    <div className="genero-item">
+      <img src="/romace.jpg" alt="Romance" />
+      Romance
+    </div>
+
+    <div className="genero-item">
+      <img src="/fantasia.jpg" alt="Fantasia" />
+      Fantasía
+    </div>
+
+    <div className="genero-item">
+      <img src="/drama.jpg" alt="Drama" />
+      Drama
+    </div>
+
+    <div className="genero-item">
+      <img src="/comedia.jpg" alt="Comedia" />
+      Comedia
+    </div>
+
+    <div className="genero-item">
+      <img src="/aventura.jpg" alt="Aventura" />
+      Aventura
+    </div>
+
+    <div className="genero-item">
+      <img src="/terror.jpg" alt="Terror" />
+      Terror
+    </div>
+
+     <div className="genero-item">
+      <img src="/misterio.jpg" alt="Misterio" />
+      Misterio
+    </div>
+
+     <div className="genero-item">
+      <img src="/terror.jpg" alt="Ciencia" />
+      Ciencia Ficción
+    </div>
+
+  </div>
+</div>
+
+
+
+  </div>
+
+  <div className="generos-right">
+    <div className="img-container">
+      <img
+        src="/src/assets/levi.jpg"
+        alt="persona leyendo"
+        className="generos-img"
+      />
+
+     
+    </div>
+  </div>
+</section>
+
+
+      
 
 
 
@@ -89,17 +159,17 @@ export default function MiniWattpad() {
           <a>Cookies</a>
           <a>Ayuda</a>
           <a>Idioma</a>
-          <a>MiniWattpad Originales</a>
+          <a>Fictory Originales</a>
         </div>
 
 
         <div className="footer-redes">
-    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
-    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
-    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">TikTok</a>
+    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a> |
+    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a> |
+    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">TikTok</a> 
   </div>
 
-        <p className="footer-copy">© 2025 MiniWattpad</p>
+        <p className="footer-copy">© 2025 Fictory</p>
       </footer>
     </div>
   );

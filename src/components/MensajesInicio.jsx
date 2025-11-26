@@ -2,18 +2,16 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 
-export default function MensajesInicio() {
+export default function MensajesInicio({ startIndex = 0 }) {
   const [mensajes, setMensajes] = useState([]);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(startIndex);
 
   useEffect(() => {
-
     const traer = async () => {
       const ref = collection(db, "mensajesInicio");
       const snap = await getDocs(ref);
       const datos = snap.docs.map(doc => doc.data().Texto);
       setMensajes(datos);
-      
     };
     traer();
   }, []);
@@ -28,7 +26,8 @@ export default function MensajesInicio() {
     return () => clearInterval(timer);
   }, [mensajes]);
 
-  if (mensajes.length === 0) return <p className="mensaje-inicio">Cargando mensaje...</p>;
+  if (mensajes.length === 0)
+    return <p className="mensaje-inicio">Cargando mensaje...</p>;
 
   return <p className="mensaje-inicio">{mensajes[index]}</p>;
 }

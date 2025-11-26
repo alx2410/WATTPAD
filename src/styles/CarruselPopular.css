@@ -1,0 +1,45 @@
+.carrusel-popular { 
+     padding:40px 0; }
+
+.carrusel-popular h2 {
+  font-size:32px;
+  margin-bottom:20px;
+  padding-inline-start:90px;
+}
+
+
+.carrusel-box {
+  display:flex;
+  align-items:center;
+
+  justify-content:center;
+}
+
+.carrusel-items {
+  display:flex;
+  height:100%;
+  backface-visibility:hidden;
+  padding:0;
+  margin:0;
+  gap:10px;      /* opcional si quieres mini espacio, puedes quitarlo */
+  overflow:hidden;
+}
+
+
+.carrusel-items img {
+  width:140px;      /* puedes subir a 150 o 160 si quieres más grandes */
+  height:200px;
+  object-fit:cover;
+  border-radius:6px;
+  backface-visibility:hidden;
+}
+
+
+.carrusel-items img:hover { transform:scale(1.05); }
+.arrow {
+  background:none;
+  font-size:28px;
+  border:none;
+  cursor:pointer;
+}
+.arrow:hover { transform:scale(1.2); }

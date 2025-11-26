@@ -90,9 +90,6 @@ export default function Navbar() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button type="submit" aria-label="Buscar">
-          🔍
-        </button>
       </form>
 
       {/* LINKS DERECHA */}

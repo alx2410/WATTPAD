@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #ffd6c4; /* rosado durazno suave */
+  background-color: #fff0c6; 
   color: #222;
   scroll-behavior: smooth;
 }
@@ -139,7 +139,7 @@ nav button:hover {
   display: flex;
   align-items: center;
   background: transparent;
-  border: 1.5px solid #fff;
+  border: 1.5px solid grey;
   border-radius: 0;
   overflow: hidden;
   margin: 0 20px;
@@ -147,18 +147,17 @@ nav button:hover {
 
 .search-bar input {
   border: none;
+  border-radius: 6;
   outline: none;
   padding: 6px 10px;
   font-size: 0.95rem;
   width: 150px;
-  color: #000;
+  color: grey;
   background: transparent;
   transition: width 0.3s ease;
 }
 
-.search-bar input::placeholder {
-  color: #ff8c42;
-}
+
 
 .search-bar input:focus {
   width: 220px;
