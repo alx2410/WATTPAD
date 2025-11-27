@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 
 export default function AnimatedText({ frases, velocidad = 100, pausa = 1500 }) {
@@ -33,10 +34,11 @@ export default function AnimatedText({ frases, velocidad = 100, pausa = 1500 }) 
     }
   }, [textoMostrado, borrando]);
 
-  return (
-    <h1 className="animated-text">
-      {textoMostrado}
-      <span className="cursor">|</span>
-    </h1>
-  );
+ return (
+  <h1 className="animated-text">
+    <span className="typing-text">{textoMostrado}</span>
+    <span className="cursor"></span>
+  </h1>
+);
+
 }

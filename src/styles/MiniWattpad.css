@@ -15,12 +15,16 @@
 }
 
 .mi-titulo {
-  color: black; /* var(--ds-neutral-100-solid) = blanco */
-  font-size: 74px; /* var(--font-size-74) */
-  font-weight: 700; /* var(--font-weight-bold) */
-  line-height: 80px; /* var(--line-height-80) */
-padding-inline-start: 90px;
+  color: black;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 92px;
+  padding-inline-start: 90px;
 }
+
+
+
+
 
 
 .descripcion {
@@ -209,14 +213,15 @@ h1.generos-title{
   justify-content: center;        /* Centrado horizontal */
   padding-top: 130px;             /* Lo sube pero no tanto */
   position: relative;
+  
 }
 
 /* CAJA BUSCADOR */
 .hero-search-box {
-  width: 520px;
+  width: 200px;
   height: 70px;
   background: #ffffff;
-  border-radius: 45px;
+  border-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,18 +237,15 @@ h1.generos-title{
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-/* TEXTO DINÁMICO ESCRIBIÉNDOSE */
-#typing {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
-  border-right: 3px solid #333;
-  padding-right: 6px;
-  animation: caretBlink .6s infinite;
+.hero-wattpad .hero-search-box {
+  font-size: 14px; /* tamaño general */
 }
 
-/* Parpadeo del cursor */
-@keyframes caretBlink {
-  50% { border-color: transparent; }
+/* si AnimatedText genera un span o p */
+.hero-wattpad .hero-search-box span,
+.hero-wattpad .hero-search-box p {
+  font-size: 20px;
+  color: #333;       /* ya que estás, lo estilizas */
+  font-weight: 400;
 }
+

@@ -75,9 +75,7 @@ const handleSearch = (e) => {
           </Link>
 
           {showCategories && (
-            <div className="mega-menu">
-              <h3>Categorías</h3>
-
+            <div className="mega-menu-categorias">
               <div className="columnas-menu">
                 {categorias.map((cat) => (
                   <button
@@ -101,7 +99,7 @@ const handleSearch = (e) => {
   
   <input
     type="text"
-    placeholder="Buscar título, autor o género..."
+    placeholder="Buscar..."
     value={busqueda}
     onChange={(e) => setBusqueda(e.target.value)}
     onKeyDown={(e) => {

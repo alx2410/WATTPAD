@@ -397,32 +397,50 @@ export default function Perfil() {
         </div>
       )}
 
-      {/* =======================================================
-           MURO
-      ======================================================= */}
       {tab === "muro" && (
-        <div className="muro">
-          <div className="muro-publicar">
-            <textarea value={nuevoPost} onChange={(e) => setNuevoPost(e.target.value)} placeholder={esPropio ? "Escribe algo en tu muro..." : "Escribe un comentario..."}></textarea>
-            <button onClick={publicarEnMuro} className="btn-editar">Publicar</button>
-          </div>
+  <div className="muro">
 
-          {posts.length ? (
-            posts.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).map((post) => (
-              <div key={post.id} className="muro-post">
-                {post.foto && <img src={post.foto} className="post-avatar" />}
-                <div className="post-contenido">
-                  <p className="post-autor">{post.autor}</p>
-                  <p className="post-texto">{post.texto}</p>
-                  {post.fecha && <span className="post-fecha">{new Date(post.fecha).toLocaleString("es-ES", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>}
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No hay publicaciones aún.</p>
-          )}
-        </div>
-      )}
+    {/* SOLO SI ES TU PROPIO PERFIL */}
+    {esPropio && (
+      <div className="muro-publicar">
+        <textarea
+          value={nuevoPost}
+          onChange={(e) => setNuevoPost(e.target.value)}
+          placeholder="Escribe algo en tu muro..."
+        ></textarea>
+        <button onClick={publicarEnMuro} className="btn-editar">Publicar</button>
+      </div>
+    )}
+
+
+    {posts.length ? (
+      posts
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+        .map((post) => (
+          <div key={post.id} className="muro-post">
+            {post.foto && <img src={post.foto} className="post-avatar" />}
+            <div className="post-contenido">
+              <p className="post-autor">{post.autor}</p>
+              <p className="post-texto">{post.texto}</p>
+              {post.fecha && (
+                <span className="post-fecha">
+                  {new Date(post.fecha).toLocaleString("es-ES", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              )}
+            </div>
+          </div>
+        ))
+    ) : (
+      <p>No hay publicaciones aún.</p>
+    )}
+  </div>
+)}
 
       {/* =======================================================
            SEGUIDORES

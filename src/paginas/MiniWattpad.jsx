@@ -2,7 +2,7 @@ import "../styles/MiniWattpad.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
 import RecomendacionInicio from "../components/RecomendacionInicio.jsx";
 import CarruselPopular from "../components/CarruselPopular.jsx";
-import { useEffect } from "react";
+import AnimatedText from "../components/AnimatedText.jsx";
 
 
  const librosPopulares = [
@@ -17,39 +17,18 @@ import { useEffect } from "react";
   ];
 
 export default function MiniWattpad() {
-    useEffect(() => {
-  const textos = ["Descubre tu nueva obsesión", "Historias que no te dejaran dormir",
-    "Lee como si nadie te estuviera viendo", "Un universo por deslizar"
-  ];
-  let i = 0, j = 0;
-  const speed = 80;
-  const el = document.getElementById("typing");
-
-  function type() {
-    el.textContent = textos[i].slice(0,j++);
-    if(j <= textos[i].length) setTimeout(type,speed);
-    else setTimeout(erase,1500);
-  }
-
-  function erase() {
-    el.textContent = textos[i].slice(0, j--);
-    if(j >= 0) setTimeout(erase,speed/2);
-    else { i = (i+1)%textos.length; setTimeout(type,speed); }
-  }
-
-  type();
-}, []);
   return (
     <div>
       {/* SECCIÓN PRINCIPAL */}
       <div className="inicio-container">
         <div className="inicio-texto">
-          <h1 className="mi-titulo">
-            Ven por la <br />
-            historia. <br />
-            Quédate por la <br />
-             conexión.
-          </h1>
+         <h1 className="mi-titulo">
+  Historias que <br />
+  atrapan. <br />
+  Lectores que<br />
+ vuelven.
+</h1>
+
 
           <p className="descripcion">
             Historias mejores que el streaming y secciones de comentarios
@@ -100,6 +79,7 @@ export default function MiniWattpad() {
     <p className="generos-desc">
       Explora historias para cada estado mental posible.
     </p>
+    <br />
 
  
 
@@ -121,13 +101,21 @@ export default function MiniWattpad() {
 
   </div>
 
-  {/* DERECHA: IMAGEN GRANDE */}
-  {/* HERO EXACTO TIPO WATTPAD */}
+  {/* HERO TIPO WATTPAD - SOLO UNA VEZ */}
 <section className="hero-wattpad">
   <div className="hero-search-box">
-    <span id="typing"></span>
+    <AnimatedText 
+      frases={[
+        "Romance prohibido",
+        "Suspenso que te desvela",
+        "Historias que enganchan"
+      ]}
+      velocidad={90}
+      pausa={1300}
+    />
   </div>
 </section>
+
   
 </section>
 

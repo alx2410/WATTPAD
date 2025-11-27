@@ -1,51 +1,5 @@
-.mega-menu {
-  position: absolute;
-  top: 70px; /* ajusta según tu navbar */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 85%;
-  background: white;
-  border-radius: 8px;
-  padding: 25px 30px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
-  z-index: 40;
-}
-
-.mega-menu h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.columnas-menu {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.categoria-opcion {
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 6px 4px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  text-transform: capitalize;
-}
-
-.categoria-opcion:hover {
-  color: #ff6c2f;
-}
-
-.grid-libros {
-  margin-top: 30px;
-  display: grid;
-  gap: 15px;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-}
-
-
-.mega-menu {
+/* MENÚ DE CATEGORÍAS DEL NAVBAR */
+.mega-menu-categorias {
   position: absolute;
   top: 35px;
   left: 0;
@@ -57,26 +11,81 @@
   z-index: 100;
 }
 
-.mega-menu h3 {
+.mega-menu-categorias h3 {
   font-size: 0.9rem;
   font-weight: 700;
   margin-bottom: 12px;
 }
 
-.columnas-menu {
+.mega-menu-categorias .columnas-menu {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px;
 }
 
-.categoria-opcion {
+.mega-menu-categorias .categoria-opcion {
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
   padding: 3px;
+  text-transform: capitalize;
 }
 
-.categoria-opcion:hover {
+.mega-menu-categorias .categoria-opcion:hover {
   color: #ff6c2f;
 }
+
+
+/* Grid de libros */
+.grid-libros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* Cada libro */
+.libro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Imagen del libro */
+.libro-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover; /* recorta lo que sobra para mantener proporción */
+  margin-bottom: 8px;
+ 
+}
+
+/* Título del libro */
+.info-libro h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+/* Contenedor de etiquetas */
+.etiquetas {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Cada etiqueta: género o autor */
+.etiqueta {
+  font-size: 0.75rem;
+  background: #f0f0f0;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: capitalize;
+}
+
+

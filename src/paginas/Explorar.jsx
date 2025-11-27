@@ -63,26 +63,15 @@ export default function Explorar() {
 
   return (
     <div className="explorar-container">
-      <h1>Explorar</h1>
-      <p>Aquí puedes descubrir nuevas historias y cómics.</p>
+      <h1 className="titulo-explorar">
+  {filtroGenero 
+    ? filtroGenero.charAt(0).toUpperCase() + filtroGenero.slice(1) 
+    : (busqueda ? `Resultados para "${busqueda}"` : "Todos los libros")
+  }
+</h1>
+      
 
-      {/* Selector de género (se mantiene, no afecta buscador) */}
-      <div className="filtro-genero">
-        <select
-          value={filtroGenero}
-          onChange={(e) => setFiltroGenero(e.target.value)}
-        >
-          <option value="">Todos los géneros</option>
-          <option value="romance">Romance</option>
-          <option value="fantasia">Fantasía</option>
-          <option value="ciencia ficcion">Ciencia ficción</option>
-          <option value="misterio">Misterio</option>
-          <option value="drama">Drama</option>
-          <option value="terror">Terror</option>
-          <option value="comedia">Comedia</option>
-          <option value="aventura">Aventura</option>
-        </select>
-      </div>
+      
 
       {cargando ? (
         <p>Cargando libros...</p>

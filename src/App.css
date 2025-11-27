@@ -1,11 +1,10 @@
-
 /* =========================================================
    ESTILOS GENERALES
 ========================================================= */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #fff0c6; 
+  background-color: #ffd6c4; /* rosado durazno suave */
   color: #222;
   scroll-behavior: smooth;
 }
@@ -27,6 +26,12 @@ main {
   padding: 24px;
   max-width: 1000px;
   margin: auto;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: rgba(180, 180, 180, 0.7);
 }
 
 
@@ -131,6 +136,7 @@ nav button:hover {
 }
 
 
+
 /* =========================================================
    BUSCADOR
 ========================================================= */
@@ -183,7 +189,6 @@ nav button:hover {
 .btn-buscar.lupa:hover svg {
   stroke: #222;
 }
-
 
 /* =========================================================
    PÁGINA ESCRIBIR
@@ -433,61 +438,6 @@ nav button:hover {
   cursor: pointer;
 }
 
-
-
-/* =========================================================
-   PERFIL
-========================================================= */
-
-.perfil-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  background: #1f1f1f;
-  color: #fff;
-}
-
-.perfil-card {
-  background-color: #2a2a2a;
-  padding: 30px 40px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  max-width: 400px;
-  width: 100%;
-}
-
-.perfil-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-  border: 3px solid #ff6b00;
-}
-
-.perfil-card h2 {
-  margin-bottom: 5px;
-  font-size: 1.4rem;
-}
-
-.perfil-card p {
-  margin-bottom: 20px;
-  color: #bbb;
-  font-size: 0.95rem;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
-}
-
-
 /* =========================================================
    BIBLIOTECA
 ========================================================= */
@@ -528,175 +478,6 @@ nav button:hover {
   color: white;
   font-weight: bold;
   cursor: pointer;
-}
-
-/* =========================================================
-   MODAL MINI-WATTPAD
-========================================================= */
-
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.45);
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  backdrop-filter: blur(2px);
-  z-index: 2000;
-}
-
-.modal-card {
-  background: #ffffff;
-  width: 100%;
-  max-width: 30%;
-  padding: 2rem 1.6rem;
-  border-radius: 18px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-  position: relative;
-  animation: modalFade 0.25s ease-out;
-}
-
-@keyframes modalFade {
-  from { transform: translateY(20px); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-
-/* Botón cerrar */
-.modal-cerrar {
-  position: absolute;
-  top: 10px; 
-  right: 12px;
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  color: #777;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.modal-cerrar:hover {
-  color: #ff6b00;
-}
-
-/* Título */
-.modal-title {
-  text-align: center;
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: #ff6b00;
-  margin-bottom: 1.4rem;
-}
-
-/* Campos */
-.modal-card label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #444;
-  margin-bottom: 4px;
-}
-
-.modal-card input {
-  width: 95%;
-  padding: 10px 12px;
-  border: 2px solid #ffd3b4;
-  border-radius: 10px;
-  background: #fffdfc;
-  outline: none;
-  margin-bottom: 14px;
-  transition: 0.25s;
-}
-
-.botones {
-  margin: 5px;
-}
-
-
-
-.modal-card input:focus {
-  border-color: #ff7b00;
-  box-shadow: 0 0 6px rgba(255, 123, 0, 0.25);
-}
-
-/* Google */
-.btn-google {
-  width: 100%;
-  background: #fff;
-  border: 2px solid #e5e5e5;
-  border-radius: 10px;
-  padding: 10px;
-  display: flex;
-  color: rgb(117, 98, 98);
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.btn-google img {
-  width: 20px;
-}
-
-.btn-google:hover {
-  background: #fafafa;
-  border-color: #dcdcdc;
-}
-
-/* Botones principales */
-.btn-primario {
-  width: 100%;
-  background: linear-gradient(90deg, #ff8c42, #ff6b00);
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: 0.3s;
-}
-.btn-primario:hover {
-  background: linear-gradient(90deg, #ff9b5a, #ff7b00);
-  transform: translateY(-2px);
-}
-
-/* Botones secundarios */
-.btn-secundario {
-  width: 100%;
-  background: #fff6f2;
-  border: 2px solid #ffd3b4;
-  color: #ff6b00;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-.btn-secundario:hover {
-  background: #ffe9df;
-  transform: translateY(-1px);
-}
-
-/* Error */
-.modal-error {
-  background: #ffe1e1;
-  color: #b60000;
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-#botoncitos {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;   /* centra horizontalmente */ 
-  gap: 1px;                  /* opcional: separación entre botones */
 }
 
 /* =========================================================
@@ -1022,6 +803,8 @@ nav button:hover {
   gap: 8px;
   margin-top: 10px;
 }
+
+
 /* =========================================================
    BIBLIOTECA
 ========================================================= */
@@ -1093,104 +876,6 @@ nav button:hover {
   height: 20px;
   display: block;
   flex: 0 0 20px;
-}
-
-
-/* =========================================================
-   DROPDOWN DEL USUARIO (TOOLKIT)
-========================================================= */
-
-/* Contenedor del avatar */
-.user-toolkit {
-  position: relative;
-}
-
-/* Imagen pequeña del navbar */
-.user-toolkit .avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid #000;
-  object-fit: cover;
-}
-
-/* Caja del dropdown */
-.dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: 55px;
-  width: 230px;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 14px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  animation: fadeIn 0.25s ease-out;
-  z-index: 2000;
-}
-
-/* Animación suave */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Parte superior: avatar y nombre */
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 12px;
-}
-
-.user-info .avatar-big {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid #000;
-  object-fit: cover;
-}
-
-.user-info .user-name {
-  margin-top: 10px;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #111;
-}
-
-/* Opciones */
-.menu-options {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  list-style: none;
-  padding: 0;
-}
-
-.menu-options li a {
-  text-decoration: none;
-  color: #222;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.menu-options li a:hover {
-  color: #ff6b00;
-}
-
-/* Cerrar sesión */
-.menu-options .cerrar-sesion {
-  color: #d30000;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.menu-options .cerrar-sesion:hover {
-  color: #ff0000;
 }
 
 
