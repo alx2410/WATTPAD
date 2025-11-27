@@ -1,7 +1,7 @@
-// Escribir.jsx
+// src/paginas/Escribir.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useAuth } from "../context/AuthContext"; // ajusta ruta si hace falta
-import { db, storage } from "../firebase/config"; // ajusta ruta si hace falta
+import { useAuth } from "../context/AuthContext"; // ajusta ruta si es necesario
+import { db, storage } from "../firebase/config"; // ajusta ruta si es necesario
 import {
   collection,
   addDoc,
@@ -9,16 +9,11 @@ import {
   updateDoc,
   serverTimestamp,
   getDocs,
-  query,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-
-
-
 export default function Escribir() {
   const { user } = useAuth();
-
 
   // Libro
   const [tituloLibro, setTituloLibro] = useState("");
@@ -26,11 +21,9 @@ export default function Escribir() {
   const [portadaFile, setPortadaFile] = useState(null);
   const [portadaPreview, setPortadaPreview] = useState("");
 
-
-  // Capítulos
-  const [capitulos, setCapitulos] = useState([]); // cada capítulo: { id, titulo, contenido, musicaUrl, musicaFile, stickers:[{file,type,preview,uploadedUrl}], fecha, publishedId, published:bool }
+  // Capítulos (local)
+  const [capitulos, setCapitulos] = useState([]); // objetos con { id, titulo, contenido, musicaUrl, musicaFile, stickers:[{file,type,preview,uploadedUrl}], fecha, publishedId }
   const [editingIndex, setEditingIndex] = useState(-1);
-
 
   // Editor temporal (capítulo)
   const [capTitulo, setCapTitulo] = useState("");
@@ -39,17 +32,15 @@ export default function Escribir() {
   const [capMusicaFile, setCapMusicaFile] = useState(null);
   const [capStickers, setCapStickers] = useState([]); // { file, type, preview, uploadedUrl? }
 
-
   // UI y estado
   const [vistaPreview, setVistaPreview] = useState(false);
   const [subiendo, setSubiendo] = useState(false);
   const [mensaje, setMensaje] = useState("");
-  const [libroDocId, setLibroDocId] = useState(null); // si ya se publicó, guardamos id del libro
-  const [libroTerminado, setLibroTerminado] = useState(false); // marcado como terminado
+  const [libroDocId, setLibroDocId] = useState(null); // id en Firestore si fue publicado
+  const [libroTerminado, setLibroTerminado] = useState(false);
   const filePortadaRef = useRef();
 
-
-  // inject estilos (naranja suave + sombras)
+  // inject estilos (naranja suave + sombras) - igual que tu archivo largo
   useEffect(() => {
     const id = "escribir-styles-v2";
     if (document.getElementById(id)) return;
@@ -74,14 +65,14 @@ export default function Escribir() {
       .sticker-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
       .preview-area{background:#fffaf1;padding:12px;border-radius:8px;border:1px solid rgba(255,138,61,0.08)}
       .muted{color:#64748b;font-size:13px}
-      @media (max-width:1000px){.escribir-grid{grid-template-columns:1fr;}}
+      .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      @media (max-width:1000px){.escribir-grid{grid-template-columns:1fr;} .grid-two { grid-template-columns: 1fr; } }
     `;
     const style = document.createElement("style");
     style.id = id;
     style.innerHTML = css;
     document.head.appendChild(style);
   }, []);
-
 
   // --- helpers para archivos y previews ---
   const handlePortada = (e) => {
@@ -91,14 +82,12 @@ export default function Escribir() {
     setPortadaPreview(URL.createObjectURL(f));
   };
 
-
   const handleAddSticker = (file) => {
     if (!file) return;
     const type = file.type.startsWith("video") ? "video" : "image";
     const preview = URL.createObjectURL(file);
     setCapStickers((s) => [...s, { file, type, preview }]);
   };
-
 
   const handleRemoveSticker = (idx) => {
     setCapStickers((s) => {
@@ -108,7 +97,6 @@ export default function Escribir() {
       return arr;
     });
   };
-
 
   const resetCapEditor = () => {
     setCapTitulo("");
@@ -121,7 +109,6 @@ export default function Escribir() {
     setVistaPreview(false);
   };
 
-
   // guardar capítulo localmente (antes de publicar)
   const handleSaveChapterLocal = () => {
     if (!capTitulo.trim() || !capContenido.trim()) {
@@ -129,18 +116,16 @@ export default function Escribir() {
       return;
     }
 
-
     const ch = {
       id: editingIndex >= 0 ? capitulos[editingIndex].id : `local-${Date.now()}`,
       titulo: capTitulo,
       contenido: capContenido,
       musicaUrl: capMusicaUrl || null,
       musicaFile: capMusicaFile || null,
-      stickers: capStickers.map((s) => ({ preview: s.preview, type: s.type, file: s.file })),
+      stickers: capStickers.map((s) => ({ preview: s.preview, type: s.type, file: s.file, uploadedUrl: s.uploadedUrl || null })),
       fecha: new Date().toISOString(),
       publishedId: capitulos[editingIndex]?.publishedId || null,
     };
-
 
     if (editingIndex >= 0) {
       setCapitulos((prev) => {
@@ -154,10 +139,8 @@ export default function Escribir() {
       setMensaje("Capítulo agregado localmente");
     }
 
-
     resetCapEditor();
   };
-
 
   const handleEditChapter = (index) => {
     const ch = capitulos[index];
@@ -166,15 +149,11 @@ export default function Escribir() {
     setCapContenido(ch.contenido);
     setCapMusicaUrl(ch.musicaUrl || "");
     setCapMusicaFile(null);
-    const sarr = (ch.stickers || []).map((s) => {
-      // if s.file exists we keep it; else keep preview/uploadedUrl for display
-      return { file: s.file || null, type: s.type, preview: s.preview, uploadedUrl: s.uploadedUrl || s.preview };
-    });
+    const sarr = (ch.stickers || []).map((s) => ({ file: s.file || null, type: s.type, preview: s.preview, uploadedUrl: s.uploadedUrl || s.preview }));
     setCapStickers(sarr);
     setVistaPreview(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
 
   const handleDeleteChapter = (index) => {
     if (!confirm("¿Eliminar capítulo?")) return;
@@ -187,7 +166,6 @@ export default function Escribir() {
     setMensaje("Capítulo eliminado");
   };
 
-
   // upload helper
   async function uploadFileToStorage(folderPath, file) {
     const name = `${Date.now()}-${file.name}`;
@@ -197,21 +175,18 @@ export default function Escribir() {
     return url;
   }
 
-
-  // PUBLICAR libro + capítulos
+  // PUBLICAR libro + capítulos (utiliza uploadFileToStorage y la estructura del corto)
   const handlePublishBook = async () => {
     if (!user) { alert("Debes iniciar sesión para publicar."); return; }
     if (!tituloLibro.trim() || !genero.trim()) { alert("Completa título y género del libro."); return; }
     if (!portadaFile) { alert("Sube una portada antes de publicar."); return; }
     if (capitulos.length === 0) { alert("Agrega al menos un capítulo."); return; }
 
-
     setSubiendo(true);
     setMensaje("");
     try {
       // 1) subir portada
       const portadaUrl = await uploadFileToStorage("portadas", portadaFile);
-
 
       // 2) crear documento libro
       const libroRef = await addDoc(collection(db, "libros"), {
@@ -222,12 +197,10 @@ export default function Escribir() {
         autorId: user.uid,
         permitirCalificacion: true,
         fecha: serverTimestamp(),
-        estado: "publicado", // inicialmente publicado (pero no 'terminado')
+        estado: "publicado",
       });
 
-
       setLibroDocId(libroRef.id);
-
 
       // 3) subir capítulos a subcolección
       for (const ch of capitulos) {
@@ -244,13 +217,11 @@ export default function Escribir() {
           }
         }
 
-
         // subir música file si existe
         let musicaUrlFinal = ch.musicaUrl || null;
         if (ch.musicaFile) {
           musicaUrlFinal = await uploadFileToStorage(`capitulos/${libroRef.id}/musica`, ch.musicaFile);
         }
-
 
         const capRef = await addDoc(collection(db, `libros/${libroRef.id}/capitulos`), {
           tituloCapitulo: ch.titulo,
@@ -260,14 +231,11 @@ export default function Escribir() {
           fecha: serverTimestamp(),
         });
 
-
         // assign publishedId locally for future edits
         ch.publishedId = capRef.id;
       }
 
-
       setMensaje("Libro publicado en tu perfil (borrador publicado). Ahora puedes seguir editando o marcar como TERMINADO.");
-      // keep the local capitulos (they now have publishedId set)
     } catch (err) {
       console.error(err);
       alert("Error al publicar: " + (err.message || err));
@@ -276,14 +244,10 @@ export default function Escribir() {
     }
   };
 
-
-  // MARCAR COMO TERMINADO (Opción A)
+  // MARCAR COMO TERMINADO
   const handleMarkAsFinished = async () => {
     if (!libroDocId) { alert("Primero debes publicar el libro (botón Publicar libro)."); return; }
-
-
     if (!confirm("¿Marcar este libro como terminado? (Los lectores verán la versión final)")) return;
-
 
     setSubiendo(true);
     try {
@@ -299,35 +263,25 @@ export default function Escribir() {
     }
   };
 
-
-  // ACTUALIZAR cambios en libro ya publicado (en Perfil)
-  // Actualiza libro metadata y capítulos que tengan publishedId (si se editaron)
+  // ACTUALIZAR cambios en libro ya publicado (actualiza capítulos con publishedId)
   const handleUpdatePublishedChanges = async () => {
     if (!libroDocId) { alert("No hay libro publicado en el perfil aún."); return; }
     setSubiendo(true);
     setMensaje("");
     try {
-      // 1) update basic libro (title, genre, portada if new)
       const libroRef = doc(db, "libros", libroDocId);
       let portadaUrl = null;
       if (portadaFile && portadaPreview && portadaPreview.startsWith("blob:")) {
         portadaUrl = await uploadFileToStorage("portadas", portadaFile);
       }
-      const updateData = {
-        titulo: tituloLibro,
-        genero,
-      };
+      const updateData = { titulo: tituloLibro, genero };
       if (portadaUrl) updateData.portada = portadaUrl;
       await updateDoc(libroRef, updateData);
 
-
-      // 2) update capítulos publicados (those with publishedId)
       for (const ch of capitulos) {
-        if (!ch.publishedId) continue; // not published earlier
+        if (!ch.publishedId) continue;
         const capDocRef = doc(db, `libros/${libroDocId}/capitulos`, ch.publishedId);
 
-
-        // compute stickers: if there are local file stickers, upload them and add urls
         const stickersUrls = [];
         for (const s of ch.stickers || []) {
           if (s.file) {
@@ -340,13 +294,10 @@ export default function Escribir() {
           }
         }
 
-
-        // upload music file if provided
         let musicaUrlFinal = ch.musicaUrl || null;
         if (ch.musicaFile) {
           musicaUrlFinal = await uploadFileToStorage(`capitulos/${libroDocId}/musica`, ch.musicaFile);
         }
-
 
         await updateDoc(capDocRef, {
           tituloCapitulo: ch.titulo,
@@ -357,7 +308,6 @@ export default function Escribir() {
         });
       }
 
-
       setMensaje("Cambios subidos al libro en Perfil ✔");
     } catch (err) {
       console.error(err);
@@ -367,44 +317,86 @@ export default function Escribir() {
     }
   };
 
+  const publicarLibro = async () => {
+  try {
+    setSubiendo(true);
 
-  // EXPORTAR PDF (opción 3: texto + portada + autor + índice)
-  const handleExportPDF = async () => {
-    if (!libroDocId) {
-      // allow export from local draft too
-      // warn user
-      if (!confirm("Aún no has publicado este libro en tu perfil. ¿Deseas generar PDF desde borrador local?")) return;
+    // 1. SUBIR PORTADA
+    let portadaURL = "";
+    if (portadaFile) {
+      const portadaRef = ref(storage, `portadas/${user.uid}/${Date.now()}`);
+      await uploadBytes(portadaRef, portadaFile);
+      portadaURL = await getDownloadURL(portadaRef);
     }
 
+    // 2. SUBIR MÚSICA DE CADA CAPÍTULO
+    const capitulosConMusica = [];
+    for (const cap of capitulos) {
+      let musicaURL = cap.musicaUrl || "";
+
+      if (cap.musicaFile) {
+        const musicaRef = ref(storage, `musica/${user.uid}/${Date.now()}_${cap.musicaFile.name}`);
+        await uploadBytes(musicaRef, cap.musicaFile);
+        musicaURL = await getDownloadURL(musicaRef);
+      }
+
+      capitulosConMusica.push({
+        titulo: cap.titulo,
+        contenido: cap.contenido,
+        musicaUrl: musicaURL,
+        stickers: cap.stickers || []
+      });
+    }
+
+    // 3. GUARDAR EN FIRESTORE
+    await addDoc(collection(db, "historias"), {
+      uid: user.uid,
+      titulo: tituloLibro,
+      genero,
+      portada: portadaURL,
+      capitulos: capitulosConMusica,
+      fecha: Date.now(),
+    });
+
+    setMensaje("Historia publicada con éxito ✔");
+    setLibroTerminado(true);
+
+  } catch (err) {
+    console.log(err);
+    setMensaje("Error al publicar la historia.");
+  } finally {
+    setSubiendo(false);
+  }
+};
+
+
+  // EXPORTAR A PDF con jsPDF: texto + portada + autor + índice + stickers (imagenes)
+  const handleExportPDF = async () => {
+    if (!libroDocId) {
+      if (!confirm("Aún no has publicado este libro en tu perfil. ¿Deseas generar PDF desde borrador local?")) return;
+    }
 
     setSubiendo(true);
     setMensaje("");
 
-
     try {
-      // Build PDF using jsPDF
       const pdf = new jsPDF({ unit: "pt", format: "a4" });
       const margin = 40;
       const pageWidth = pdf.internal.pageSize.getWidth();
       const usableWidth = pageWidth - margin * 2;
       let y = 60;
 
-
-      // 1) Portada (use portadaPreview if available, else skip)
+      // portada
       if (portadaPreview) {
-        // convert preview to dataURL (if file is present)
         let imgDataUrl = null;
         if (portadaFile) {
           imgDataUrl = await fileToDataURL(portadaFile);
         } else if (portadaPreview.startsWith("http") || portadaPreview.startsWith("https")) {
           imgDataUrl = await urlToDataURL(portadaPreview);
         } else {
-          // blob: URL -> fetch and convert
           imgDataUrl = await urlToDataURL(portadaPreview);
         }
 
-
-        // add image with aspect fit
         try {
           const imgProps = pdf.getImageProperties(imgDataUrl);
           const imgWidth = usableWidth;
@@ -412,13 +404,10 @@ export default function Escribir() {
           pdf.addImage(imgDataUrl, "JPEG", margin, y, imgWidth, imgHeight);
           y += imgHeight + 20;
         } catch (err) {
-          // fallback: skip image
           console.warn("No se pudo añadir la imagen a PDF:", err);
         }
       }
 
-
-      // Title and author
       pdf.setFontSize(22);
       pdf.setTextColor("#333");
       pdf.text(tituloLibro || "Título sin definir", margin, y);
@@ -428,27 +417,20 @@ export default function Escribir() {
       pdf.text(`Autor: ${user?.displayName || user?.email || "Autor"}`, margin, y);
       y += 30;
 
-
-      // Índice de capítulos
       pdf.setFontSize(16);
-      pdf.setTextColor("#ff8b3d"); // naranja suave
+      pdf.setTextColor("#ff8b3d");
       pdf.text("Índice", margin, y);
       y += 20;
       pdf.setFontSize(12);
       pdf.setTextColor("#333");
-      // reserve index with page numbers later - simple approach: list titles (no page numbers)
       capitulos.forEach((c, i) => {
         pdf.text(`${i + 1}. ${c.titulo}`, margin, y);
         y += 16;
       });
 
-
-      // New page for chapters content
       pdf.addPage();
       y = 60;
 
-
-      // Add each chapter content
       for (let i = 0; i < capitulos.length; i++) {
         const c = capitulos[i];
         pdf.setFontSize(16);
@@ -456,28 +438,19 @@ export default function Escribir() {
         pdf.text(`${i + 1}. ${c.titulo}`, margin, y);
         y += 22;
 
-
         pdf.setFontSize(12);
         pdf.setTextColor("#222");
 
-
-        // split long text into lines that fit usableWidth
         const lines = pdf.splitTextToSize(c.contenido || "(sin contenido)", usableWidth);
         pdf.text(lines, margin, y);
         y += lines.length * 14 + 12;
 
-
-        // add stickers thumbnails as images if any (only images)
+        // stickers (imágenes)
         for (const s of c.stickers || []) {
           try {
             let url = s.uploadedUrl || s.preview;
-            if (!url && s.file) {
-              // file not uploaded yet -> convert to data URL
-              url = await fileToDataURL(s.file);
-            } else if (url && url.startsWith("blob:")) {
-              url = await urlToDataURL(url);
-            }
-
+            if (!url && s.file) url = await fileToDataURL(s.file);
+            else if (url && url.startsWith("blob:")) url = await urlToDataURL(url);
 
             if (url) {
               const prop = pdf.getImageProperties(url);
@@ -495,19 +468,14 @@ export default function Escribir() {
           }
         }
 
-
-        // add page break before next chapter if necessary
         if (i < capitulos.length - 1 && y > pdf.internal.pageSize.getHeight() - 120) {
           pdf.addPage();
           y = 60;
         } else if (i < capitulos.length - 1) {
-          // small separator
           y += 10;
         }
       }
 
-
-      // save PDF
       const filename = (tituloLibro || "mi-libro").replace(/\s+/g, "_") + ".pdf";
       pdf.save(filename);
       setMensaje("PDF generado ✔");
@@ -519,7 +487,6 @@ export default function Escribir() {
     }
   };
 
-
   // helpers to convert file or URL to dataURL
   async function fileToDataURL(file) {
     return await new Promise((res, rej) => {
@@ -530,7 +497,6 @@ export default function Escribir() {
     });
   }
   async function urlToDataURL(url) {
-    // fetch and convert to blob -> dataURL
     const resp = await fetch(url);
     const blob = await resp.blob();
     return await new Promise((res, rej) => {
@@ -541,13 +507,12 @@ export default function Escribir() {
     });
   }
 
-
-  // Save draft in localStorage (metadata + chapters, but not File objects)
+  // Save / Load draft local (no files)
   function guardarDraftLocal() {
     const draft = {
       tituloLibro,
       genero,
-      portadaPreview, // preview url only
+      portadaPreview,
       capitulos: capitulos.map((c) => ({
         ...c,
         stickers: (c.stickers || []).map((s) => ({ preview: s.preview, type: s.type, uploadedUrl: s.uploadedUrl || null })),
@@ -558,9 +523,6 @@ export default function Escribir() {
     localStorage.setItem("escribir_draft", JSON.stringify(draft));
     setMensaje("Borrador guardado localmente ✔");
   }
-
-
-  // Load draft from localStorage
   function cargarDraftLocal() {
     const raw = localStorage.getItem("escribir_draft");
     if (!raw) { setMensaje("No hay borrador guardado"); return; }
@@ -576,7 +538,6 @@ export default function Escribir() {
     }
   }
 
-
   // RENDER
   return (
     <div className="escribir-root">
@@ -586,47 +547,40 @@ export default function Escribir() {
           <div className="small">Todo en una sola página — naranja suave ✨</div>
         </div>
 
-
         <div className="row">
           <button className="btn btn-soft" onClick={guardarDraftLocal}>Guardar borrador</button>
           <button className="btn btn-soft" onClick={cargarDraftLocal}>Cargar borrador</button>
-          <button className="btn btn-primary" onClick={handlePublishBook} disabled={subiendo}>
+          <button className="btn btn-primary" onClick={publicarLibro} disabled={subiendo}>
             {subiendo ? "Publicando..." : (libroDocId ? "Re-publicar libro" : "Publicar libro")}
           </button>
         </div>
       </div>
 
-
       <div className="escribir-grid">
-        {/* Panel principal: editor */}
+        {/* Panel principal */}
         <div className="panel">
           <h3>Datos del libro</h3>
-
 
           <div className="field" style={{ marginBottom: 12 }}>
             <label>Título</label>
             <input type="text" value={tituloLibro} onChange={(e) => setTituloLibro(e.target.value)} placeholder="Título del libro" />
           </div>
 
-
           <div className="row" style={{ gap: 12 }}>
             <div style={{ flex: 1 }}>
               <label>Género</label>
               <select value={genero} onChange={(e) => setGenero(e.target.value)}>
                 <option value="">Selecciona un género</option>
-              <option value="romance">💞 Romance</option>
-              <option value="fantasia">🧚 Fantasía</option>
-              <option value="ciencia-ficcion">🚀 Ciencia ficción</option>
-              <option value="misterio">🕵️ Misterio</option>
-              <option value="drama">🎭 Drama</option>
-              <option value="terror">👻 Terror</option>
-              <option value="comedia">😂 Comedia</option>
-              <option value="aventura">🌍 Aventura</option>
-
-
+                <option value="romance">💞 Romance</option>
+                <option value="fantasia">🧚 Fantasía</option>
+                <option value="ciencia-ficcion">🚀 Ciencia ficción</option>
+                <option value="misterio">🕵️ Misterio</option>
+                <option value="drama">🎭 Drama</option>
+                <option value="terror">👻 Terror</option>
+                <option value="comedia">😂 Comedia</option>
+                <option value="aventura">🌍 Aventura</option>
               </select>
             </div>
-
 
             <div style={{ width: 170 }}>
               <label>Portada</label>
@@ -635,9 +589,7 @@ export default function Escribir() {
             </div>
           </div>
 
-
           <hr style={{ margin: "14px 0", border: "none", borderTop: "1px solid #f6eee9" }} />
-
 
           <h3>Editor de capítulo</h3>
           <div className="field">
@@ -645,12 +597,10 @@ export default function Escribir() {
             <input type="text" value={capTitulo} onChange={(e) => setCapTitulo(e.target.value)} placeholder="Ej: Capítulo 1 — El inicio" />
           </div>
 
-
           <div className="field">
             <label>Contenido</label>
             <textarea value={capContenido} onChange={(e) => setCapContenido(e.target.value)} placeholder="Escribe el contenido..." />
           </div>
-
 
           <div className="row" style={{ gap: 12 }}>
             <div style={{ flex: 1 }}>
@@ -658,13 +608,11 @@ export default function Escribir() {
               <input type="url" value={capMusicaUrl} onChange={(e) => setCapMusicaUrl(e.target.value)} placeholder="https://..." />
             </div>
 
-
             <div style={{ width: 180 }}>
               <label>ó Subir audio (mp3)</label>
               <input type="file" accept="audio/*" onChange={(e) => setCapMusicaFile(e.target.files?.[0] || null)} />
             </div>
           </div>
-
 
           <div style={{ marginTop: 10 }}>
             <label>Stickers (imagen / video)</label>
@@ -674,10 +622,8 @@ export default function Escribir() {
                 <input type="file" accept="image/*,video/*" hidden onChange={(e) => handleAddSticker(e.target.files?.[0])} />
               </label>
 
-
               <div className="small">Se permiten imágenes y videos; se mostrarán como miniaturas.</div>
             </div>
-
 
             <div className="sticker-list" style={{ marginTop: 8 }}>
               {capStickers.map((s, idx) => (
@@ -689,13 +635,11 @@ export default function Escribir() {
             </div>
           </div>
 
-
           <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
             <button className="btn btn-soft" onClick={() => setVistaPreview(!vistaPreview)}>{vistaPreview ? "Ocultar preview" : "Vista previa"}</button>
             <button className="btn btn-soft" onClick={() => resetCapEditor()}>Limpiar</button>
             <button className="btn btn-primary" onClick={handleSaveChapterLocal}>{editingIndex >= 0 ? "Guardar cambios" : "Agregar capítulo"}</button>
           </div>
-
 
           {vistaPreview && (
             <div className="preview-area" style={{ marginTop: 12 }}>
@@ -712,14 +656,13 @@ export default function Escribir() {
           )}
         </div>
 
-
         {/* Side panel: capítulos list y acciones */}
         <div className="panel">
           <h3>Capítulos añadidos</h3>
           <div style={{ maxHeight: 360, overflow: "auto", paddingRight: 6 }}>
             {capitulos.length === 0 && <div className="small">Aún no has agregado capítulos.</div>}
             {capitulos.map((c, i) => (
-              <div key={c.id} className="chapter-card">
+              <div key={c.id || i} className="chapter-card">
                 <div style={{ flex: 1 }}>
                   <strong>{c.titulo}</strong>
                   <div className="small" style={{ marginTop: 6 }}>{(c.contenido || "").slice(0, 120)}{c.contenido && c.contenido.length > 120 ? "..." : ""}</div>
@@ -731,7 +674,6 @@ export default function Escribir() {
                   </div>
                 </div>
 
-
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   {(c.stickers || []).slice(0, 2).map((s, idx) => (
                     s.type === "image" ? <img key={idx} src={s.preview || s.uploadedUrl} className="sticker-thumb" alt="" /> : <video key={idx} src={s.preview || s.uploadedUrl} className="sticker-thumb" />
@@ -741,9 +683,7 @@ export default function Escribir() {
             ))}
           </div>
 
-
           <hr style={{ margin: "12px 0", border: "none", borderTop: "1px solid #f6eee9" }} />
-
 
           <div className="small">Vista rápida del libro</div>
           <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 10 }}>
@@ -755,30 +695,24 @@ export default function Escribir() {
             </div>
           </div>
 
-
           <div style={{ marginTop: 12, display: "flex", gap: 8, flexDirection: "column" }}>
             <button className="btn btn-primary" onClick={handleMarkAsFinished} disabled={!libroDocId || libroTerminado}>
               {libroTerminado ? "Libro terminado" : "Marcar como TERMINADO"}
             </button>
 
-
             <button className="btn btn-soft" onClick={handleUpdatePublishedChanges} disabled={!libroDocId}>
               Subir cambios al libro en Perfil
             </button>
-
 
             <button className="btn btn-soft" onClick={handleExportPDF} disabled={subiendo}>
               Exportar a PDF (texto + portada + autor + índice)
             </button>
           </div>
 
-
-          {mensaje && <div style={{ marginTop: 12, color: "#bf3b1b" }}>{mensaje}</div>}
+          {mensaje && <div style={{ marginTop: 12, color: "#7a2e9a" }}>{mensaje}</div>}
           <div style={{ marginTop: 10 }} className="small">Recuerda: stickers (img/video) y audio se suben a Storage al publicar o al subir cambios.</div>
         </div>
       </div>
     </div>
   );
 }
-
-

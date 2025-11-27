@@ -282,6 +282,32 @@ const obtenerSeguidores = async (miUid) => {
   return snap.docs.map(d => d.id); // retorna array de UIDs
 };
 
+// =============================
+// CREAR HISTORIA NUEVA
+// =============================
+async function crearHistoria(titulo, descripcion, portadaFile) {
+  let portadaURL = "";
+
+  // si sube imagen, la guardamos
+  if (portadaFile) {
+    const storageRef = ref(storage, `portadas/${user.uid}/${Date.now()}`);
+    await uploadBytes(storageRef, portadaFile);
+    portadaURL = await getDownloadURL(storageRef);
+  }
+
+  const nueva = {
+    uid: user.uid,
+    titulo,
+    descripcion,
+    portada: portadaURL,
+    fecha: new Date().toISOString(),
+  };
+
+  const ref = await addDoc(collection(db, "historias"), nueva);
+
+  return { id: ref.id, ...nueva };
+}
+
 
 
   // ============================================
@@ -301,8 +327,10 @@ const obtenerSeguidores = async (miUid) => {
       seguirUsuario,
   dejarSeguirUsuario,
   yaLoSigo,
-  obtenerSiguiendo,   // <--- aquí
+  obtenerSiguiendo, 
     obtenerSeguidores, 
+    crearHistoria,
+
   };
 
   return (

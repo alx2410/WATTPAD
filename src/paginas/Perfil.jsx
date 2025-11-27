@@ -4,13 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
-import "../styles/Perfil.css";
 
-// ===== MOCKS =====
-const mockHistorias = [
-  { id: 1, titulo: "La Reina de Hielo", descripcion: "Una historia de magia, traición y un destino congelado.", portada: "https://via.placeholder.com/200x280" },
-  { id: 2, titulo: "Sombras del Pasado", descripcion: "Un misterio que regresa para cambiarlo todo.", portada: "https://via.placeholder.com/200x280" },
-];
+import "../styles/Perfil.css";
 
 export default function Perfil() {
   const { uid: uidPerfil } = useParams();
@@ -50,6 +45,9 @@ export default function Perfil() {
 
   // LISTA DE SEGUIDORES (NUEVO)
   const [listaSeguidores, setListaSeguidores] = useState([]);
+
+  const [historias, setHistorias] = useState([]);
+
 
   // =========================
   // 1. Cargar Perfil
@@ -232,6 +230,23 @@ export default function Perfil() {
   }, [datosPerfil]);
 
   // =============================
+//  CARGAR HISTORIAS DEL AUTOR
+// =============================
+useEffect(() => {
+  async function cargarHistorias() {
+    const snap = await getDocs(collection(db, "historias"));
+    const lista = snap.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(h => h.uid === uidObjetivo); // solo historias del autor
+
+    setHistorias(lista);
+  }
+
+  cargarHistorias();
+}, [uidObjetivo]);
+
+
+  // =============================
   // 8. Cargar SIGUIENDO (modal)
   // =============================
   const cargarSiguiendo = async (reset = false) => {
@@ -292,6 +307,12 @@ export default function Perfil() {
     setPaginaSiguiendo(paginaActual + 1);
     setCargandoMas(false);
   };
+
+  
+
+
+
+
 
   if (!datosPerfil) return <p>Cargando perfil...</p>;
 
@@ -384,15 +405,23 @@ export default function Perfil() {
 
           <div className="info-col-2">
             <h3>Historias de {datosPerfil.username}</h3>
-            {mockHistorias.map((h) => (
-              <div key={h.id} className="historia-card">
-                <div className="historia-content">
-                  <h4>{h.titulo}</h4>
-                  <p>{h.descripcion}</p>
-                </div>
-                <img src={h.portada} alt="portada" className="historia-portada" />
-              </div>
-            ))}
+
+{historias.length === 0 && (
+  <p>Este usuario aún no tiene historias.</p>
+)}
+
+{historias.map((h) => (
+  <div key={h.id} className="historia-card">
+    <div className="historia-content">
+      <h4>{h.titulo}</h4>
+      <p>{h.descripcion}</p>
+    </div>
+    {h.portada && (
+      <img src={h.portada} alt="portada" className="historia-portada" />
+    )}
+  </div>
+))}
+
           </div>
         </div>
       )}
