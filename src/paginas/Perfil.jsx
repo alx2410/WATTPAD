@@ -56,6 +56,8 @@ export default function Perfil() {
   const [listaSeguidores, setListaSeguidores] = useState([]);
   const [historias, setHistorias] = useState([]);
 
+  const [menuAbierto, setMenuAbierto] = useState(null);
+
   // =========================
   // 1. Cargar Perfil
   // =========================
@@ -164,6 +166,8 @@ useEffect(() => {
           dislikes: (p.dislikesUsuarios || existing.dislikesUsuarios || []).length,
           editando: existing.editando || false,
           textoEditado: existing.textoEditado || p.texto || "",
+          editado: p.editado || false,  // 👈 NUEVO
+
         };
       });
 
@@ -198,6 +202,13 @@ useEffect(() => {
       setSeguidoresCount(prev => prev + 1);
     }
   };
+
+
+  const toggleMenu = (postId) => {
+  setMenuAbierto(prev => (prev === postId ? null : postId));
+};
+
+
 
   // =========================
   // 6. Editar perfil
@@ -248,6 +259,7 @@ const guardarCambios = async () => {
   }
 };
 
+
 // ===================================================
 // Cargar SOLO las historias (libros) del usuario
 // ===================================================
@@ -272,6 +284,7 @@ useEffect(() => {
   cargarLibros();
 }, [uidObjetivo]);
 
+
   // =======================================================
 // Cargar lista de seguidores COMPLETA (con foto y username)
 // =======================================================
@@ -295,13 +308,28 @@ useEffect(() => {
           if (!info.exists()) return null;
 
           const data = info.data();
+
+          // 🔥 Cargar cantidad de historias de este seguidor
+          const librosSnap = await getDocs(
+            collection(db, "libros")
+          );
+          const historias = librosSnap.docs.filter(
+            libro => libro.data().autorId === uid
+          ).length;
+
+          // 🔥 Cargar cantidad de seguidores de este seguidor
+          const segSnap = await getDocs(
+            collection(db, "usuarios", uid, "seguidores")
+          );
+          const seguidores = segSnap.size;
+
           return {
             uid,
             nickname: data.username || "Sin nombre",
             usuario: data.email?.split("@")[0] || "user",
             foto: data.avatar || data.photoURL || "",
-            historias: data.historiasCount || 0,
-            seguidores: data.seguidoresCount || 0,
+            historias,
+            seguidores,
           };
         })
       );
@@ -420,12 +448,29 @@ useEffect(() => {
 
     try {
       const postRef = doc(db, "muro", postId);
-      await setDoc(postRef, { texto: post.textoEditado }, { merge: true });
+      await setDoc(
+  postRef,
+  { 
+    texto: post.textoEditado,
+    editado: true  // 👈 AÑADIDO
+  },
+  { merge: true }
+);
+
+setPosts(prev =>
+  prev.map(p =>
+    p.id === postId
+      ? { ...p, texto: post.textoEditado, editando: false, editado: true } // 👈 AÑADIDO
+      : p
+  )
+);
+
       setPosts(prev => prev.map(p => p.id === postId ? { ...p, texto: post.textoEditado, editando: false } : p));
     } catch (err) {
       console.error(err);
       alert("No se pudo guardar la edición.");
     }
+    
   };
 
   const borrarPost = async postId => {
@@ -567,7 +612,20 @@ useEffect(() => {
             <p>Próximamente...</p>
 
             <h3>Último post</h3>
-            {posts[0] ? <p>{posts[0].texto}</p> : <p>No has publicado aún.</p>}
+{(() => {
+  const postsUsuario = posts
+    .filter(p => p.uid === uidObjetivo)
+    .sort((a, b) => {
+      const fechaA = a.fecha?.seconds ? a.fecha.toDate() : new Date(a.fecha);
+      const fechaB = b.fecha?.seconds ? b.fecha.toDate() : new Date(b.fecha);
+      return fechaB - fechaA; // Más nuevo arriba
+    });
+
+  return postsUsuario.length
+    ? <p>{postsUsuario[0].texto}</p>
+    : <p>No has publicado aún.</p>;
+})()}
+
           </div>
 
           <div className="info-col-2">
@@ -576,27 +634,32 @@ useEffect(() => {
             {historias.length === 0 && <p>Este usuario aún no tiene historias.</p>}
 
             {historias.map((h) => (
-              <div
-                key={h.id}
-                className="historia-card"
-                onClick={() => navigate(`/libro/${h.id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="historia-content">
-                  <h4>{h.titulo}</h4>
-                  <p>{h.descripcion}</p>
-                </div>
+  <div
+    key={h.id}
+    className="historia-card"
+    onClick={() => navigate(`/libro/${h.id}`)}
+    style={{ cursor: "pointer" }}
+  >
+    <div className="historia-content">
+      <h4>{h.titulo}</h4>
 
-                {h.portada && <img src={h.portada} alt="portada" className="historia-portada" />}
-              </div>
-            ))}
+      {h.genero && (
+        <p className="genero-label"> {h.genero}</p>
+      )}
+
+      <p>{h.descripcion}</p>
+    </div>
+
+    {h.portada && (
+      <img src={h.portada} alt="portada" className="historia-portada" />
+    )}
+  </div>
+))}
+
           </div>
         </div>
       )}
 
-     {/* =======================================================
-           MURO
-   ======================================================= */}
 {/* =======================================================
      MURO
 ======================================================= */}
@@ -640,17 +703,16 @@ useEffect(() => {
               <p className="post-autor">{post.autor}</p>
 
               {/* TEXTO */}
-              {!post.editando ? (
-                <p className="post-texto">{post.texto}</p>
-              ) : (
-                <textarea
-                  value={post.textoEditado}
-                  onChange={(e) =>
-                    setPosts((prev) =>
-                      prev.map((p) =>
-                        p.id === post.id
-                          ? { ...p, textoEditado: e.target.value }
-                          : p
+{!post.editando ? (
+  <p className="post-texto">{post.texto}</p>
+  
+) : (
+  <textarea
+    value={post.textoEditado}
+    onChange={(e) =>
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === post.id ? { ...p, textoEditado: e.target.value } : p
                       )
                     )
                   }
@@ -658,55 +720,70 @@ useEffect(() => {
               )}
 
               {/* FECHA */}
-              {post.fecha && (
-                <span className="post-fecha">
-                  {(post.fecha?.toDate
-                    ? post.fecha.toDate()
-                    : new Date(post.fecha)
-                  ).toLocaleString("es-ES", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              )}
+{post.fecha && (
+  <span className="post-fecha">
+    {(post.fecha?.toDate
+      ? post.fecha.toDate()
+      : new Date(post.fecha)
+    ).toLocaleString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
+    
+    {/*  MOSTRAR (EDITADO) JUNTO A LA FECHA */}
+    {post.editado && (
+      <span className="post-editado"> (EDITADO)</span>
+    )}
+  </span>
+)}
 
-              {/* REACCIONES */}
-              <div className="post-reacciones">
-                <button onClick={() => toggleLike(post.id)}>
-                  👍 {post.likes || 0}
-                </button>
-                <button onClick={() => darDislike(post.id)}>
-                  👎 {post.dislikes || 0}
-                </button>
-              </div>
 
-              {/* OPCIONES SI ES SU PROPIO POST */}
-              {post.uid === user?.uid && (
-                <div className="post-opciones">
-                  {!post.editando ? (
-                    <>
-                      <button onClick={() => activarEdicion(post.id)}>
-                        ✏️ Editar
-                      </button>
-                      <button onClick={() => borrarPost(post.id)}>
-                        🗑️ Borrar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={() => guardarEdicion(post.id)}>
-                        💾 Guardar
-                      </button>
-                      <button onClick={() => cancelarEdicion(post.id)}>
-                        ❌ Cancelar
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
+  {/* BOTÓN DE 3 PUNTOS ARRIBA A LA DERECHA */}
+  {post.uid === user?.uid && !post.editando && (
+    <div className="post-menu-wrapper">
+      <button
+        className="icon-btn menu-btn"
+        onClick={() => toggleMenu(post.id)}
+      >
+        <span className="material-icons">more_vert</span>
+      </button>
+
+      {menuAbierto === post.id && (
+        <div className="post-menu">
+          <button onClick={() => activarEdicion(post.id)}>
+            <span className="material-icons">edit</span> Editar
+          </button>
+
+          <button onClick={() => borrarPost(post.id)}>
+            <span className="material-icons">delete</span> Borrar
+          </button>
+        </div>
+      )}
+    </div>
+  )}
+
+  {/* REACCIONES */}
+  <div className="post-reacciones">
+    <button className="icon-btn" onClick={() => toggleLike(post.id)}>
+      <span className="material-icons">thumb_up</span> {post.likes || 0}
+    </button>
+
+    <button className="icon-btn" onClick={() => darDislike(post.id)}>
+      <span className="material-icons">thumb_down</span> {post.dislikes || 0}
+    </button>
+
+    {post.editando && (
+      <button className="icon-btn" onClick={() => guardarEdicion(post.id)}>
+        <span className="material-icons">save</span>
+      </button>
+    )}
+
+</div>
+
+
             </div>
           </div>
         ))

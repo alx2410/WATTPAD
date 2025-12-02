@@ -61,7 +61,7 @@ const handleSearch = (e) => {
         
         {/* EXPLORAR CON MENÚ NUEVO */}
         <li
-          className="explorar-wrapper"
+          className="explorar-wrapper nav-links"
           style={{ position: "relative" }} // Necesario para posicionar el menú
         >
           <Link
@@ -91,7 +91,7 @@ const handleSearch = (e) => {
           )}
         </li>
 
-        <li><Link to="/comunidad">Comunidad</Link></li>
+        <li><Link to="/comunidad" className="nav-links">Comunidad</Link></li>
       </ul>
 
  {/* BUSCADOR -- Limpia el input automáticamente y usa icono de lupa */}
@@ -147,9 +147,9 @@ const handleSearch = (e) => {
 
       {/* LINKS DERECHA */}
       <ul className="links-right">
-        <li><Link to="/escribir">Escribir</Link></li>
-        <li><Link to="/biblioteca">Biblioteca</Link></li>
-        <li><Link to="/intranet">Intranet</Link></li>
+        <li ><Link to="/escribir" className="nav-links" >Escribir</Link></li>
+        <li><Link to="/biblioteca" className="nav-links" >Biblioteca</Link></li>
+        <li><Link to="/intranet" className="nav-links">Intranet</Link></li>
       </ul>
 
        {/* USUARIO */}
@@ -204,7 +204,7 @@ const handleSearch = (e) => {
                 <p className="user-name">Hola, {mostrarNombre()} 👋</p>
               </div>
 
-              <ul className="menu-options">
+              <ul className="menu-options">       
                 <li><Link to="/perfil">Mi perfil</Link></li>
                 <li><Link to="/cuenta">Mi cuenta</Link></li>
                 <hr />
