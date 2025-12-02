@@ -4,8 +4,10 @@
 .carrusel-popular h2 {
   font-size:32px;
   margin-bottom:20px;
-  padding-inline-start:90px;
+  text-align:center;  /* usa esto, no padding de 140px por favor */
+  padding-inline-start:0; 
 }
+
 
 
 .carrusel-box {
@@ -27,8 +29,8 @@
 
 
 .carrusel-items img {
-  width:140px;      /* puedes subir a 150 o 160 si quieres más grandes */
-  height:200px;
+  width:180px;      /* puedes subir a 150 o 160 si quieres más grandes */
+  height:250px;
   object-fit:cover;
   border-radius:6px;
   backface-visibility:hidden;

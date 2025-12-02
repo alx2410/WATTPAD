@@ -207,45 +207,67 @@ h1.generos-title{
 /* HERO GENERAL */
 .hero-wattpad {
   width: 100%;
-  height: 85vh;
+  height: 90vh;
   display: flex;
-  align-items: flex-start;        /* Para que quede arriba */
-  justify-content: center;        /* Centrado horizontal */
-  padding-top: 130px;             /* Lo sube pero no tanto */
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 130px;
   position: relative;
-  
+
+  background-image: url("/fondo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 
 /* CAJA BUSCADOR */
 .hero-search-box {
-  width: 200px;
+  width: 450px;
   height: 70px;
   background: #ffffff;
-  border-radius: 30px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding-inline: 30px;
+  justify-content: flex-start;  /* ya no centra nada */
+  padding-inline: 20px;         /* espacio normal */
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  font-family: "Poppins", sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 700;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Efecto hover para que no parezca muerto */
+/* Efecto hover */
 .hero-search-box:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
+/* Tamaño general dentro del buscador */
 .hero-wattpad .hero-search-box {
-  font-size: 14px; /* tamaño general */
+  font-size: 14px;
 }
 
-/* si AnimatedText genera un span o p */
-.hero-wattpad .hero-search-box span,
-.hero-wattpad .hero-search-box p {
+/* Texto animado (solo esto se mueve) */
+.hero-search-box .animated-text span,
+.hero-search-box .animated-text p {
   font-size: 20px;
-  color: #333;       /* ya que estás, lo estilizas */
-  font-weight: 400;
+  color: #333;
+  font-weight: 700;
+}
+
+/* Lupa fija */
+.icono-lupa {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;   /* evita que se mueva */
+  color: #000;
+}
+
+/* Aplica negrita a todo dentro */
+.hero-search-box * {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 700;
 }
 

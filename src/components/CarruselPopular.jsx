@@ -4,9 +4,11 @@ import "../styles/CarruselPopular.css";
 
 export default function CarruselPopular({ libros }) {
   const [i, setI] = useState(0);
+  const visibles = 7; // portadas visibles
+  const mover = 3;    // portadas que avanzan al presionar los botones
 
-  const prev = () => i > 0 && setI(i - 1);
-  const next = () => i < libros.length - 7 && setI(i + 1);
+  const prev = () => setI(prev => Math.max(prev - mover, 0));
+  const next = () => setI(prev => Math.min(prev + mover, libros.length - visibles));
 
   return (
     <section className="carrusel-popular">
@@ -16,7 +18,7 @@ export default function CarruselPopular({ libros }) {
         <button onClick={prev} className="arrow">‹</button>
 
         <div className="carrusel-items">
-          {libros.slice(i, i + 7).map(libro => (
+          {libros.slice(i, i + visibles).map(libro => (
             <Link to={`/libro/${libro.id}`} key={libro.id} className="item">
               <img src={libro.portada} alt={libro.titulo} />
             </Link>

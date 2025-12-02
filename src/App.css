@@ -57,7 +57,7 @@ nav {
 /* LOGO */
 
 nav img.logo {
-  height: 80px;   /* cámbialo a 40px, 30px, lo que quieras */
+  height: 120px;   /* cámbialo a 40px, 30px, lo que quieras */
   width: auto;
   object-fit: contain;
 }
@@ -76,7 +76,7 @@ nav ul {
   padding: 0;
 }
 
-nav ul li a {
+.nav-links {
   color: #000;
   text-decoration: none;
   font-weight: 700;
@@ -84,7 +84,12 @@ nav ul li a {
   transition: 0.3s ease;
 }
 
-nav ul li a::after {
+.nav-links a {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.nav-links::after {
   content: "";
   position: absolute;
   bottom: -5px;
@@ -96,7 +101,7 @@ nav ul li a::after {
   transition: width 0.3s ease;
 }
 
-nav ul li a:hover::after {
+.nav-links:hover::after {
   width: 100%;
 }
 

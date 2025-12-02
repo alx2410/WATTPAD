@@ -7,7 +7,7 @@
   width: 350px;
   padding: 18px 20px;
   border-radius: 6px;
-  box-shadow: 0 3px 18px rgba(0,0,0,0.15);
+  box-shadow: 0 3px 18px rgba(190, 130, 130, 0.15);
   z-index: 100;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .mega-menu-categorias .categoria-opcion:hover {
-  color: #ff6c2f;
+  color: black;
 }
 
 

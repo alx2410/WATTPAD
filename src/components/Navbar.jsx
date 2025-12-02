@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
-import logo from "../assets/logo.png";
+import logo from "../assets/fictory-trans.png";
 import "../styles/Explorar.css"; // NUEVO
 
 
@@ -36,7 +36,11 @@ const handleSearch = (e) => {
   "drama",
   "terror",
   "comedia",
-  "aventura"
+  "aventura",
+  "fanfic",
+  "LGTBQ+",
+  "motivacional",
+  "thriller"
 ];
 
 
@@ -61,7 +65,7 @@ const handleSearch = (e) => {
         
         {/* EXPLORAR CON MENÚ NUEVO */}
         <li
-          className="explorar-wrapper"
+          className="explorar-wrapper" className="nav-links"
           style={{ position: "relative" }} // Necesario para posicionar el menú
         >
           <Link
@@ -91,7 +95,7 @@ const handleSearch = (e) => {
           )}
         </li>
 
-        <li><Link to="/comunidad">Comunidad</Link></li>
+        <li><Link to="/comunidad" className="nav-links">Comunidad</Link></li>
       </ul>
 
  {/* BUSCADOR -- Limpia el input automáticamente y usa icono de lupa */}
@@ -147,9 +151,8 @@ const handleSearch = (e) => {
 
       {/* LINKS DERECHA */}
       <ul className="links-right">
-        <li><Link to="/escribir">Escribir</Link></li>
-        <li><Link to="/biblioteca">Biblioteca</Link></li>
-        <li><Link to="/intranet">Intranet</Link></li>
+        <li><Link to="/escribir" className="nav-links">Escribir</Link></li>
+        <li><Link to="/biblioteca" className="nav-links">Biblioteca</Link></li>
       </ul>
 
        {/* USUARIO */}

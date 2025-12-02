@@ -191,6 +191,14 @@ main {
   border-radius: 12px;
   border: 1px solid #e8e0ff;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+    min-width: 300px;          /* nunca más pequeño que esto */
+  max-width: 800px;          /* opcional: limitar tamaño máximo */
+  width: 100%;               /* ocupa todo el contenedor disponible */
+  box-sizing: border-box;    /* incluye padding y border en el ancho */
+  flex-direction: row;       /* fila de avatar + texto */
+  align-items: flex-start;
+  
 }
 
 
@@ -331,6 +339,7 @@ main {
 ====================================================== */
 .btn-editar {
   margin-top: 18px;
+  margin-bottom: 19px;
   padding: 10px 20px;
   background: #fff2ec;
   border: 2px solid #ff6b3d;
@@ -349,6 +358,10 @@ main {
 /* ======================================================
    ✨ MODO EDITAR PERFIL — Inputs, textarea, subir foto
 ====================================================== */
+
+.input-text {
+  margin-top: 30px;
+}
 
 .input-text,
 .textarea-bio {
@@ -614,4 +627,114 @@ main {
   text-align: center;
   margin-bottom: 15px;
   font-weight: bold;
+}
+
+.genero-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  background: #ffe4d2;
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+
+
+
+
+/* ========== BOTONES DE ICONOS ========== */
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #ffd6c4; /* rosado suave */
+}
+
+.icon-btn .material-icons {
+  font-size: 16px;
+  color: #333;
+}
+
+
+/* ========== CONTENEDOR DEL POST ========== */
+.post, .muro-post {
+  position: relative; /* permite usar absolute dentro */
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+
+/* ========== BOTÓN DE 3 PUNTOS ========== */
+.post-menu-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.menu-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+
+/* ========== MENÚ DESPLEGABLE (EDITAR / BORRAR) ========== */
+.post-menu {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  padding: 6px 0;
+  width: 150px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #eee;
+}
+
+.post-menu button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.post-menu button:hover {
+  background: #f1f1f1;
+}
+
+
+/* ========== REACCIONES (LIKE / DISLIKE / GUARDAR) ========== */
+.post-reacciones {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
 }

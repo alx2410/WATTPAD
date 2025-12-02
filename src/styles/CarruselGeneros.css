@@ -1,0 +1,98 @@
+/* ==============================
+   CARRUSEL DE GÉNEROS - GRID FUNCIONAL
+================================= */
+.carruselGeneros {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Botón | Grid | Botón */
+  align-items: center;
+  gap: 12px; /* espacio entre botones y grid */
+  width: 100%;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 10px; /* deja margen para que el grid no quede debajo del botón */
+  box-sizing: border-box;
+}
+
+/* BOTONES DE NAVEGACIÓN */
+.btnNav {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;  /* tamaño exacto del botón */
+  height: 40px;
+  padding: 0;   /* evita bloquear clics */
+  z-index: 2;
+}
+
+.btnNav svg, .btnNav i {
+  pointer-events: none; /* el icono no bloquea clicks */
+}
+
+/* GRID DE TARJETAS */
+.gridGen {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 20px;
+  width: 100%;
+  justify-items: center;
+  align-items: center;
+  padding: 0 5px; /* respira un poquito de los botones */
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* TARJETA */
+.tarjeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  background: white;
+  border: grey;
+  outline: grey;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: transform .18s ease;
+  width: 100%;
+  max-width: 220px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.tarjeta:hover { transform: translateY(-4px); }
+
+/* TARJETA: imagen redonda */
+.tarjeta img {
+  width: 60px;       /* mantienes tamaño original */
+  height: 60px;
+  object-fit: cover; /* importante para que la imagen se recorte bien */
+  border-radius: 50%; /* esto hace que sea redonda */
+  flex-shrink: 0;
+}
+
+
+.tarjeta p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .gridGen {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, auto);
+  }
+  .tarjeta { max-width: 320px; }
+}
