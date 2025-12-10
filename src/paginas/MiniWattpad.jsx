@@ -1,6 +1,5 @@
 import "../styles/MiniWattpad.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
-import RecomendacionInicio from "../components/RecomendacionInicio.jsx";
 import CarruselPopular from "../components/CarruselPopular.jsx";
 import AnimatedText from "../components/AnimatedText.jsx";
 import PopularBooks from "../components/PopularBooks.jsx";
@@ -83,12 +82,12 @@ export default function MiniWattpad() {
   {/* IZQUIERDA: TITULO + TEXTO + BARRA ANIMADA */}
   <div className="generos-left">
     <h1 className="generos-title">
-      Explora por géneros. <br />
+      Todos los  géneros. <br />
       Todos Tuyos.
     </h1>
 
     <p className="generos-desc">
-      Explora historias para cada estado mental posible.
+      Historias para cada estado mental posible.
     </p>
     <br />
 
@@ -107,8 +106,8 @@ export default function MiniWattpad() {
   <div className="hero-search-box">
     <span className="icono-lupa">
       <svg
-        width="60"
-        height="25"
+        width="25"
+        height="20"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -140,8 +139,7 @@ export default function MiniWattpad() {
   
 </section>
 
-      {/* FORMULARIO RECOMENDACIÓN */}
-      <RecomendacionInicio />
+      
 
       {/* FOOTER */}
       <footer className="footer">

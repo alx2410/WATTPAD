@@ -1,5 +1,7 @@
 .carrusel-popular { 
-     padding:40px 0; }
+     padding:40px 0; 
+    background-color: #ffffff;
+    }
 
 .carrusel-popular h2 {
   font-size:32px;
@@ -45,3 +47,30 @@
   cursor:pointer;
 }
 .arrow:hover { transform:scale(1.2); }
+
+
+@media (max-width: 768px) {
+
+  /* El carrusel de libros sí debe desplazarse con el dedo */
+  .carrusel-items {
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    gap: 15px;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .carrusel-items img {
+    flex: 0 0 auto;              /* evita que se encojan */
+    scroll-snap-align: start;
+    width: 150px;
+    height: 220px;
+  }
+
+  /* Quita flechas en móvil si estorban */
+  .arrow {
+    display: none;
+  }
+}
