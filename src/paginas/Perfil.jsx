@@ -58,6 +58,11 @@ export default function Perfil() {
 
   const [menuAbierto, setMenuAbierto] = useState(null);
 
+  const [busquedaLibro, setBusquedaLibro] = useState("");
+const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
+const [leyendoAhora, setLeyendoAhora] = useState(null);
+
+
   // =========================
   // 1. Cargar Perfil
   // =========================
@@ -84,6 +89,89 @@ export default function Perfil() {
     }
     fetchPerfil();
   }, [uidObjetivo, uidPerfil, user]);
+
+  /////////////////////////////////////////////
+
+useEffect(() => {
+  async function buscar() {
+    if (!busquedaLibro.trim()) {
+      setResultadosBusqueda([]);
+      return;
+    }
+
+    try {
+      const snap = await getDocs(collection(db, "historias")); // ← AQUÍ EL CAMBIO
+
+      const lista = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(lib =>
+          lib.titulo?.toLowerCase?.().includes(busquedaLibro.toLowerCase())
+        );
+
+      setResultadosBusqueda(lista);
+    } catch (err) {
+      console.error("Error al buscar historias:", err);
+    }
+  }
+
+  buscar();
+}, [busquedaLibro]);
+
+
+/////////////////////////////////////////////////////////////////////////
+
+const seleccionarLeyendoAhora = async (libro) => {
+  if (!user) return;
+
+  try {
+    const refLeyendo = doc(db, "usuarios", user.uid, "leyendo", libro.id);
+
+    await setDoc(refLeyendo, {
+      libroId: libro.id,
+      titulo: libro.titulo,
+      descripcion: libro.descripcion || "",
+      portada: libro.portada || "",
+      timestamp: serverTimestamp()
+    });
+
+    setLeyendoAhora(libro);
+    setBusquedaLibro("");         // limpia barra
+    setResultadosBusqueda([]);    // limpia lista
+
+    alert("Lectura actual actualizada.");
+  } catch (err) {
+    console.error("Error al guardar lectura:", err);
+  }
+};
+
+
+///////////////////////////////////////////////
+
+useEffect(() => {
+  if (!uidObjetivo) return;
+
+  async function cargarLeyendo() {
+    try {
+      const ref = collection(db, "usuarios", uidObjetivo, "leyendo");
+      const snap = await getDocs(ref);
+
+      if (snap.empty) {
+        setLeyendoAhora(null);
+        return;
+      }
+
+      // Solo hay 1 lectura, así tomamos la primera
+      const data = snap.docs[0].data();
+      setLeyendoAhora(data);
+    } catch (err) {
+      console.error("Error cargando lectura actual:", err);
+    }
+  }
+
+  cargarLeyendo();
+}, [uidObjetivo]);
+
+
 
   // =========================
   // 2. Cargar seguidores y siguiendo
@@ -583,7 +671,46 @@ setPosts(prev =>
                 <input type="file" accept="image/*" onChange={handleFileChange} />
               </label>
 
-              <button className="btn-guardar" onClick={guardarCambios}>Guardar cambios</button>
+              <div className="editar-lectura-actual">
+
+  <input
+    type="text"
+    className="input-text"
+    placeholder="Selecciona tu lectura actual..."
+    value={busquedaLibro}
+    onChange={(e) => setBusquedaLibro(e.target.value)}
+  />
+
+  {resultadosBusqueda.length > 0 && (
+    <div className="resultado-busqueda-lista">
+      {resultadosBusqueda.map((lib) => (
+        <div
+          key={lib.id}
+          className="resultado-item"
+          onClick={() => seleccionarLeyendoAhora(lib)}
+          style={{
+            cursor: "pointer",
+            padding: "6px",
+            borderBottom: "1px solid #ddd"
+          
+          }}
+        >
+          {lib.titulo}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* Vista previa de lo que escogiste */}
+  {leyendoAhora && (
+    <p style={{ marginTop: "6px", fontStyle: "italic", color: "gray" }}>
+      Seleccionado: {leyendoAhora.titulo}
+    </p>
+  )}
+</div>
+
+          
+              <button onClick={guardarCambios} className="btn-editar">Guardar cambios</button>
               <button className="btn-cancelar" onClick={() => setEditMode(false)}>Cancelar</button>
             </>
           )}
@@ -599,6 +726,7 @@ setPosts(prev =>
         <button onClick={() => setTab("seguidores")} className={tab === "seguidores" ? "active" : ""}>SEGUIDORES</button>
       </div>
 
+<div className="perfil-contenido">
       {/* =======================================================
            INFO
       ======================================================= */}
@@ -608,8 +736,33 @@ setPosts(prev =>
             <h3>Biografía</h3>
             <p>{bio || "Aún no has escrito tu biografía."}</p>
 
-            <h3>Siguiendo</h3>
-            <p>Próximamente...</p>
+            <h3>Lectura actual</h3>
+
+{leyendoAhora ? (
+  <div className="leyendo-ahora-card" style={{ marginTop: "10px" }}>
+    <p style={{ margin: "0 0 6px 0" }}>
+      Estás leyendo ahora mismo:
+    </p>
+
+    <div
+      className="historia-card"
+      onClick={() => navigate(`/libro/${leyendoAhora.id}`)}
+      style={{ cursor: "pointer" }}
+    >
+      <div className="historia-content">
+        <h4>{leyendoAhora.titulo}</h4>
+        <p>{leyendoAhora.descripcion}</p>
+      </div>
+
+      {leyendoAhora.portada && (
+        <img src={leyendoAhora.portada} className="historia-portada"/>
+      )}
+    </div>
+  </div>
+) : (
+  <p>No tienes una lectura actual.</p>
+)}
+
 
             <h3>Último post</h3>
 {(() => {
@@ -846,6 +999,7 @@ setPosts(prev =>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
