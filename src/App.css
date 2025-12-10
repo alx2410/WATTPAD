@@ -76,10 +76,8 @@ nav ul {
   padding: 0;
 }
 
-/*////////////////////////////////*/
-/* ESTILO SOLO PARA LOS LINKS CON LA CLASE .nav-links */
-
-.nav-links {
+////////////////////////////////
+nav ul li a {
   color: #000;
   text-decoration: none;
   font-weight: 700;
@@ -87,12 +85,7 @@ nav ul {
   transition: 0.3s ease;
 }
 
-.nav-links a {
-  color: #000 !important;
-  text-decoration: none;
-}
-
-.nav-links::after {
+nav ul li a::after {
   content: "";
   position: absolute;
   bottom: -5px;
@@ -104,11 +97,11 @@ nav ul {
   transition: width 0.3s ease;
 }
 
-.nav-links:hover::after {
+nav ul li a:hover::after {
   width: 100%;
 }
 
-/*/
+/
 
 /* BOTÓN */
 .boton-navbar {

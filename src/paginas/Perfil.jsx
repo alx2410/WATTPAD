@@ -62,6 +62,9 @@ export default function Perfil() {
 const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
 const [leyendoAhora, setLeyendoAhora] = useState(null);
 
+const [notificaciones, setNotificaciones] = useState([]);
+
+
 
   // =========================
   // 1. Cargar Perfil
@@ -116,6 +119,26 @@ useEffect(() => {
 
   buscar();
 }, [busquedaLibro]);
+
+  // =========================
+  // NOTIFICACIONES
+  // =========================
+
+useEffect(() => {
+  if (!user) return;
+
+  const q = query(
+    collection(db, "usuarios", user.uid, "notificaciones"),
+    orderBy("fecha", "desc")
+  );
+
+  const unsub = onSnapshot(q, (snap) => {
+    const lista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setNotificaciones(lista);
+  });
+
+  return () => unsub();
+}, [user]);
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -266,30 +289,52 @@ useEffect(() => {
   return () => unsubscribe();
 }, [uidObjetivo]);
 
-  // =========================
-  // 5. Toggle Follow
-  // =========================
-  const toggleFollow = async () => {
-    if (!user) return;
+// =========================
+// 5. Toggle Follow
+// =========================
+const toggleFollow = async () => {
+  if (!user) return;
 
-    setYaSigo(prev => !prev);
+  setYaSigo(prev => !prev);
 
-    if (yaSigo) {
-      await dejarSeguirUsuario(user.uid, uidPerfil);
-      setDatosPerfil(prev => ({
-        ...prev,
-        seguidores: prev.seguidores.filter(id => id !== user.uid),
-      }));
-      setSeguidoresCount(prev => prev - 1);
-    } else {
-      await seguirUsuario(user.uid, uidPerfil);
-      setDatosPerfil(prev => ({
-        ...prev,
-        seguidores: [...prev.seguidores, user.uid],
-      }));
-      setSeguidoresCount(prev => prev + 1);
-    }
-  };
+  if (yaSigo) {
+    // DEJAR DE SEGUIR
+    await dejarSeguirUsuario(user.uid, uidPerfil);
+
+    setDatosPerfil(prev => ({
+      ...prev,
+      seguidores: prev.seguidores.filter(id => id !== user.uid),
+    }));
+
+    setSeguidoresCount(prev => prev - 1);
+
+  } else {
+    // SEGUIR
+    await seguirUsuario(user.uid, uidPerfil);
+
+    // Actualizar estado local primero
+    setDatosPerfil(prev => ({
+      ...prev,
+      seguidores: [...prev.seguidores, user.uid],
+    }));
+
+    setSeguidoresCount(prev => prev + 1);
+
+    // Crear notificación después
+    await addDoc(
+      collection(db, "usuarios", uidPerfil, "notificaciones"),
+      {
+        tipo: "follow",
+        fromUID: user.uid,
+        nombreAutor: user.displayName || user.email || "Usuario",
+        fecha: serverTimestamp(),
+        leida: false
+      }
+    );
+  }
+};
+
+  
 
 
   const toggleMenu = (postId) => {
@@ -443,7 +488,8 @@ useEffect(() => {
   try {
     const fotoPerfil = datosPerfil?.avatar || user.photoURL || "";
 
-    await addDoc(collection(db, "muro"), {
+    // 1. Publicar en muro
+    const postRef = await addDoc(collection(db, "muro"), {
       uid: user.uid,
       autor: datosPerfil?.username || user.displayName || user.email,
       texto: nuevoPost.trim(),
@@ -453,16 +499,37 @@ useEffect(() => {
       dislikesUsuarios: []
     });
 
-    // ❌ Ya NO agregamos nada al estado local
-    // Firestore lo insertará automáticamente por el onSnapshot
-
     setNuevoPost("");
+
+    // 2. Obtener seguidores
+    const seguidoresSnap = await getDocs(
+      collection(db, "usuarios", user.uid, "seguidores")
+    );
+
+    const seguidoresUIDs = seguidoresSnap.docs.map(d => d.id);
+
+    // 3. Crear notificación para cada seguidor
+    for (const segUID of seguidoresUIDs) {
+      await addDoc(
+        collection(db, "usuarios", segUID, "notificaciones"),
+        {
+          tipo: "muro",
+          fromUID: user.uid,
+          nombreAutor: datosPerfil?.username,
+          texto: nuevoPost,
+          postId: postRef.id,
+          fecha: serverTimestamp(),
+          leida: false
+        }
+      );
+    }
 
   } catch (err) {
     console.error("publicarEnMuro error:", err);
     alert("No se pudo publicar en el muro.");
   }
 };
+
 
 
 
@@ -775,7 +842,7 @@ setPosts(prev =>
     });
 
   return postsUsuario.length
-    ? <p>{postsUsuario[0].texto}</p>
+    ? <p className="ultimo-post-texto">{postsUsuario[0].texto}</p>
     : <p>No has publicado aún.</p>;
 })()}
 

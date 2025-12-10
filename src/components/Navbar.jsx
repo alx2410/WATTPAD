@@ -61,10 +61,11 @@ const handleSearch = (e) => {
         
         {/* EXPLORAR CON MENÚ NUEVO */}
         <li
-          className="explorar-wrapper nav-links"
-          style={{ position: "relative" }} // Necesario para posicionar el menú
+          className="explorar-wrapper "
+          style={{ position: "relative"}} // Necesario para posicionar el menú
         >
           <Link
+           className="nav-links"
             to="#"
             onClick={(e) => {
               e.preventDefault();

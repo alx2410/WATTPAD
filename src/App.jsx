@@ -18,6 +18,7 @@ import AdminUsuarios from "./paginas/intranet/AdminUsuarios";
 import RutaProtegida from "./components/RutaProtegida";
 import RutaAdmin from "./components/RutaAdmin";
 
+import Notificaciones from "./paginas/Notificaciones";
 
 import { LibrosProvider } from "./context/LibrosContext";
 
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/perfil/:uid?" element={<Perfil />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/miniwattpad" element={<MiniWattpad />} />
+        <Route path="/notificaciones" element={<Notificaciones />} />
 
 
         {/* RUTAS PROTEGIDAS: INTRANET */}

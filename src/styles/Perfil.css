@@ -231,9 +231,14 @@
     grid-template-columns: 1.2fr 2.2fr;
     gap: 30px;
     width: 90%;
-    max-width: 1400px;
+    max-width: 9%;
     padding-top: 20px;
   }
+
+  .ultimo-post-texto {
+  white-space: normal;
+  word-break: break-word;
+}
 
 
   /* COLUMNA 1 */
@@ -244,6 +249,8 @@
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     color: rgb(65, 77, 77);
+    max-width: 100%;
+  overflow-wrap: break-word;
   }
 
   .info-col-1 h3 {
@@ -263,7 +270,15 @@
     margin-bottom: 18px;
     border: 1px solid #ffd2c3;
     transition: 0.2s;
+    min-width: 0; 
   }
+
+.historia-portada {
+  height: 50%;
+  object-fit: cover;
+}
+
+
 
   .historia-content {
     width: 100%;
@@ -293,6 +308,10 @@
     margin-bottom: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     color: #6d6666;
+    max-width: 100% !important;
+  width: 100% !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
   }
 
   .muro-publicar textarea {
@@ -907,8 +926,15 @@
 body, html, .perfil-container, .perfil-header {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: hidden !important;
     box-sizing: border-box;
+}
+/* ==== PREVENT DESBORDES EN TODO EL PERFIL ==== */
+.perfil-container * {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal !important;
+  box-sizing: border-box;
 }
 
 /* ======================================================
