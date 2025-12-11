@@ -5,6 +5,8 @@ import { doc, getDoc, getDocs, collection, query, where, setDoc } from "firebase
 import { db } from "../firebase/config";
 import { auth } from "../firebase/auth";
 import ReseñassLibro from "../paginas/ReseñasLibro";
+import { Link } from "react-router-dom";
+
 
 
 
@@ -85,7 +87,15 @@ export default function LibroDetalle() {
         {/* INFO */}
         <div style={{ maxWidth: "600px" }}>
           <h1>{libro.titulo}</h1>
-          <h3 style={{ color: "#555" }}>{libro.autor}</h3>
+          <h3 style={{ color: "#555" }}>
+  <Link 
+    to={`/perfil/${libro.autorId}`}
+    style={{ textDecoration: "none", color: "#555", fontWeight: "bold" }}
+  >
+    {libro.autor}
+  </Link>
+</h3>
+
 
           <p><strong>Género:</strong> {libro.genero}</p>
 

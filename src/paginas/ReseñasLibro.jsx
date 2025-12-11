@@ -10,6 +10,8 @@ import {
   doc,
   serverTimestamp
 } from "firebase/firestore";
+import { Link } from "react-router-dom";
+
 
 export default function Comunidad({ libroId, usuario }) {
 
@@ -169,7 +171,18 @@ export default function Comunidad({ libroId, usuario }) {
                 }}
               />
             )}
-            <strong>{r.usuario}</strong>
+            <Link 
+  to={`/perfil/${r.userId}`}
+  style={{
+    textDecoration: "none",
+    color: "black",
+    fontWeight: "600",
+    cursor: "pointer"
+  }}
+>
+  {r.usuario}
+</Link>
+
           </div>
 
           <div>
