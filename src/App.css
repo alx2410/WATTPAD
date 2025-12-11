@@ -106,10 +106,9 @@ nav ul li a:hover::after {
   width: 100%;
 }
 
-/
 
 /* BOTÓN */
-.boton-navbar {
+.boton-login {
   background-color: #000;
   border: none;
   color: #fff;

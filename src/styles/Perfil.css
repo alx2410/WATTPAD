@@ -298,6 +298,7 @@
   .muro {
     padding: 25px 35px;
     
+    
   }
 
   .muro-publicar,
@@ -308,10 +309,9 @@
     margin-bottom: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     color: #6d6666;
-    max-width: 100% !important;
-  width: 100% !important;
-  overflow-wrap: break-word;
-  word-break: break-word;
+    
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .muro-publicar textarea {
@@ -380,6 +380,35 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
+  /* FIX FINAL PARA TOOLTIP */
+.post-menu {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  width: 160px; /* ancho fijo, evita compresión */
+  min-width: 160px;
+  white-space: nowrap; /* el menú NO se parte nunca */
+  overflow: visible !important; 
+}
+
+.post-menu-wrapper,
+.menu-btn {
+  overflow: visible !important;
+}
+
+/* evita que el padre flex comprima al hijo absoluto */
+.muro-post {
+  align-items: flex-start;
+  overflow: visible !important;
+}
+
+/* evita que el word-break afecte al menú */
+.post-menu * {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
 
   /* ======================================================
     🔥 RESPONSIVIDAD REAL 🔥
@@ -616,17 +645,22 @@
   ====================================================== */
 
 .seguidores-grid {
-   padding-top: 20px;
-  width: 90%;
-  max-width: 900px;   /* evita tarjetas gigantes, ajusta si quieres */
-  margin: 0 auto;
-  align-items: start;   /* evita que las cards se estiren verticalmente */
+  padding-top: 20px;
+  width: 100%;
+  max-width: 900px;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0 !important;
+
+  align-items: start;
 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 20px;
-  justify-content: center;   /* centra las tarjetas */
+  justify-content: center;
 }
+
 
 
 .seguidor-card {

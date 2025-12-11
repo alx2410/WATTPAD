@@ -155,7 +155,7 @@ const handleSearch = (e) => {
 
        {/* USUARIO */}
       {!user ? (
-        <button onClick={() => setShowAuth(true)} className="boton-navbar">
+        <button onClick={() => setShowAuth(true)} className="boton-login">
           Iniciar sesión
         </button>
       ) : (
