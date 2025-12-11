@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 60px;
-  background: #fff0c6;
+  background: #ffffff;
   min-height: 500px;
 }
 
@@ -108,17 +108,29 @@ h1.generos-title{
 }
 
 .generos-section {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  padding: 70px 60px;
-  background: #fff;
+  flex-direction: column;
   gap: 40px;
-  padding-inline-start: 90px;
 }
 
+
+
 .generos-left {
-  width: 50%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
+
+.generos-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 
 .generos-title {
   font-size: 35px;
@@ -131,6 +143,14 @@ h1.generos-title{
   color: black;
   padding-inline-start: 90px;
 }
+
+.generos-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
 
 /* BOTONES EN 2 FILAS HORIZONTALES */
 .generos-container {
@@ -207,40 +227,48 @@ h1.generos-title{
 /* HERO GENERAL */
 .hero-wattpad {
   width: 100%;
-  height: 90vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 130px;
-  position: relative;
-
-  background-image: url("/fondo.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  height: auto; /* No 90vh */
 }
 
 
 /* CAJA BUSCADOR */
-.hero-search-box {
-  width: 450px;
-  height: 70px;
-  background: #ffffff;
-  border-radius: 20px;
+.hero-search-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+
+  background-image: url("/fondo.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  
   display: flex;
   align-items: center;
-  justify-content: flex-start;  /* ya no centra nada */
-  padding-inline: 20px;         /* espacio normal */
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  font-family: "Source Sans Pro", sans-serif;
-  font-weight: 700;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  justify-content: center;
 }
 
-/* Efecto hover */
-.hero-search-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+
+
+/* Tu caja blanca intacta */
+.hero-search-box {
+  width: 260px;
+  height: 65px;
+  background: white;
+  border-radius: 20px;
+  padding-inline: 20px;
+
+  display: flex;
+  align-items: center;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+
+  position: relative;
+  z-index: 10; /* garantiza que esté encima */
+}
+
+.hero-search-box span {
+  font-weight: 700;
+  font-family: "Source Sans Pro", sans-serif;
 }
 
 /* Tamaño general dentro del buscador */
@@ -271,3 +299,30 @@ h1.generos-title{
   font-weight: 700;
 }
 
+.footer-links a {
+  color: #ccc;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 6px;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.footer-redes a {
+  margin: 0 10px;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-redes svg {
+  transition: transform 0.2s;
+}
+
+.footer-redes a:hover svg {
+  transform: scale(1.15);
+  color: #0af;
+}

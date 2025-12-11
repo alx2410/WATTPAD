@@ -28,7 +28,7 @@ export default function Login({ onRegistroClick, onLoginExitoso, onClose }) {
   };
 
   return (
-      <div className="modal-card">
+      <div className="login-modal">
 
         {/* BOTÓN CERRAR */}
         <button className="modal-cerrar" onClick={onClose}>×</button>

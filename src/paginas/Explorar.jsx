@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { db } from "../firebase/config";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import "../styles/Explorar.css";
+import { Link } from "react-router-dom";
 
 export default function Explorar() {
   const [libros, setLibros] = useState([]);
@@ -69,24 +70,25 @@ export default function Explorar() {
     : (busqueda ? `Resultados para "${busqueda}"` : "Todos los libros")
   }
 </h1>
-      
-
-      
-
       {cargando ? (
         <p>Cargando libros...</p>
       ) : (
         <div className="grid-libros">
           {librosFiltrados.length > 0 ? (
             librosFiltrados.map((libro) => (
-              <div key={libro.id} className="libro-card">
-                <img src={libro.portada} alt={libro.titulo} />
-                <div className="info-libro">
-                  <h2>{libro.titulo}</h2>
-                  <p>{libro.genero}</p>
-                  <p>Autor: {libro.autor}</p>
-                </div>
-              </div>
+             <Link 
+  to={`/libro/${libro.id}`} 
+  key={libro.id} 
+  className="libro-card"
+>
+  <img src={libro.portada} alt={libro.titulo} />
+  <div className="info-libro">
+    <h2>{libro.titulo}</h2>
+    <p>{libro.genero}</p>
+    <p>Autor: {libro.autor}</p>
+  </div>
+</Link>
+
             ))
           ) : (
             <p>No hay resultados.</p>

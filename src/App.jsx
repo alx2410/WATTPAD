@@ -8,6 +8,7 @@ import Escribir from "./paginas/Escribir";
 import Biblioteca from "./paginas/Biblioteca";
 import MiniWattpad from "./paginas/MiniWattpad";
 import Perfil from "./paginas/Perfil";
+import Notificaciones from "./paginas/Notificaciones";
 
 import RutaProtegida from "./components/RutaProtegida";
 import RutaAdmin from "./components/RutaAdmin";
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/perfil/:uid?" element={<Perfil />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/miniwattpad" element={<MiniWattpad />} />
+        <Route path="/notificaciones" element={<Notificaciones />} />
 
 
         {/*RUTA DEL CARRUSEL*/}

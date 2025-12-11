@@ -59,7 +59,7 @@ export default function Registro({ onRegistroExitoso, onLoginExitoso, irALogin, 
     };
 
     return (
-            <div className="modal-overlay">
+            <div className="login-modal">
         <div className="modal-card">
 
                 <button className="modal-cerrar" onClick={onClose}>×</button>
@@ -76,7 +76,7 @@ export default function Registro({ onRegistroExitoso, onLoginExitoso, irALogin, 
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Ej: enrique48"
+                            placeholder="Ej: xime48"
                             required
                         />
                     </div>

@@ -79,12 +79,12 @@ const handleSearch = (e) => {
           </Link>
 
           {showCategories && (
-            <div className="mega-menu-categorias">
-              <div className="columnas-menu">
+            <div className="mega-menu-modal">
+              <div className="columnas-modal">
                 {categorias.map((cat) => (
                   <button
                     key={cat}
-                    className="categoria-opcion"
+                    className="categoria-modal"
                     onClick={() => seleccionar(cat)}
                   >
                     {cat}

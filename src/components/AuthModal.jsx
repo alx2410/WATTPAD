@@ -8,7 +8,7 @@ export default function AuthModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
+    <div className="login-overlay">
 
       {modo === "login" && (
         <Login

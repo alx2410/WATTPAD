@@ -76,91 +76,114 @@ export default function MiniWattpad() {
 
  <PopularBooks />
 
+<section className="generos-section">
 
-     <section className="generos-section">
+  {/* CONTENEDOR DE DOS COLUMNAS */}
+  <div className="generos-top">
 
-  {/* IZQUIERDA: TITULO + TEXTO + BARRA ANIMADA */}
-  <div className="generos-left">
-    <h1 className="generos-title">
-      Todos los  géneros. <br />
-      Todos Tuyos.
-    </h1>
+    {/* COLUMNA IZQUIERDA */}
+    <div className="generos-left">
+      <h1 className="generos-title">
+        Todos los géneros. <br />
+        Todos Tuyos.
+      </h1>
 
-    <p className="generos-desc">
-      Historias para cada estado mental posible.
-    </p>
-    <br />
-
-    <CarruselGeneros
-  generos={listaDeGeneros}
-  onSelectGenero={(nombre) => navigate(`/explorar?genero=${nombre}`)}
-/>
-
-
-
-  </div>
-
-  {/* HERO TIPO WATTPAD - SOLO UNA VEZ */}
-<section className="hero-wattpad">
-
-  <div className="hero-search-box">
-    <span className="icono-lupa">
-      <svg
-        width="25"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-    </span>
-
-    <div className="animated-text">
-      <AnimatedText 
-      frases={[
-        "Romance prohibido",
-        "Suspenso que te desvela",
-        "Historias que enganchan",
-        "Levi 4ever"
-      ]}
-      velocidad={110}
-      pausa={1300}
-    /> 
+      <p className="generos-desc">
+        Historias para cada estado mental posible.
+      </p>
     </div>
-   
-  </div>
-</section>
 
-  
+    {/* COLUMNA DERECHA: HERO */}
+    <div className="generos-right">
+      <div className="hero-search-container">
+        <div className="hero-search-box">
+          <span className="icono-lupa">
+            <svg
+              width="25"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+
+          <div className="animated-text">
+            <AnimatedText 
+              frases={[
+                "Romance prohibido",
+                "Suspenso que te desvela",
+                "Historias que enganchan",
+                "Levi 4ever"
+              ]}
+              velocidad={110}
+              pausa={1300}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {/* CARRUSEL ABAJO DE TODO */}
+  <CarruselGeneros
+    generos={listaDeGeneros}
+    onSelectGenero={(nombre) => navigate(`/explorar?genero=${nombre}`)}
+  />
+
 </section>
 
       
 
       {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-links">
-          <a>Privacidad</a>
-          <a>Condiciones</a>
-          <a>Cookies</a>
-          <a>Ayuda</a>
-          <a>Idioma</a>
-          <a>Fictory Originales</a>
-        </div>
+      <footer class="footer">
+  <div class="footer-container">
 
+    <div class="footer-section">
+      <h4>Información</h4>
+      <a>Privacidad</a>
+      <a>Condiciones</a>
+      <a>Cookies</a>
+      <a>Ayuda</a>
+      <a>Idioma</a>
+      <a>Fictory Originales</a>
+    </div>
 
-        <div className="footer-redes">
-    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a> |
-    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a> |
-    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">TikTok</a> 
+    <div class="footer-section">
+      <h4>Redes</h4>
+      <div class="footer-redes">
+  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0 0 22 12z"/>
+    </svg>
+  </a>
+
+  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 2 .2 2.4.4a4 4 0 0 1 1.5 1.5c.2.4.3 1.2.4 2.4.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 2-.4 2.4a4 4 0 0 1-1.5 1.5c-.4.2-1.2.3-2.4.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-2-.2-2.4-.4a4 4 0 0 1-1.5-1.5c-.2-.4-.3-1.2-.4-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-2 .4-2.4a4 4 0 0 1 1.5-1.5c.4-.2 1.2-.3 2.4-.4C8.4 2.2 8.8 2.2 12 2.2m0 3.5a6.3 6.3 0 1 0 0 12.6 6.3 6.3 0 0 0 0-12.6zm6.5-.9a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+    </svg>
+  </a>
+
+  <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.8 2h3.2c.1 1.3.6 2.3 1.4 3.2.8.8 1.8 1.3 3.1 1.4v3.3c-1.8-.1-3.3-.7-4.5-1.7v6.9a6 6 0 1 1-6-6c.5 0 1 .1 1.5.2v3.4c-.5-.2-1-.3-1.5-.3a2.6 2.6 0 1 0 2.6 2.6V2z" />
+    </svg>
+  </a>
+</div>
+
+    </div>
+
   </div>
 
-        <p className="footer-copy">© 2025 Fictory</p>
-      </footer>
+  <p class="footer-copy">© 2025 Fictory</p>
+</footer>
+
     </div>
   );
 }

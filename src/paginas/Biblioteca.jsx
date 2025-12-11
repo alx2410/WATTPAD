@@ -1,229 +1,156 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase/auth";
 import { db } from "../firebase/config";
-import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Biblioteca() {
-  const [libros, setLibros] = useState([]);
-  const [libroSeleccionado, setLibroSeleccionado] = useState(null);
+  const navigate = useNavigate();
+
+  // ESTADOS REALES QUE VIENEN DE FIREBASE
+  const [enLectura, setEnLectura] = useState([]);
+  const [miLista, setMiLista] = useState([]);
+  const [favoritos, setFavoritos] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "libros"), (snapshot) => {
-      const lista = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setLibros(lista);
-    });
+    const user = auth.currentUser;
+    if (!user) return;
 
-    return () => unsubscribe();
+    const cargarLibros = async () => {
+      // BIBLIOTECA (EN LECTURA)
+      const snapBiblio = await getDocs(
+        collection(db, "usuarios", user.uid, "biblioteca")
+      );
+
+      const arrBiblio = [];
+      snapBiblio.forEach((doc) => arrBiblio.push({ id: doc.id, ...doc.data() }));
+      setEnLectura(arrBiblio);
+
+      // MI LISTA
+      const snapLista = await getDocs(
+        collection(db, "usuarios", user.uid, "lista")
+      );
+
+      const arrLista = [];
+      snapLista.forEach((doc) => arrLista.push({ id: doc.id, ...doc.data() }));
+      setMiLista(arrLista);
+
+      // FAVORITOS
+      const snapFav = await getDocs(
+        collection(db, "usuarios", user.uid, "favoritos")
+      );
+
+      const arrFav = [];
+      snapFav.forEach((doc) => arrFav.push({ id: doc.id, ...doc.data() }));
+      setFavoritos(arrFav);
+    };
+
+    cargarLibros();
   }, []);
 
-  // 🗑️ Eliminar libro
-  const eliminarLibro = async (id) => {
-    if (!confirm("¿Seguro que deseas borrar este libro?")) return;
-    await deleteDoc(doc(db, "libros", id));
+  // FUNCIONES BÁSICAS
+  const seguirLeyendo = (id) => {
+    navigate(`/leer/${id}`);
   };
 
-  // Libros con progreso (para sección "Seguir leyendo")
-  const enLectura = libros.filter((l) => l.progreso && l.progreso < 100);
+  const empezarALeer = (id) => {
+    const libro = miLista.find((l) => l.id === id);
+    if (!libro) return;
 
+    setMiLista(miLista.filter((l) => l.id !== id));
+    setEnLectura([...enLectura, libro]);
+  };
+
+  const quitarDeBiblioteca = (id) => {
+    setEnLectura(enLectura.filter((l) => l.id !== id));
+  };
+
+  const quitarDeMiLista = (id) => {
+    setMiLista(miLista.filter((l) => l.id !== id));
+  };
+
+  const quitarFavorito = (id) => {
+    setFavoritos(favoritos.filter((l) => l.id !== id));
+  };
+
+  // --------------------------
+  // RENDER
+  // --------------------------
   return (
-    <div className="biblioteca-container" style={{ padding: "20px" }}>
-      <h2 style={{ color: "#ff7300" }}>📚 Tu Biblioteca</h2>
+    <div className="biblioteca-contenedor">
 
-      {/* ================================
-          SECCIÓN SEGUIR LEYENDO
-      ================================= */}
-      {enLectura.length > 0 && (
-        <div style={{ marginTop: "25px" }}>
-          <h3 style={{ color: "#ff7300" }}>📖 Seguir leyendo</h3>
+      {/* EN LECTURA */}
+      <div className="biblioteca-seccion">
+        <h2>En lectura</h2>
 
-          <div className="libros-grid">
-            {enLectura.map((libro) => (
-              <div
-                className="libro-card"
-                key={libro.id}
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "10px",
-                  borderRadius: "10px",
-                }}
-              >
-                <img
-                  src={libro.portada || "/sin-portada.png"}
-                  alt="Portada"
-                  className="libro-portada"
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
+        <div className="libros-grid">
+          {enLectura.length === 0 && <p>No estás leyendo nada aún.</p>}
 
-                <h4 style={{ marginTop: "10px" }}>{libro.titulo}</h4>
+          {enLectura.map((libro) => (
+            <div className="libro-card" key={libro.id}>
+              <img src={libro.portada} alt={libro.titulo} />
+              <p>{libro.titulo}</p>
 
-                <p style={{ fontSize: "0.9rem", opacity: 0.7 }}>
-                  Progreso: {libro.progreso || 0}%
-                </p>
+              <button onClick={() => seguirLeyendo(libro.id)}>
+                Seguir leyendo
+              </button>
 
-                <button
-                  style={{
-                    marginTop: "10px",
-                    background: "#ff7300",
-                    color: "white",
-                    padding: "8px 12px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    width: "100%",
-                  }}
-                  onClick={() => setLibroSeleccionado(libro)}
-                >
-                  Seguir leyendo
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ================================
-          TODOS LOS LIBROS
-      ================================= */}
-      <h3 style={{ marginTop: "40px", color: "#ff7300" }}>📚 Libros publicados</h3>
-
-      {libros.length === 0 ? (
-        <p>No has publicado ningún libro todavía.</p>
-      ) : (
-        <div className="libros-grid" style={{ marginTop: "20px" }}>
-          {libros.map((libro) => (
-            <div
-              className="libro-card"
-              key={libro.id}
-              style={{
-                border: "1px solid #ddd",
-                padding: "10px",
-                borderRadius: "10px",
-              }}
-            >
-              <img
-                src={libro.portada || "/sin-portada.png"}
-                alt="Portada"
-                className="libro-portada"
-                style={{
-                  width: "100%",
-                  height: "200px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-
-              <h3 style={{ marginTop: "10px" }}>{libro.titulo}</h3>
-              <p style={{ opacity: 0.7 }}>📌 {libro.genero}</p>
-
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                {/* Ver más */}
-                <button
-                  style={{
-                    flex: 1,
-                    background: "#ff7300",
-                    color: "white",
-                    padding: "8px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setLibroSeleccionado(libro)}
-                >
-                  Ver más
-                </button>
-
-                {/* Borrar */}
-                <button
-                  style={{
-                    flex: 1,
-                    background: "#d93333",
-                    color: "white",
-                    padding: "8px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => eliminarLibro(libro.id)}
-                >
-                  Borrar
-                </button>
-              </div>
+              <button onClick={() => quitarDeBiblioteca(libro.id)}>
+                Quitar
+              </button>
             </div>
           ))}
         </div>
-      )}
+      </div>
 
-      {/* ================================
-          MODAL VER MÁS
-      ================================= */}
-      {libroSeleccionado && (
-        <div
-          className="modal"
-          onClick={() => setLibroSeleccionado(null)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-          }}
-        >
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              width: "600px",
-              maxHeight: "80vh",
-              overflowY: "auto",
-            }}
-          >
-            <h2 style={{ color: "#ff7300" }}>{libroSeleccionado.titulo}</h2>
+      {/* MI LISTA */}
+      <div className="biblioteca-seccion">
+        <h2>Mi lista</h2>
 
-            {libroSeleccionado.portada && (
-              <img
-                src={libroSeleccionado.portada}
-                alt="Portada"
-                style={{
-                  width: "100%",
-                  borderRadius: "10px",
-                  marginTop: "10px",
-                }}
-              />
-            )}
+        <div className="libros-grid">
+          {miLista.length === 0 && <p>Tu lista está vacía.</p>}
 
-            <p style={{ marginTop: "15px", whiteSpace: "pre-line" }}>
-              {libroSeleccionado.contenido}
-            </p>
+          {miLista.map((libro) => (
+            <div className="libro-card" key={libro.id}>
+              <img src={libro.portada} alt={libro.titulo} />
+              <p>{libro.titulo}</p>
 
-            <button
-              style={{
-                marginTop: "20px",
-                background: "#ff7300",
-                color: "white",
-                padding: "10px",
-                borderRadius: "5px",
-                cursor: "pointer",
-                width: "100%",
-              }}
-              onClick={() => setLibroSeleccionado(null)}
-            >
-              Cerrar
-            </button>
-          </div>
+              <button onClick={() => empezarALeer(libro.id)}>
+                Empezar
+              </button>
+
+              <button onClick={() => quitarDeMiLista(libro.id)}>
+                Quitar
+              </button>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* FAVORITOS */}
+      <div className="biblioteca-seccion">
+        <h2>Favoritos</h2>
+
+        <div className="libros-grid">
+          {favoritos.length === 0 && <p>No tienes favoritos todavía.</p>}
+
+          {favoritos.map((libro) => (
+            <div className="libro-card" key={libro.id}>
+              <img src={libro.portada} alt={libro.titulo} />
+              <p>{libro.titulo}</p>
+
+              <button onClick={() => seguirLeyendo(libro.id)}>
+                Leer otra vez
+              </button>
+
+              <button onClick={() => quitarFavorito(libro.id)}>
+                Quitar
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }

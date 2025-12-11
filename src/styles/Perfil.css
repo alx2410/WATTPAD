@@ -1,42 +1,108 @@
 /* ======================================================
-   GLOBAL
-====================================================== */
+    GLOBAL
+  ====================================================== */
 .perfil-container {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column !important;
-  background-color: #f7dbd7;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* 🔥 CLAVE: evita romper pantallas grandes */
+  justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 
-main {
-  max-width: none !important;
+
+
+
+
+  main {
+    max-width: none !important;
+  }
+
+
+  /* ======================================================
+    HEADER — SIEMPRE ARRIBA A TODO EL ANCHO
+  ====================================================== */
+  .perfil-header * {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
+  .perfil-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row; /* 👈 evita columnas */
+    align-items: center;
+    gap: 20px;
+    background: #ffffff;
+    border-bottom: 2px solid #ffe1d6;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    /* position: sticky;
+    top: 0;
+    z-index: 30; */
+    flex-wrap: nowrap; /* 👈 protege de romper columna */
+  }
 
-/* ======================================================
-   HEADER — SIEMPRE ARRIBA A TODO EL ANCHO
-====================================================== */
+  .perfil-avatar {
+    margin: 2%;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ff6b3d;
+  }
+
+  .perfil-nombre {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 700;
+  }
+
+  .perfil-username {
+    font-size: 1rem;
+    color: #777;
+  }
+
+  .perfil-stats {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .perfil-stats span {
+    background: #fff2ec;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    color: #ff6b3d;
+    border: 1px solid #ffd2c3;
+  }
+
+  /* ================================
+   HEADER — DESKTOP / NORMAL
+================================ */
 .perfil-header {
   width: 100%;
   display: flex;
-  flex-direction: row; /* 👈 evita columnas */
+  flex-direction: row;
   align-items: center;
   gap: 20px;
+  padding: 15px 20px;
+
   background: #ffffff;
   border-bottom: 2px solid #ffe1d6;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  /* position: sticky;
-  top: 0;
-  z-index: 30; */
-  flex-wrap: nowrap; /* 👈 protege de romper columna */
+
+  flex-wrap: nowrap;
 }
 
 .perfil-avatar {
-  margin: 2%;
   width: 110px;
   height: 110px;
+  margin-right: 10px;
+
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #ff6b3d;
@@ -44,9 +110,8 @@ main {
 
 .perfil-nombre {
   font-size: 1.8rem;
-  margin-bottom: 5px;
-  color: #333;
   font-weight: 700;
+  color: #333;
 }
 
 .perfil-username {
@@ -70,411 +135,533 @@ main {
   border: 1px solid #ffd2c3;
 }
 
-/* ======================================================
-   PESTAÑAS — SIEMPRE EN UNA FILA
-====================================================== */
-.perfil-tabs {
+
+/* ================================
+   🔥 MOBILE — RESPONSIVE REAL
+================================ */
+@media (max-width: 600px) {
+
+.perfil-header {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+
+  .perfil-avatar {
+    width: 90px;
+    height: 90px;
+    margin: 0;
+  }
+
+.perfil-nombre, 
+.perfil-username {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+  .perfil-stats {
+    justify-content: center;   /* ↓ stats centrados */
+    gap: 10px;
+  }
+
+  .perfil-stats span {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+}
+
+
+/* ================================
+   📱 MOBILE MUY PEQUEÑO (<400px)
+================================ */
+@media (max-width: 400px) {
+
+  .perfil-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .perfil-nombre {
+    font-size: 1.2rem;
+  }
+}
+
+
+  /* ======================================================
+    PESTAÑAS — SIEMPRE EN UNA FILA
+  ====================================================== */
+ .perfil-tabs {
   display: flex;
-  width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;        /* 🔥 móvil no rompe */
   justify-content: center;
+  width: 100%;
   background: #fff;
   border-bottom: 2px solid #ffe1d6;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-  margin-bottom: 25px;
-  /* position: sticky;
-  top: 140px; 
-  z-index: 20; */
-  flex-wrap: nowrap; /* 👈 evita columnas */
-}
-
-.perfil-tabs button {
-  padding: 14px 40px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #777;
-  transition: 0.2s;
-  white-space: nowrap; /* 👈 no se parten */
-}
-
-.perfil-tabs button.active {
-  color: #ff6b3d;
-}
-
-/* ======================================================
-   INFO — GRID
-====================================================== */
-.info-layout {
-  display: grid;
-  grid-template-columns: 1.2fr 2.2fr;
-  gap: 30px;
-  width: 90%;
-  max-width: 1400px;
+  padding: 6px 0;
+  gap: 5px;
 }
 
 
-/* COLUMNA 1 */
-.info-col-1,
-.info-col-2 {
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  color: rgb(65, 77, 77);
+  .perfil-tabs button {
+    padding: 14px 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #777;
+    transition: 0.2s;
+    white-space: nowrap; /* 👈 no se parten */
+  }
+
+  .perfil-tabs button.active {
+    color: #ff6b3d;
+  }
+
+  /* ======================================================
+    INFO — GRID
+  ====================================================== */
+  .info-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 2.2fr;
+    gap: 30px;
+    width: 90%;
+    max-width: 9%;
+    padding-top: 20px;
+  }
+
+  .ultimo-post-texto {
+  white-space: normal;
+  word-break: break-word;
 }
 
-.info-col-1 h3 {
-  margin-top: 10px;
-  color: #ff6b3d;
-}
 
-/* COLUMNA 2 HISTORIAS */
-.historia-card {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  align-items: center;
-  background: #fff7f3;
-  padding: 18px;
-  border-radius: 18px;
-  margin-bottom: 18px;
-  border: 1px solid #ffd2c3;
-  transition: 0.2s;
-}
+  /* COLUMNA 1 */
+  .info-col-1,
+  .info-col-2 {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    color: rgb(65, 77, 77);
+    max-width: 100%;
+  overflow-wrap: break-word;
+  }
 
-.historia-content {
-  width: 100%;
-}
+  .info-col-1 h3 {
+    margin-top: 10px;
+    color: #ff6b3d;
+  }
+
+  /* COLUMNA 2 HISTORIAS */
+  .historia-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+    background: #fff7f3;
+    padding: 18px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+    border: 1px solid #ffd2c3;
+    transition: 0.2s;
+    min-width: 0; 
+  }
 
 .historia-portada {
-  width: 110px;
-  height: 150px;
-  border-radius: 8px;
+  height: 50%;
   object-fit: cover;
 }
 
 
-/* ======================================================
-   MURO
-====================================================== */
-.muro {
-  padding: 25px 35px;
-}
-
-.muro-publicar,
-.muro-post {
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  color: #6d6666;
-}
-
-.muro-publicar textarea {
-  width: 90%;
-  min-height: 90px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ffd2c3;
-}
-
-
-/* === POST INDIVIDUAL === */
-.muro-post {
-  display: flex;
-  gap: 12px;
-  background: #faf8ff;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid #e8e0ff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-
-    min-width: 300px;          /* nunca más pequeño que esto */
-  max-width: 800px;          /* opcional: limitar tamaño máximo */
-  width: 100%;               /* ocupa todo el contenedor disponible */
-  box-sizing: border-box;    /* incluye padding y border en el ancho */
-  flex-direction: row;       /* fila de avatar + texto */
-  align-items: flex-start;
-  
-}
-
-
-.post-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* Nombre del autor */
-.post-autor {
-  font-weight: bold;
-  font-size: 1rem;
-  color: #6a00ff;
-  margin: 0;
-}
-
-/* Texto del mensaje */
-.post-texto {
-  font-size: 1.1rem;
-  color: #222;
-  margin: 6px 0;
-  line-height: 1.4;
-}
-
-/* Fecha del mensaje */
-.post-fecha {
-  font-size: 0.75rem;
-  color: #8a8a8a;
-  margin-top: 5px;
-  display: block;
-}
-
-.post-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* ======================================================
-   🔥 RESPONSIVIDAD REAL 🔥
-====================================================== */
-
-/* ========== TABLET (≤ 900px) ========== */
-@media (max-width: 900px) {
-
-  .perfil-header {
-    flex-wrap: wrap;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .perfil-tabs {
-    top: 120px;
-  }
-
-  .info-layout {
-    grid-template-columns: 1fr; /* 👈 pasa a 1 columna */
-  }
-
-  .historia-card {
-    flex-direction: column;
-    text-align: center;
-  }
 
   .historia-content {
     width: 100%;
   }
 
   .historia-portada {
-    width: 80%;
-    height: auto;
-  }
-}
-
-/* ========== MÓVIL (≤ 600px) ========== */
-@media (max-width: 600px) {
-
-  .perfil-header {
-    padding: 20px;
-    gap: 15px;
+    width: 110px;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
   }
 
-  .perfil-avatar {
-    margin: 5px;
-    width: 90px;
-    height: 90px;
-  }
 
-  .perfil-nombre {
-    font-size: 1.4rem;
-  }
-
-  .perfil-tabs button {
-    padding: 12px 20px;
-    font-size: 0.9rem;
-  }
-
-  .perfil-tabs {
-    top: 100px; /* ajustado */
-    overflow-x: auto; /* 👈 barras si no entra */
-  }
-
-  .info-layout {
-    padding: 20px;
-  }
-
+  /* ======================================================
+    MURO
+  ====================================================== */
   .muro {
+    padding: 25px 35px;
+    
+    
+  }
+
+  .muro-publicar,
+  .muro-post {
+    background: #fff;
     padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    color: #6d6666;
+    
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
-  .historia-portada {
-    width: 70%;
-  }
-}
-
-/* ========== MÓVIL PEQUEÑO (≤ 450px) ========== */
-@media (max-width: 450px) {
-
-  .perfil-tabs button {
-    padding: 10px 18px;
+  .muro-publicar textarea {
+    width: 90%;
+    min-height: 90px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ffd2c3;
   }
 
-  .historia-card {
+
+  /* === POST INDIVIDUAL === */
+  .muro-post {
+    display: flex;
+    gap: 12px;
+    background: #faf8ff;
     padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e8e0ff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+      min-width: 300px;          /* nunca más pequeño que esto */
+    max-width: 800px;          /* opcional: limitar tamaño máximo */
+    width: 100%;               /* ocupa todo el contenedor disponible */
+    box-sizing: border-box;    /* incluye padding y border en el ancho */
+    flex-direction: row;       /* fila de avatar + texto */
+    align-items: flex-start;
+    
+  }
+
+
+  .post-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* Nombre del autor */
+  .post-autor {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #6a00ff;
+    margin: 0;
+  }
+
+  /* Texto del mensaje */
+  .post-texto {
+    font-size: 1.1rem;
+    color: #222;
+    margin: 6px 0;
+    line-height: 1.4;
+  }
+
+  /* Fecha del mensaje */
+  .post-fecha {
+    font-size: 0.75rem;
+    color: #8a8a8a;
+    margin-top: 5px;
+    display: block;
   }
 
   .post-avatar {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
   }
+
+  /* FIX FINAL PARA TOOLTIP */
+.post-menu {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  width: 160px; /* ancho fijo, evita compresión */
+  min-width: 160px;
+  white-space: nowrap; /* el menú NO se parte nunca */
+  overflow: visible !important; 
 }
 
-/* ======================================================
-   ✏ BOTÓN EDITAR PERFIL (MODO NORMAL)
-====================================================== */
-.btn-editar {
-  margin-top: 18px;
-  margin-bottom: 19px;
-  padding: 10px 20px;
-  background: #fff2ec;
-  border: 2px solid #ff6b3d;
-  color: #ff6b3d;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
+.post-menu-wrapper,
+.menu-btn {
+  overflow: visible !important;
 }
 
-.btn-editar:hover {
-  background: #ff6b3d;
-  color: white;
+/* evita que el padre flex comprima al hijo absoluto */
+.muro-post {
+  align-items: flex-start;
+  overflow: visible !important;
 }
 
-/* ======================================================
-   ✨ MODO EDITAR PERFIL — Inputs, textarea, subir foto
-====================================================== */
-
-.input-text {
-  margin-top: 30px;
+/* evita que el word-break afecte al menú */
+.post-menu * {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
 }
 
-.input-text,
-.textarea-bio {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 15px;
-  background: #fff7f3;
-  border: 1px solid #ffd2c3;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  color: #444;
-  transition: 0.25s ease;
-}
 
-.input-text:focus,
-.textarea-bio:focus {
-  background: #fff;
-  border-color: #ff6b3d;
-  box-shadow: 0 0 8px rgba(255, 107, 61, 0.35);
-  outline: none;
-}
+  /* ======================================================
+    🔥 RESPONSIVIDAD REAL 🔥
+  ====================================================== */
 
-.textarea-bio {
-  min-height: 130px;
-  resize: vertical;
-}
+  /* ========== TABLET (≤ 900px) ========== */
+  @media (max-width: 900px) {
 
-/* LABEL SUBIR FOTO */
-.file-label {
+    .perfil-header {
+      flex-wrap: wrap;
+      text-align: center;
+      justify-content: center;
+    }
 
-  display: inline-block;
-  padding: 10px 16px;
-  background: #ffe1d6;
-  color: #c24f28;
-  font-weight: 600;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-bottom: 14px;
-  border: 1px solid #ffbca6;
-  transition: 0.25s;
-  margin-right: 10px;
-  
-}
+    .perfil-tabs {
+      top: 120px;
+    }
 
-.file-label:hover {
-  background: #ffd2c3;
-}
+    .info-layout {
+      grid-template-columns: 1fr; /* 👈 pasa a 1 columna */
+    }
 
-.file-label input[type="file"] {
-  display: none;
-}
+    .historia-card {
+      flex-direction: column;
+      text-align: center;
+    }
 
-/* ======================================================
-   💾 BOTONES GUARDAR / CANCELAR
-====================================================== */
+    .historia-content {
+      width: 100%;
+    }
 
-.btn-guardar {
-  padding: 10px 20px;
-  background: #ff6b3d;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
+    .historia-portada {
+      width: 80%;
+      height: auto;
+    }
+  }
 
-.btn-guardar:hover {
-  background: #ff3f1e;
-  
-}
+  /* ========== MÓVIL (≤ 600px) ========== */
+  @media (max-width: 600px) {
 
-.btn-cancelar {
-  padding: 10px 20px;
-  background: #fff7f3;
-  border: 2px solid #ffd2c3;
-  border-radius: 12px;
-  color: #666;
-  font-weight: 600;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: 0.25s ease;
-}
+    .perfil-header {
+      padding: 20px;
+      gap: 15px;
+    }
 
-.btn-cancelar:hover {
-  background: #ffeae3;
-}
+    .perfil-avatar {
+      margin: 5px;
+      width: 90px;
+      height: 90px;
+    }
 
-/* ======================================================
-   📱 RESPONSIVE EDIT MODE
-====================================================== */
+    .perfil-nombre {
+      font-size: 1.4rem;
+    }
 
-@media (max-width: 600px) {
+    .perfil-tabs button {
+      padding: 12px 20px;
+      font-size: 0.9rem;
+    }
+
+    .perfil-tabs {
+      top: 100px; /* ajustado */
+      overflow-x: auto; /* 👈 barras si no entra */
+    }
+
+    .info-layout {
+      padding: 20px;
+    }
+
+    .muro {
+      padding: 20px;
+    }
+
+    .historia-portada {
+      width: 70%;
+    }
+  }
+
+  /* ========== MÓVIL PEQUEÑO (≤ 450px) ========== */
+  @media (max-width: 450px) {
+
+    .perfil-tabs button {
+      padding: 10px 18px;
+    }
+
+    .historia-card {
+      padding: 15px;
+    }
+
+    .post-avatar {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  /* ======================================================
+    ✏ BOTÓN EDITAR PERFIL (MODO NORMAL)
+  ====================================================== */
+  .btn-editar {
+    margin-top: 18px;
+    margin-bottom: 19px;
+    padding: 10px 20px;
+    background: #fff2ec;
+    border: 2px solid #ff6b3d;
+    color: #ff6b3d;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+  }
+
+  .btn-editar:hover {
+    background: #ff6b3d;
+    color: white;
+  }
+
+  @media (max-width: 600px) {
   .btn-guardar,
   .btn-cancelar {
     width: 100%;
-    margin-bottom: 10px;
+    margin: 6px 0;
   }
 }
 
-/* ======================================================
-   SEGUIDORES — GRID + CARDS
-====================================================== */
+  /* ======================================================
+    ✨ MODO EDITAR PERFIL — Inputs, textarea, subir foto
+  ====================================================== */
+
+  .input-text {
+    margin-top: 30px;
+  }
+
+  .input-text,
+  .textarea-bio {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    background: #fff7f3;
+    border: 1px solid #ffd2c3;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    color: #444;
+    transition: 0.25s ease;
+  }
+
+  .input-text:focus,
+  .textarea-bio:focus {
+    background: #fff;
+    border-color: #ff6b3d;
+    box-shadow: 0 0 8px rgba(255, 107, 61, 0.35);
+    outline: none;
+  }
+
+  .textarea-bio {
+    min-height: 130px;
+    resize: vertical;
+  }
+
+  /* LABEL SUBIR FOTO */
+  .file-label {
+
+    display: inline-block;
+    padding: 10px 16px;
+    background: #ffe1d6;
+    color: #c24f28;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    border: 1px solid #ffbca6;
+    transition: 0.25s;
+    margin-right: 10px;
+    
+  }
+
+  .file-label:hover {
+    background: #ffd2c3;
+  }
+
+  .file-label input[type="file"] {
+    display: none;
+  }
+
+  /* ======================================================
+    💾 BOTONES GUARDAR / CANCELAR
+  ====================================================== */
+
+  .btn-guardar {
+    padding: 10px 20px;
+    background: #ff6b3d;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+  }
+
+  .btn-guardar:hover {
+    background: #ff3f1e;
+    
+  }
+
+  .btn-cancelar {
+    padding: 10px 20px;
+    background: #fff7f3;
+    border: 2px solid #ffd2c3;
+    border-radius: 12px;
+    color: #666;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: 0.25s ease;
+  }
+
+  .btn-cancelar:hover {
+    background: #ffeae3;
+  }
+
+  /* ======================================================
+    📱 RESPONSIVE EDIT MODE
+  ====================================================== */
+
+  @media (max-width: 600px) {
+    .btn-guardar,
+    .btn-cancelar {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+
+  /* ======================================================
+    SEGUIDORES — GRID + CARDS
+  ====================================================== */
 
 .seguidores-grid {
-  width: 90%;
-  max-width: 1400px;
+  padding-top: 20px;
+  width: 100%;
+  max-width: 900px;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0 !important;
+
+  align-items: start;
+
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 25px;
-  padding: 20px;
-  margin-bottom: 40px;
+  gap: 20px;
+  justify-content: center;
 }
+
+
 
 .seguidor-card {
   background: #fff;
@@ -487,254 +674,339 @@ main {
   gap: 18px;
   cursor: pointer;
   transition: 0.25s ease;
+
+  min-width: 260px;   /* más flexible */
+  max-width: 100%;    /* nunca se pasa del ancho del contenedor */
+  box-sizing: border-box;
 }
 
-.seguidor-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-  background: #fff7f3;
-}
-
-.seguidor-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #ff6b3d;
-}
-
-.seguidor-info h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #333;
-}
-
-.seguidor-info p {
-  margin: 2px 0;
-  color: #777;
-  font-size: 0.9rem;
-}
-
-/* BOTÓN DE SEGUIR / SIGUIENDO */
-.btn-follow {
-  margin-left: auto;
-  padding: 8px 16px;
-  background: #fff2ec;
-  border: 2px solid #ff6b3d;
-  border-radius: 12px;
-  color: #ff6b3d;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.btn-follow.siguiendo {
-  background: #ff6b3d;
-  color: #fff;
-}
-
-.btn-follow:hover {
-  opacity: 0.85;
-}
-
-/* =============================== 
-   RESPONSIVE SEGUIDORES
-================================= */
-
-@media (max-width: 600px) {
-  .seguidor-card {
-    flex-direction: column;
-    text-align: center;
+  .seguidor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    background: #fff7f3;
   }
 
   .seguidor-avatar {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ff6b3d;
   }
 
+  .seguidor-info h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .seguidor-info p {
+    margin: 2px 0;
+    color: #777;
+    font-size: 0.9rem;
+  }
+
+  /* BOTÓN DE SEGUIR / SIGUIENDO */
   .btn-follow {
-    width: 100%;
-    margin-top: 10px;
+    margin-left: auto;
+    padding: 8px 16px;
+    background: #fff2ec;
+    border: 2px solid #ff6b3d;
+    border-radius: 12px;
+    color: #ff6b3d;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  .btn-follow.siguiendo {
+    background: #ff6b3d;
+    color: #fff;
+  }
+
+  .btn-follow:hover {
+    opacity: 0.85;
+  }
+
+  @media (max-width: 500px) {
+  .seguidores-grid {
+    width: 80%;
   }
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* =============================== 
+    RESPONSIVE SEGUIDORES
+  ================================= */
+
+  @media (max-width: 600px) {
+    .seguidor-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .seguidor-avatar {
+      width: 80px;
+      height: 80px;
+    }
+
+    .btn-follow {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+
+  .modal-siguiendo {
+    background: white;
+    padding: 20px;
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 10px;
+  }
+
+  .modal-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-item {
+    display: flex;
+    gap: 12px;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
+
+  .modal-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .btn-cargar {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    background: #ff885b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .cerrar-modal {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .titulo-modal {
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+  .genero-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+    background: #ffe4d2;
+    padding: 4px 10px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+
+
+
+
+
+  /* ========== BOTONES DE ICONOS ========== */
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: #ffd6c4; /* rosado suave */
+  }
+
+  .icon-btn .material-icons {
+    font-size: 16px;
+    color: #333;
+  }
+
+
+  /* ========== CONTENEDOR DEL POST ========== */
+  .post, .muro-post {
+    position: relative; /* permite usar absolute dentro */
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+
+  /* ========== BOTÓN DE 3 PUNTOS ========== */
+  .post-menu-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .menu-btn {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+  }
+
+  .menu-btn:hover {
+    background: rgba(0,0,0,0.1);
+  }
+
+
+  /* ========== MENÚ DESPLEGABLE (EDITAR / BORRAR) ========== */
+  .post-menu {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    padding: 6px 0;
+    width: 150px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid #eee;
+  }
+
+  .post-menu button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 14px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .post-menu button:hover {
+    background: #f1f1f1;
+  }
+
+
+  /* ========== REACCIONES (LIKE / DISLIKE / GUARDAR) ========== */
+  .post-reacciones {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+  }
+  /* ============================================
+    CONTENEDOR PRINCIPAL
+  ============================================ */
+
+.perfil-contenido {
+  min-height: 550px;     /* 🔥 asegura un mínimo bonito en laptop */
+  height: auto;          /* 🔥 se adapta al contenido en móvil */
   width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
+  overflow: visible;     /* 🔥 arregla todo en móvil */
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 2000;
+  padding-bottom: 40px;
 }
 
-.modal-siguiendo {
-  background: white;
-  padding: 20px;
-  width: 400px;
-  max-height: 80vh;
-  overflow-y: auto;
-  border-radius: 10px;
+
+  /* Quitar scroll interno del muro */
+  .muro,
+  .muro-post {
+    overflow: visible !important;
+  }
+
+  /* 🔥 FIX GLOBAL PARA EVITAR QUE NINGUNA SECCIÓN SE DESBORDE */
+body, html, .perfil-container, .perfil-header {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+/* ==== PREVENT DESBORDES EN TODO EL PERFIL ==== */
+.perfil-container * {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal !important;
+  box-sizing: border-box;
 }
 
-.modal-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+/* ======================================================
+   BUSCADOR DE HISTORIAS (input + resultados)
+====================================================== */
 
-.modal-item {
-  display: flex;
-  gap: 12px;
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-}
-
-.modal-avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.btn-cargar {
+.input-text {
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-  background: #ff885b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-}
-
-.cerrar-modal {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.titulo-modal {
-  text-align: center;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-
-.genero-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #444;
-  background: #ffe4d2;
-  padding: 4px 10px;
-  border-radius: 8px;
-  display: inline-block;
-  margin-bottom: 6px;
-}
-
-
-
-
-
-/* ========== BOTONES DE ICONOS ========== */
-.icon-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: background 0.2s ease;
-}
-
-.icon-btn:hover {
-  background: #ffd6c4; /* rosado suave */
-}
-
-.icon-btn .material-icons {
-  font-size: 16px;
-  color: #333;
-}
-
-
-/* ========== CONTENEDOR DEL POST ========== */
-.post, .muro-post {
-  position: relative; /* permite usar absolute dentro */
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-
-/* ========== BOTÓN DE 3 PUNTOS ========== */
-.post-menu-wrapper {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.menu-btn {
-  background: transparent;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background 0.2s ease;
-}
-
-.menu-btn:hover {
-  background: rgba(0,0,0,0.1);
-}
-
-
-/* ========== MENÚ DESPLEGABLE (EDITAR / BORRAR) ========== */
-.post-menu {
-  position: absolute;
-  top: 32px;
-  right: 0;
-  background: white;
-  border-radius: 10px;
-  padding: 6px 0;
-  width: 150px;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border: 1px solid #eee;
-}
-
-.post-menu button {
-  width: 100%;
-  background: transparent;
-  border: none;
   padding: 10px 14px;
-  text-align: left;
+  background: #fff7f3;
+  border: 1px solid #ffd2c3;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #444;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+.resultado-busqueda-lista {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ffd2c3;
+  border-radius: 12px;
+  margin-top: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.resultado-item {
+  padding: 10px 14px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #333;
+  transition: background 0.6s ease;
+  font-size: 0.95rem;
 }
 
-.post-menu button:hover {
-  background: #f1f1f1;
-}
-
-
-/* ========== REACCIONES (LIKE / DISLIKE / GUARDAR) ========== */
-.post-reacciones {
-  margin-top: 14px;
-  display: flex;
-  gap: 12px;
+.resultado-item:hover {
+  background: #ffe1d8;
 }

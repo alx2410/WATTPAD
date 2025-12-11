@@ -58,6 +58,14 @@ export default function Perfil() {
 
   const [menuAbierto, setMenuAbierto] = useState(null);
 
+  const [busquedaLibro, setBusquedaLibro] = useState("");
+const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
+const [leyendoAhora, setLeyendoAhora] = useState(null);
+
+const [notificaciones, setNotificaciones] = useState([]);
+
+
+
   // =========================
   // 1. Cargar Perfil
   // =========================
@@ -84,6 +92,109 @@ export default function Perfil() {
     }
     fetchPerfil();
   }, [uidObjetivo, uidPerfil, user]);
+
+  /////////////////////////////////////////////
+
+useEffect(() => {
+  async function buscar() {
+    if (!busquedaLibro.trim()) {
+      setResultadosBusqueda([]);
+      return;
+    }
+
+    try {
+      const snap = await getDocs(collection(db, "historias")); // ← AQUÍ EL CAMBIO
+
+      const lista = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(lib =>
+          lib.titulo?.toLowerCase?.().includes(busquedaLibro.toLowerCase())
+        );
+
+      setResultadosBusqueda(lista);
+    } catch (err) {
+      console.error("Error al buscar historias:", err);
+    }
+  }
+
+  buscar();
+}, [busquedaLibro]);
+
+  // =========================
+  // NOTIFICACIONES
+  // =========================
+
+useEffect(() => {
+  if (!user) return;
+
+  const q = query(
+    collection(db, "usuarios", user.uid, "notificaciones"),
+    orderBy("fecha", "desc")
+  );
+
+  const unsub = onSnapshot(q, (snap) => {
+    const lista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setNotificaciones(lista);
+  });
+
+  return () => unsub();
+}, [user]);
+
+
+/////////////////////////////////////////////////////////////////////////
+
+const seleccionarLeyendoAhora = async (libro) => {
+  if (!user) return;
+
+  try {
+    const refLeyendo = doc(db, "usuarios", user.uid, "leyendo", libro.id);
+
+    await setDoc(refLeyendo, {
+      libroId: libro.id,
+      titulo: libro.titulo,
+      descripcion: libro.descripcion || "",
+      portada: libro.portada || "",
+      timestamp: serverTimestamp()
+    });
+
+    setLeyendoAhora(libro);
+    setBusquedaLibro("");         // limpia barra
+    setResultadosBusqueda([]);    // limpia lista
+
+    alert("Lectura actual actualizada.");
+  } catch (err) {
+    console.error("Error al guardar lectura:", err);
+  }
+};
+
+
+///////////////////////////////////////////////
+
+useEffect(() => {
+  if (!uidObjetivo) return;
+
+  async function cargarLeyendo() {
+    try {
+      const ref = collection(db, "usuarios", uidObjetivo, "leyendo");
+      const snap = await getDocs(ref);
+
+      if (snap.empty) {
+        setLeyendoAhora(null);
+        return;
+      }
+
+      // Solo hay 1 lectura, así tomamos la primera
+      const data = snap.docs[0].data();
+      setLeyendoAhora(data);
+    } catch (err) {
+      console.error("Error cargando lectura actual:", err);
+    }
+  }
+
+  cargarLeyendo();
+}, [uidObjetivo]);
+
+
 
   // =========================
   // 2. Cargar seguidores y siguiendo
@@ -178,30 +289,52 @@ useEffect(() => {
   return () => unsubscribe();
 }, [uidObjetivo]);
 
-  // =========================
-  // 5. Toggle Follow
-  // =========================
-  const toggleFollow = async () => {
-    if (!user) return;
+// =========================
+// 5. Toggle Follow
+// =========================
+const toggleFollow = async () => {
+  if (!user) return;
 
-    setYaSigo(prev => !prev);
+  setYaSigo(prev => !prev);
 
-    if (yaSigo) {
-      await dejarSeguirUsuario(user.uid, uidPerfil);
-      setDatosPerfil(prev => ({
-        ...prev,
-        seguidores: prev.seguidores.filter(id => id !== user.uid),
-      }));
-      setSeguidoresCount(prev => prev - 1);
-    } else {
-      await seguirUsuario(user.uid, uidPerfil);
-      setDatosPerfil(prev => ({
-        ...prev,
-        seguidores: [...prev.seguidores, user.uid],
-      }));
-      setSeguidoresCount(prev => prev + 1);
-    }
-  };
+  if (yaSigo) {
+    // DEJAR DE SEGUIR
+    await dejarSeguirUsuario(user.uid, uidPerfil);
+
+    setDatosPerfil(prev => ({
+      ...prev,
+      seguidores: prev.seguidores.filter(id => id !== user.uid),
+    }));
+
+    setSeguidoresCount(prev => prev - 1);
+
+  } else {
+    // SEGUIR
+    await seguirUsuario(user.uid, uidPerfil);
+
+    // Actualizar estado local primero
+    setDatosPerfil(prev => ({
+      ...prev,
+      seguidores: [...prev.seguidores, user.uid],
+    }));
+
+    setSeguidoresCount(prev => prev + 1);
+
+    // Crear notificación después
+    await addDoc(
+      collection(db, "usuarios", uidPerfil, "notificaciones"),
+      {
+        tipo: "follow",
+        fromUID: user.uid,
+        nombreAutor: user.displayName || user.email || "Usuario",
+        fecha: serverTimestamp(),
+        leida: false
+      }
+    );
+  }
+};
+
+  
 
 
   const toggleMenu = (postId) => {
@@ -355,7 +488,8 @@ useEffect(() => {
   try {
     const fotoPerfil = datosPerfil?.avatar || user.photoURL || "";
 
-    await addDoc(collection(db, "muro"), {
+    // 1. Publicar en muro
+    const postRef = await addDoc(collection(db, "muro"), {
       uid: user.uid,
       autor: datosPerfil?.username || user.displayName || user.email,
       texto: nuevoPost.trim(),
@@ -365,16 +499,37 @@ useEffect(() => {
       dislikesUsuarios: []
     });
 
-    // ❌ Ya NO agregamos nada al estado local
-    // Firestore lo insertará automáticamente por el onSnapshot
-
     setNuevoPost("");
+
+    // 2. Obtener seguidores
+    const seguidoresSnap = await getDocs(
+      collection(db, "usuarios", user.uid, "seguidores")
+    );
+
+    const seguidoresUIDs = seguidoresSnap.docs.map(d => d.id);
+
+    // 3. Crear notificación para cada seguidor
+    for (const segUID of seguidoresUIDs) {
+      await addDoc(
+        collection(db, "usuarios", segUID, "notificaciones"),
+        {
+          tipo: "muro",
+          fromUID: user.uid,
+          nombreAutor: datosPerfil?.username,
+          texto: nuevoPost,
+          postId: postRef.id,
+          fecha: serverTimestamp(),
+          leida: false
+        }
+      );
+    }
 
   } catch (err) {
     console.error("publicarEnMuro error:", err);
     alert("No se pudo publicar en el muro.");
   }
 };
+
 
 
 
@@ -583,7 +738,46 @@ setPosts(prev =>
                 <input type="file" accept="image/*" onChange={handleFileChange} />
               </label>
 
-              <button className="btn-guardar" onClick={guardarCambios}>Guardar cambios</button>
+              <div className="editar-lectura-actual">
+
+  <input
+    type="text"
+    className="input-text"
+    placeholder="Selecciona tu lectura actual..."
+    value={busquedaLibro}
+    onChange={(e) => setBusquedaLibro(e.target.value)}
+  />
+
+  {resultadosBusqueda.length > 0 && (
+    <div className="resultado-busqueda-lista">
+      {resultadosBusqueda.map((lib) => (
+        <div
+          key={lib.id}
+          className="resultado-item"
+          onClick={() => seleccionarLeyendoAhora(lib)}
+          style={{
+            cursor: "pointer",
+            padding: "6px",
+            borderBottom: "1px solid #ddd"
+          
+          }}
+        >
+          {lib.titulo}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* Vista previa de lo que escogiste */}
+  {leyendoAhora && (
+    <p style={{ marginTop: "6px", fontStyle: "italic", color: "gray" }}>
+      Seleccionado: {leyendoAhora.titulo}
+    </p>
+  )}
+</div>
+
+          
+              <button onClick={guardarCambios} className="btn-editar">Guardar cambios</button>
               <button className="btn-cancelar" onClick={() => setEditMode(false)}>Cancelar</button>
             </>
           )}
@@ -599,6 +793,7 @@ setPosts(prev =>
         <button onClick={() => setTab("seguidores")} className={tab === "seguidores" ? "active" : ""}>SEGUIDORES</button>
       </div>
 
+<div className="perfil-contenido">
       {/* =======================================================
            INFO
       ======================================================= */}
@@ -608,8 +803,33 @@ setPosts(prev =>
             <h3>Biografía</h3>
             <p>{bio || "Aún no has escrito tu biografía."}</p>
 
-            <h3>Siguiendo</h3>
-            <p>Próximamente...</p>
+            <h3>Lectura actual</h3>
+
+{leyendoAhora ? (
+  <div className="leyendo-ahora-card" style={{ marginTop: "10px" }}>
+    <p style={{ margin: "0 0 6px 0" }}>
+      Estás leyendo ahora mismo:
+    </p>
+
+    <div
+      className="historia-card"
+      onClick={() => navigate(`/libro/${leyendoAhora.id}`)}
+      style={{ cursor: "pointer" }}
+    >
+      <div className="historia-content">
+        <h4>{leyendoAhora.titulo}</h4>
+        <p>{leyendoAhora.descripcion}</p>
+      </div>
+
+      {leyendoAhora.portada && (
+        <img src={leyendoAhora.portada} className="historia-portada"/>
+      )}
+    </div>
+  </div>
+) : (
+  <p>No tienes una lectura actual.</p>
+)}
+
 
             <h3>Último post</h3>
 {(() => {
@@ -622,7 +842,7 @@ setPosts(prev =>
     });
 
   return postsUsuario.length
-    ? <p>{postsUsuario[0].texto}</p>
+    ? <p className="ultimo-post-texto">{postsUsuario[0].texto}</p>
     : <p>No has publicado aún.</p>;
 })()}
 
@@ -846,6 +1066,7 @@ setPosts(prev =>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
