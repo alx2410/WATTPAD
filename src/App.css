@@ -39,6 +39,11 @@ hr {
    NAVBAR (NUEVA VERSIÓN: fondo blanco + letras negras)
 ========================================================= */
 
+.nav-links {
+
+}
+
+
 nav {
   background: #ffffff;
   display: flex;
@@ -76,8 +81,7 @@ nav ul {
   padding: 0;
 }
 
-////////////////////////////////
-nav ul li a {
+.nav-links, .nav-links a{
   color: #000;
   text-decoration: none;
   font-weight: 700;
@@ -85,7 +89,8 @@ nav ul li a {
   transition: 0.3s ease;
 }
 
-nav ul li a::after {
+.nav-links::after, 
+.nav-links a::after {
   content: "";
   position: absolute;
   bottom: -5px;

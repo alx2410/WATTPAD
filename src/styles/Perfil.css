@@ -617,7 +617,7 @@
 
 .seguidores-grid {
    padding-top: 20px;
-  width: 100%;
+  width: 90%;
   max-width: 900px;   /* evita tarjetas gigantes, ajusta si quieres */
   margin: 0 auto;
   align-items: start;   /* evita que las cards se estiren verticalmente */
