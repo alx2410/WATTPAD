@@ -778,6 +778,31 @@
     border-radius: 10px;
   }
 
+  /* ---- Modal Responsivo ---- */
+@media (max-width: 600px) {
+  .modal-siguiendo {
+    width: 90% !important;      /* más angosto y fluido */
+    max-width: 360px;           /* límite elegante */
+    padding: 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-siguiendo {
+    width: 88% !important;
+    max-width: 300px;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 330px) {
+  .modal-siguiendo {
+    width: 92% !important;
+    max-width: 260px;
+    padding: 12px;
+  }
+}
+
   .modal-lista {
     display: flex;
     flex-direction: column;
