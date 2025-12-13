@@ -1,0 +1,501 @@
+/* =========================================================
+   ESTILOS GENERALES
+========================================================= */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Merriweather', serif;
+  background-color: #fdf6e3;
+  color: #222;
+}
+
+/* Contenedor principal del libro */
+.leer-libro {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 50px 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  position: relative;
+  line-height: 1.8;
+}
+
+/* Título y sinopsis */
+.leer-libro-container h1 {
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+}
+
+.sinopsis {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* Capítulo */
+.leer-capitulo h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.leer-capitulo p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Navegación de capítulos */
+.nav-capitulos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.nav-capitulos button {
+  padding: 10px 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-capitulos button:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+/* Barra de capítulos lateral */
+.barra-capitulos {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  width: 220px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+.barra-capitulos h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  text-align: center;
+  color: #555;
+}
+
+.barra-capitulos li {
+  list-style: none;
+  margin-bottom: 6px;
+}
+
+.barra-capitulos li button {
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.barra-capitulos li button.active,
+.barra-capitulos li button:hover {
+  color: #ff7f50;
+}
+
+/* =========================================================
+   MODO OSCURO
+========================================================= */
+body.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
+
+body.dark-mode .leer-libro-container {
+  background-color: #1e1e1e;
+  color: #eee;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .leer-capitulo p,
+body.dark-mode .sinopsis {
+  color: #ddd;
+}
+
+body.dark-mode .nav-capitulos button {
+  background-color: #333;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+body.dark-mode .nav-capitulos button:hover {
+  background-color: #444;
+  border-color: #777;
+}
+
+body.dark-mode .barra-capitulos {
+  background-color: #2a2a2a;
+  border-color: #555;
+}
+
+body.dark-mode .barra-capitulos li button {
+  color: #ccc;
+}
+
+body.dark-mode .barra-capitulos li button.active,
+body.dark-mode .barra-capitulos li button:hover {
+  color: #ff7f50;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 900px) {
+  .leer-libro-container {
+    padding: 30px 20px;
+    max-width: 100%;
+  }
+
+  .barra-capitulos {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-bottom: 20px;
+  }
+
+  .nav-capitulos {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .leer-libro-container {
+    padding: 20px 15px;
+  }
+
+  .leer-capitulo h2 {
+    font-size: 1.5rem;
+  }
+
+  .leer-capitulo p {
+    font-size: 1rem;
+  }
+}
+
+
+
+
+/* ==========================
+   ESTILO GENERAL
+========================== */
+.leer-capitulo {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: "Poppins", sans-serif;
+  line-height: 1.7;
+  color: #222;
+  background-color: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* ==========================
+   MODO OSCURO
+========================== */
+body.dark .leer-capitulo {
+  background-color: #1f1f1f;
+  color: #eee;
+}
+
+/* ==========================
+   TITULO DEL CAPITULO
+========================== */
+.leer-capitulo h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ==========================
+   CONTENIDO DEL CAPITULO
+========================== */
+.leer-capitulo p {
+  text-align: justify;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  padding: 0 10px;
+}
+
+/* ==========================
+   BOTONES DE NAVEGACION
+========================== */
+.nav-capitulos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav-capitulos button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f46e5;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.nav-capitulos button:hover {
+  background-color: #3730a3;
+  transform: translateY(-2px);
+}
+
+/* ==========================
+   MENU LATERAL DE CAPITULOS
+========================== */
+.menu-capitulos {
+  margin-top: 40px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+body.dark .menu-capitulos {
+  background-color: #2b2b2b;
+}
+
+.menu-capitulos h3 {
+  margin-bottom: 15px;
+}
+
+.menu-capitulos ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-capitulos li {
+  margin-bottom: 8px;
+}
+
+.menu-capitulos li button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.menu-capitulos li button:hover {
+  background-color: #e0e0ff;
+}
+
+body.dark .menu-capitulos li button:hover {
+  background-color: #4444aa;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 768px) {
+  .leer-capitulo {
+    padding: 20px 15px;
+  }
+
+  .nav-capitulos {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-capitulos button {
+    width: 100%;
+  }
+}
+
+
+/* ===============================
+   CONTENEDOR LECTURA
+================================ */
+.leer-capitulo {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 60px 24px;
+   font-family: "Poppins", sans-serif;
+  line-height: 1.9;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+/* ===============================
+   TITULO
+================================ */
+.leer-capitulo h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 40px;
+}
+
+/* ===============================
+   TEXTO
+================================ */
+.leer-capitulo p {
+  text-align: justify;
+  margin-bottom: 1.6rem;
+}
+
+/* ===============================
+   NAVEGACION
+================================ */
+.nav-capitulos {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.nav-capitulos button {
+  background: #eee;            /* ← tu color */
+  border: 1px solid #ccc;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #222;
+  transition: all 0.2s ease;
+}
+
+.nav-capitulos button:hover {
+  background: #e2e2e2;
+  border-color: #bbb;
+}
+
+.nav-capitulos button:active {
+  transform: scale(0.97);
+}
+/* ===============================
+   LAYOUT GENERAL
+================================ */
+.leer-layout {
+  display: flex;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+/* ===============================
+   MENÚ CAPÍTULOS DESKTOP
+================================ */
+.menu-capitulos.desktop {
+  width: 260px;
+  flex-shrink: 0;
+  border-left: 1px solid #eee;
+  padding-left: 24px;
+}
+
+.menu-capitulos h3 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.menu-capitulos ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-capitulos li {
+  margin-bottom: 8px;
+}
+
+.menu-capitulos button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-capitulos button:hover {
+  background: #f3f3f3;
+}
+
+.menu-capitulos button.activo {
+  font-weight: 600;
+  background: #ececff;
+}
+
+/* ===============================
+   BOTÓN HAMBURGUESA
+================================ */
+.btn-menu {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1001;
+  border: none;
+  background: #ff6b6b;
+  color: white;
+  font-size: 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+/* ===============================
+   MENÚ MÓVIL
+================================ */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+  display: flex;
+}
+
+.menu-capitulos.mobile {
+  background: white;
+  width: 260px;
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+  .leer-layout {
+    flex-direction: column;
+  }
+
+  .menu-capitulos.desktop {
+    display: none;
+  }
+
+  .btn-menu {
+    display: block;
+  }
+}
+
+

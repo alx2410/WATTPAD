@@ -16,6 +16,10 @@ import RutaAdmin from "./components/RutaAdmin";
 import PopularBooks from "./components/PopularBooks";
 import LibroDetalle from "./components/LibroDetalle";
 
+import LeerLibro from "./paginas/LeerLibro";
+import LeerCapitulo from "./paginas/LeerCapitulo";
+
+
 
 import { LibrosProvider } from "./context/LibrosContext";
 
@@ -44,18 +48,13 @@ export default function App() {
         <Route path="/libro/:id" element={<LibroDetalle />} /> {/* Página de detalle */}
 
 
-        {/* RUTAS PROTEGIDAS: INTRANET */}
-        <Route
-          path="/intranet"
-          element={
-            <RutaProtegida>
-             
-            </RutaProtegida>
-          }
-        >
-        
+ {/* LECTURA */}
+        <Route path="/leer/:libroId" element={<LeerLibro />} />
+        <Route path="/leer/:libroId/:capituloId" element={<LeerCapitulo />} />
 
-        </Route>
+
+
+      
       </Routes>
     </LibrosProvider>
   );

@@ -2,155 +2,166 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase/auth";
 import { db } from "../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+  deleteDoc
+} from "firebase/firestore";
 
 export default function Biblioteca() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("enLectura");
 
-  // ESTADOS REALES QUE VIENEN DE FIREBASE
   const [enLectura, setEnLectura] = useState([]);
   const [miLista, setMiLista] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Detectar usuario logueado
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const cargarLibros = async () => {
-      // BIBLIOTECA (EN LECTURA)
-      const snapBiblio = await getDocs(
-        collection(db, "usuarios", user.uid, "biblioteca")
-      );
-
-      const arrBiblio = [];
-      snapBiblio.forEach((doc) => arrBiblio.push({ id: doc.id, ...doc.data() }));
-      setEnLectura(arrBiblio);
-
-      // MI LISTA
-      const snapLista = await getDocs(
-        collection(db, "usuarios", user.uid, "lista")
-      );
-
-      const arrLista = [];
-      snapLista.forEach((doc) => arrLista.push({ id: doc.id, ...doc.data() }));
-      setMiLista(arrLista);
-
-      // FAVORITOS
-      const snapFav = await getDocs(
-        collection(db, "usuarios", user.uid, "favoritos")
-      );
-
-      const arrFav = [];
-      snapFav.forEach((doc) => arrFav.push({ id: doc.id, ...doc.data() }));
-      setFavoritos(arrFav);
-    };
-
-    cargarLibros();
+    const unsub = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
 
-  // FUNCIONES BÁSICAS
-  const seguirLeyendo = (id) => {
-    navigate(`/leer/${id}`);
+  // Cargar datos desde Firebase
+  const cargarDatos = async (user) => {
+    if (!user) return;
+
+    const cargarSeccion = async (ruta, setState) => {
+      const snap = await getDocs(collection(db, "usuarios", user.uid, ruta));
+      const arr = [];
+      snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
+      setState(arr);
+    };
+
+    await cargarSeccion("biblioteca", setEnLectura);
+    await cargarSeccion("lista", setMiLista);
+    await cargarSeccion("favoritos", setFavoritos);
   };
 
-  const empezarALeer = (id) => {
-    const libro = miLista.find((l) => l.id === id);
-    if (!libro) return;
+  useEffect(() => {
+    if (currentUser) cargarDatos(currentUser);
+  }, [currentUser]);
 
-    setMiLista(miLista.filter((l) => l.id !== id));
+  // Mover libro de Mi Lista → En Lectura
+  const empezarALeer = async (libro) => {
+    if (!currentUser) return;
+
+    await setDoc(doc(db, "usuarios", currentUser.uid, "biblioteca", libro.id), libro);
+    await deleteDoc(doc(db, "usuarios", currentUser.uid, "lista", libro.id));
+
+    setMiLista(miLista.filter((l) => l.id !== libro.id));
     setEnLectura([...enLectura, libro]);
+
+    navigate(`/leer/${libro.id}`);
   };
 
-  const quitarDeBiblioteca = (id) => {
-    setEnLectura(enLectura.filter((l) => l.id !== id));
+  const seguirLeyendo = (libro) => navigate(`/leer/${libro.id}`);
+
+  // BORRAR LIBRO SEGÚN SECCIÓN
+  const quitarLibro = async (libro, seccion) => {
+    if (!currentUser) return;
+
+    const rutaFirestore =
+      seccion === "miLista" ? "lista"
+      : seccion === "enLectura" ? "biblioteca"
+      : "favoritos";
+
+    await deleteDoc(doc(db, "usuarios", currentUser.uid, rutaFirestore, libro.id));
+
+    if (seccion === "enLectura")
+      setEnLectura(enLectura.filter((l) => l.id !== libro.id));
+
+    if (seccion === "miLista")
+      setMiLista(miLista.filter((l) => l.id !== libro.id));
+
+    if (seccion === "favoritos")
+      setFavoritos(favoritos.filter((l) => l.id !== libro.id));
   };
 
-  const quitarDeMiLista = (id) => {
-    setMiLista(miLista.filter((l) => l.id !== id));
+  const LibroCard = ({ libro, seccion }) => (
+    <div className="libro-card">
+      <img src={libro.portada} alt={libro.titulo} />
+      <p>{libro.titulo}</p>
+
+      {seccion === "miLista" && (
+        <button className="btn-azul" onClick={() => empezarALeer(libro)}>
+          Empezar a leer
+        </button>
+      )}
+
+      {seccion === "enLectura" && (
+        <button className="btn-azul" onClick={() => seguirLeyendo(libro)}>
+          Seguir leyendo
+        </button>
+      )}
+
+      {seccion === "favoritos" && (
+        <button className="btn-azul" onClick={() => seguirLeyendo(libro)}>
+          Leer otra vez
+        </button>
+      )}
+
+      <button className="btn-rojo" onClick={() => quitarLibro(libro, seccion)}>
+        Quitar
+      </button>
+    </div>
+  );
+
+  const renderTab = () => {
+    let libros =
+      activeTab === "enLectura" ? enLectura
+      : activeTab === "miLista" ? miLista
+      : favoritos;
+
+    if (libros.length === 0)
+      return <p>No hay libros en esta sección.</p>;
+
+    return (
+      <div className="libros-grid">
+        {libros.map((libro) => (
+          <LibroCard key={libro.id} libro={libro} seccion={activeTab} />
+        ))}
+      </div>
+    );
   };
 
-  const quitarFavorito = (id) => {
-    setFavoritos(favoritos.filter((l) => l.id !== id));
-  };
+  if (loading) return <p>Cargando biblioteca...</p>;
+  if (!currentUser) return <p>Inicia sesión para ver tu biblioteca.</p>;
 
-  // --------------------------
-  // RENDER
-  // --------------------------
   return (
     <div className="biblioteca-contenedor">
+      <div className="biblioteca-tabs">
+        <button
+          className={activeTab === "enLectura" ? "active" : ""}
+          onClick={() => setActiveTab("enLectura")}
+        >
+          En lectura
+        </button>
 
-      {/* EN LECTURA */}
-      <div className="biblioteca-seccion">
-        <h2>En lectura</h2>
+        <button
+          className={activeTab === "miLista" ? "active" : ""}
+          onClick={() => setActiveTab("miLista")}
+        >
+          Mi lista
+        </button>
 
-        <div className="libros-grid">
-          {enLectura.length === 0 && <p>No estás leyendo nada aún.</p>}
-
-          {enLectura.map((libro) => (
-            <div className="libro-card" key={libro.id}>
-              <img src={libro.portada} alt={libro.titulo} />
-              <p>{libro.titulo}</p>
-
-              <button onClick={() => seguirLeyendo(libro.id)}>
-                Seguir leyendo
-              </button>
-
-              <button onClick={() => quitarDeBiblioteca(libro.id)}>
-                Quitar
-              </button>
-            </div>
-          ))}
-        </div>
+        <button
+          className={activeTab === "favoritos" ? "active" : ""}
+          onClick={() => setActiveTab("favoritos")}
+        >
+          Favoritos
+        </button>
       </div>
 
-      {/* MI LISTA */}
-      <div className="biblioteca-seccion">
-        <h2>Mi lista</h2>
-
-        <div className="libros-grid">
-          {miLista.length === 0 && <p>Tu lista está vacía.</p>}
-
-          {miLista.map((libro) => (
-            <div className="libro-card" key={libro.id}>
-              <img src={libro.portada} alt={libro.titulo} />
-              <p>{libro.titulo}</p>
-
-              <button onClick={() => empezarALeer(libro.id)}>
-                Empezar
-              </button>
-
-              <button onClick={() => quitarDeMiLista(libro.id)}>
-                Quitar
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* FAVORITOS */}
-      <div className="biblioteca-seccion">
-        <h2>Favoritos</h2>
-
-        <div className="libros-grid">
-          {favoritos.length === 0 && <p>No tienes favoritos todavía.</p>}
-
-          {favoritos.map((libro) => (
-            <div className="libro-card" key={libro.id}>
-              <img src={libro.portada} alt={libro.titulo} />
-              <p>{libro.titulo}</p>
-
-              <button onClick={() => seguirLeyendo(libro.id)}>
-                Leer otra vez
-              </button>
-
-              <button onClick={() => quitarFavorito(libro.id)}>
-                Quitar
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      {renderTab()}
     </div>
   );
 }

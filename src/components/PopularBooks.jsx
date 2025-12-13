@@ -9,8 +9,8 @@ export default function PopularBooks() {
 
   // Aquí defines los 7 libros que quieres mostrar (IDs de Firestore)
   const librosDestacados = [
-    "wtMRDnvwanMY88RxXSpO",
-    "cd15MGyjaZ94Rvs9gfkn",
+    "l7yvPwJZrwDNl2RcZ0U4",
+    "yKZ0IpdaKPO2Chragu0T",
     "PB6gXVnCfvSrzaQqfb7e",
     "86qWw0U0TpEaMoNIMLcc",
     "idLibro5",

@@ -38,7 +38,7 @@ const handleSearch = (e) => {
   "comedia",
   "aventura",
   "fanfic",
-  "LGTBQ+",
+  "LGTBQ",
   "motivacional",
   "thriller"
 ];

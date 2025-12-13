@@ -1,0 +1,231 @@
+/* =========================================
+   Escribir - estilos unificados para componentes
+   - cubre: escribir-contenedor / escribir-container
+   - crear-libro-form, editar-libro-form, capitulo-form, libro-sidebar, capitulos-editor, lista-capitulos, etc.
+   ========================================= */
+
+/* CONTENEDOR GENERAL (ambas variantes de clase por si acaso) */
+.escribir-container,
+.escribir-contenedor {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 20px;
+  background: #fff7f2;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* SIDEBAR (lado izquierdo) */
+.libro-sidebar {
+  width: 260px;
+  min-width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  height: fit-content;
+}
+
+.libro-sidebar h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.lista-libros {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-libro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s ease, transform .08s ease;
+}
+
+.item-libro:hover {
+  background: #fff0e8;
+  transform: translateY(-2px);
+}
+
+.item-libro strong {
+  font-size: 14px;
+  color: #222;
+}
+
+.item-libro .estado {
+  font-size: 12px;
+  color: #777;
+  background: #fff0e8;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+/* CONTENIDO PRINCIPAL (derecha) */
+.escribir-contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* FORM SECTIONS (usar para crear/editar libro y capítulos) */
+.form-section,
+.crear-libro-form,
+.editar-libro-form,
+.capitulo-form,
+.capitulos-editor {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+
+/* TITULOS */
+.form-section h2,
+.crear-libro-form h2,
+.editar-libro-form h2,
+.capitulos-editor h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  color: #333;
+}
+
+/* INPUTS Y TEXTAREAS */
+.form-section input,
+.form-section textarea,
+.form-section select,
+.crear-libro-form input,
+.crear-libro-form textarea,
+.editar-libro-form input,
+.editar-libro-form textarea,
+.capitulo-form input,
+.capitulo-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e6e6e6;
+  font-size: 14px;
+  background: #fff;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.form-section textarea,
+.crear-libro-form textarea,
+.editar-libro-form textarea,
+.capitulo-form textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* LABELS */
+.form-section label,
+.crear-libro-form label,
+.editar-libro-form label {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* BOTONES PRINCIPALES */
+.form-section button,
+.crear-libro-form button,
+.editar-libro-form button,
+.capitulo-form button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #ff8e61;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, transform .08s ease;
+}
+
+.form-section button:hover,
+.crear-libro-form button:hover,
+.editar-libro-form button:hover,
+.capitulo-form button:hover {
+  background: #ff7a44;
+}
+
+/* LISTADO DE CAPÍTULOS */
+.lista-capitulos,
+.capitulos-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.capitulo-item,
+.capitulo-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #f2f0ee;
+}
+
+.capitulo-item strong {
+  font-size: 15px;
+  color: #222;
+}
+
+/* BOTONES PEQUEÑOS */
+.acciones button,
+.btn-small {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: #ffd4c2;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.acciones button:hover,
+.btn-small:hover {
+  background: #ffb59a;
+}
+
+/* MENSAJES */
+.sin-libros,
+.capitulos-editor p {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+/* RESPONSIVE: colapsa sidebar */
+@media (max-width: 900px) {
+  .escribir-container,
+  .escribir-contenedor {
+    flex-direction: column;
+    padding: 16px;
+  }
+  .libro-sidebar {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+  }
+}
