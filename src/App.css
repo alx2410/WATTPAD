@@ -3,8 +3,8 @@
 ========================================================= */
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
-  background-color: #ffffff; /* rosado durazno suave */
+  background-color: #f6f7fb;
+  font-family: "Poppins", sans-serif; 
   color: #222;
   scroll-behavior: smooth;
 }
@@ -17,10 +17,7 @@ a, button {
   outline: none;
 }
 
-::selection {
-  background-color: #ffb3a7;
-  color: #fff;
-}
+
 
 main {
   padding: 24px;
@@ -331,7 +328,7 @@ nav button:hover {
 /* Botones principales */
 .btn-primario {
   width: 100%;
-  background: linear-gradient(90deg, #ff8c42, #ff6b00);
+  background: linear-gradient(90deg, #ff9b5a, #ff6b00);
   color: white;
   padding: 12px;
   border: none;

@@ -26,12 +26,14 @@ body, html {
 .leer-libro-container h1 {
   font-size: 2.2rem;
   margin-bottom: 15px;
+  font-family: "Poppins", sans-serif;
 }
 
 .sinopsis {
   font-size: 1.1rem;
   color: #555;
   margin-bottom: 30px;
+  font-family: "Poppins", sans-serif;
 }
 
 /* Capítulo */
@@ -455,7 +457,7 @@ body.dark .menu-capitulos li button:hover {
   left: 16px;
   z-index: 1001;
   border: none;
-  background: #ff6b6b;
+  background: #eee;
   color: white;
   font-size: 20px;
   padding: 10px 14px;

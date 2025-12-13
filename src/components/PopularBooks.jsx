@@ -11,7 +11,7 @@ export default function PopularBooks() {
   const librosDestacados = [
     "l7yvPwJZrwDNl2RcZ0U4",
     "yKZ0IpdaKPO2Chragu0T",
-    "PB6gXVnCfvSrzaQqfb7e",
+    "Udvsg9bIIAfk3XPksPd1",
     "86qWw0U0TpEaMoNIMLcc",
     "idLibro5",
     "idLibro6",

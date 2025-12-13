@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 60px;
-  background: #ffffff;
+  background: #f6f7fb;
   min-height: 500px;
 }
 
@@ -116,6 +116,7 @@ h1.generos-title{
 
 
 
+
 .generos-left {
   flex: 1;
   display: flex;
@@ -169,7 +170,7 @@ h1.generos-title{
 
 .genero-item {
   width: 100%;
-  background: #ffffff;
+  background: #f6f7fb;
   padding: 22px 20px;
   font-size: 20px;
   font-weight: 600;
@@ -191,7 +192,7 @@ h1.generos-title{
 }
 
 .genero-item:hover {
-  background: #f5f5f5;
+  background: #f6f7fb;
   cursor: pointer;
 }
 
@@ -200,28 +201,6 @@ h1.generos-title{
 
 
 
-/* ============================================
-   FOOTER
-============================================ */
-.footer {
-  padding: 40px;
-  background: #f0f0f0;
-  text-align: center;
-  margin-top: 50px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  font-size: 14px;
-  margin-bottom: 15px;
-}
-
-.footer-copy {
-  font-size: 13px;
-  color: #555;
-}
 
 
 /* HERO GENERAL */
@@ -234,9 +213,8 @@ h1.generos-title{
 /* CAJA BUSCADOR */
 .hero-search-container {
   position: relative;
-  width: 100%;
+  width: 200%;
   height: 400px;
-
   background-image: url("/fondo.png");
   background-size: contain;
   background-position: center;
@@ -299,30 +277,98 @@ h1.generos-title{
   font-weight: 700;
 }
 
-.footer-links a {
-  color: #ccc;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 6px;
-  text-decoration: none;
+/* FOOTER */
+.footer {
+  background-color: #0f0f12;
+  color: #cfcfd4;
+  padding: 2rem 1.25rem 1rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.footer-links a:hover {
-  color: #fff;
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+/* SECCIONES */
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-section h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.footer-section a {
+  display: block;
+  font-size: 0.85rem;
+  color: #b5b5bd;
+  text-decoration: none;
+  margin-bottom: 0.4rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-section a:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+/* REDES */
+.footer-redes {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.2rem;
 }
 
 .footer-redes a {
-  margin: 0 10px;
-  color: #fff;
-  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #1a1a1f;
+  color: #cfcfd4;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.footer-redes svg {
-  transition: transform 0.2s;
+.footer-redes a:hover {
+  background-color: #ffffff;
+  color: #0f0f12;
+  transform: translateY(-2px);
 }
 
-.footer-redes a:hover svg {
-  transform: scale(1.15);
-  color: #0af;
+/* COPYRIGHT */
+.footer-copy {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #8c8c96;
+  border-top: 1px solid #1f1f25;
+  padding-top: 1rem;
 }
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .footer {
+    text-align: center;
+  }
+
+  .footer-redes {
+    justify-content: center;
+  }
+
+  .footer-section a:hover {
+    transform: none;
+  }
+}
+
