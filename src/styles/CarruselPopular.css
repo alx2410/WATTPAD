@@ -51,26 +51,34 @@
 
 @media (max-width: 768px) {
 
-  /* El carrusel de libros sí debe desplazarse con el dedo */
+  .carrusel-box {
+    justify-content: flex-start;
+  }
+
   .carrusel-items {
     overflow-x: auto;
     overflow-y: hidden;
     display: flex;
-    gap: 15px;
+    gap: 12px;
     scroll-snap-type: x mandatory;
-    padding-bottom: 10px;
+    padding: 10px 16px;
     -webkit-overflow-scrolling: touch;
   }
 
   .carrusel-items img {
-    flex: 0 0 auto;              /* evita que se encojan */
+    flex: 0 0 auto;
+    width: 130px;
+    height: 190px;
+    border-radius: 10px;
     scroll-snap-align: start;
-    width: 150px;
-    height: 220px;
   }
 
-  /* Quita flechas en móvil si estorban */
   .arrow {
+    display: none;
+  }
+
+  /* opcional: limpia scrollbar fea */
+  .carrusel-items::-webkit-scrollbar {
     display: none;
   }
 }

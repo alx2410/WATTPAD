@@ -12,10 +12,9 @@ export default function PopularBooks() {
     "l7yvPwJZrwDNl2RcZ0U4",
     "yKZ0IpdaKPO2Chragu0T",
     "Udvsg9bIIAfk3XPksPd1",
-    "86qWw0U0TpEaMoNIMLcc",
-    "idLibro5",
-    "idLibro6",
-    "idLibro7",
+    "em2xANLHSSXtACJzeCWO",
+    "XwO6nzTo1RJrVWasLxqQ"
+    
   ];
 
   useEffect(() => {

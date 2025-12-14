@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../firebase/config";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { auth } from "../../firebase/auth";
+import "../../styles/Sidebar.css";
 
 export default function LibroSidebar({ onSelect }) {
   const [libros, setLibros] = useState([]);
@@ -27,25 +28,37 @@ export default function LibroSidebar({ onSelect }) {
   }, []);
 
   return (
-    <div className="libro-sidebar">
-      <h3>Mis libros</h3>
+    <div className="sidebar-libro">
+      <h3 className="sidebar-title">Mis libros</h3>
 
       {libros.length === 0 && (
-        <p className="sin-libros">Aún no tienes libros creados.</p>
+        <p className="sidebar-sin-libros">Aún no tienes libros creados.</p>
       )}
 
-      <ul className="lista-libros">
+      <div className="sidebar-lista">
         {libros.map((libro) => (
-          <li
+          <div
             key={libro.id}
-            className="item-libro"
+            className="sidebar-card"
             onClick={() => onSelect(libro.id)}
           >
-            <strong>{libro.titulo}</strong>
-            <span className="estado">{libro.estado}</span>
-          </li>
+            {libro.portada && (
+              <img className="sidebar-portada" src={libro.portada} alt="portada" />
+            )}
+            <div className="sidebar-info">
+              <h4 className="sidebar-titulo">{libro.titulo}</h4>
+              <div className="sidebar-estados">
+                <span className={`sidebar-estado ${libro.estado}`}>
+                  {libro.estado === "borrador" ? "Borrador" : "Publicado"}
+                </span>
+                <span className={`sidebar-progreso ${libro.estadoProgreso}`}>
+                  {libro.estadoProgreso === "en_proceso" ? "En proceso" : "Terminado"}
+                </span>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

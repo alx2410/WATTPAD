@@ -23,7 +23,7 @@
   gap: 6px;
 }
 
-.mega-menu-modal .categoria-modal{
+.mega-menu-modal .categoria-modal {
   background: none;
   border: none;
   text-align: left;
@@ -37,63 +37,89 @@
 }
 
 
-/* Grid de libros */
-/* Grid de libros: más columnas, más compacto */
-.grid-libros {
+/* =====================================================
+   GRID DE LIBROS
+===================================================== */
+
+.grid-libros-explorar {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 33px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); /* más compacto */
+  gap: 28px;
   margin-top: 30px;
 }
 
-/* Cards: más estrechos y compactos */
-.libro-card {
-  text-decoration: none;    /* quita la línea */
-  color: inherit;           /* usa el color normal del texto */
+
+/* Card */
+.libro-card-explorar {
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.2s ease;
 }
 
-.libro-card:hover {
-  transform: translateY(-4px);
+.libro-card-explorar:hover {
+  transform: translateY(-3px);
 }
 
-.libro-card h2,
-.libro-card p {
-  margin: 0;
-  text-decoration: none;
-  color: inherit;
-}
 
-/* Imagen más pequeña y delgada */
-.libro-card img {
+/* Imagen MÁS PEQUEÑA */
+.libro-card-explorar img {
+  width: 85%;                  /* CLAVE */
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
   border: none;
 }
 
-/* Info más compacta */
-.info-libro h2 {
-  font-size: 0.95rem;
-  margin: 6px 0 4px;
+
+/* Info */
+.info-libro-explorar {
+  margin-top: 6px;
+  text-align: center;
+}
+
+.info-libro-explorar h2 {
+  font-size: 0.9rem;
+  margin: 4px 0 2px;
   color: #222;
 }
 
-.info-libro p {
-  font-size: 0.75rem;
+.info-libro-explorar p {
+  font-size: 0.72rem;
   color: #666;
 }
 
-/* Responsive */
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media (max-width: 600px) {
-  .grid-libros {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 15px;
+  .grid-libros-explorar {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
   }
 
-  .libro-card img {
-    height: 160px;
+  .libro-card-explorar img {
+    width: 100%;              /* aprovecha mejor la columna */
+  }
+
+  .info-libro-explorar h2 {
+    font-size: 0.82rem;
+  }
+
+  .info-libro-explorar p {
+    font-size: 0.68rem;
   }
 }
+
+
+/* =====================================================
+   BOTONES
+===================================================== */
 
 .btn-leer {
   background: #111;
@@ -112,7 +138,6 @@
 }
 
 .btn-lista {
-
   border: none;
   padding: 10px 12px;
   border-radius: 6px;
@@ -121,7 +146,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .btn-icono:hover {

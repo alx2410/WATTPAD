@@ -22,11 +22,6 @@
   padding-inline-start: 90px;
 }
 
-
-
-
-
-
 .descripcion {
   margin-top: 20px;
   font-size: 18px;
@@ -91,9 +86,65 @@
   align-self: flex-end;
 }
 
-/* ============================================
-   MINI CARRUSEL
-============================================ */
+@media (max-width: 768px) {
+
+  /* CONTENEDOR GENERAL */
+  .inicio-container {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 30px;
+  }
+
+  /* TEXTO */
+  .inicio-texto {
+    width: 100%;
+    text-align: center;
+  }
+
+  .mi-titulo {
+    font-size: 42px;
+    line-height: 48px;
+    padding-inline-start: 0;
+  }
+
+  .descripcion {
+    width: 100%;
+    font-size: 16px;
+    padding-inline-start: 0;
+    margin-top: 12px;
+  }
+
+  .btn-comenzar {
+    margin-left: 0;
+    margin-top: 16px;
+    padding: 12px 22px;
+    font-size: 15px;
+  }
+
+  .texto-sec {
+    padding-inline-start: 0;
+    font-size: 14px;
+  }
+
+  /* BLOQUE DE MENSAJES */
+  .inicio-imagen {
+    width: 100%;
+    gap: 16px;
+  }
+
+  .caja-mensaje {
+    width: 100%;
+    padding: 18px;
+    font-size: 14px;
+  }
+
+  /* MATA EL ZIGZAG SOLO EN MÓVIL */
+  .inicio-imagen .caja-mensaje:nth-child(1),
+  .inicio-imagen .caja-mensaje:nth-child(2) {
+    align-self: center;
+  }
+}
+
 
 
 /* ============================================
@@ -107,16 +158,25 @@ h1.generos-title{
   padding-inline-start: 90px;
 }
 
+@media (max-width: 768px) {
+
+  h1.generos-title {
+    font-size: 32px;
+    line-height: 1.2;
+    padding-inline-start: 0;
+    text-align: center;
+  }
+
+  
+}
+
+
 .generos-section {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
-
-
-
-
 .generos-left {
   flex: 1;
   display: flex;
@@ -131,8 +191,6 @@ h1.generos-title{
   justify-content: center;
 }
 
-
-
 .generos-title {
   font-size: 35px;
   font-weight: 800;
@@ -143,6 +201,16 @@ h1.generos-title{
   font-size: 17px;
   color: black;
   padding-inline-start: 90px;
+}
+
+/* Responsivo para móvil */
+@media (max-width: 768px) {
+  .generos-desc {
+    font-size: 14px; /* Tamaño de letra reducido para móviles */
+    padding-inline-start: 0; /* Quitar el padding izquierdo */
+    padding-inline-end: 0; /* Asegura que no haya padding extra */
+    text-align: center; /* Centrado del texto */
+  }
 }
 
 .generos-top {
@@ -181,10 +249,6 @@ h1.generos-title{
   gap: 15px;
 }
 
-
-
-
-
 .genero-item img {
   width: 28px;
   height: 28px;
@@ -197,7 +261,64 @@ h1.generos-title{
 }
 
 
+@media (max-width: 768px) {
 
+  /* Carrusel horizontal real */
+  .gridGen {
+    display: flex !important;
+    flex-direction: row !important;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+
+    gap: 16px;
+    padding: 0 16px 12px;
+
+    /* mata cualquier grid previo */
+    grid-template-columns: none !important;
+  }
+
+  /* UNA tarjeta = UNA pantalla */
+  .tarjeta {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    scroll-snap-align: start;
+    border-radius: 16px;
+    padding: 14px;
+    font-size: 14px;
+
+    /* sensación más compacta */
+    min-height: 90px;
+  }
+
+   .tarjeta img {
+    width: 22px;
+    height: 22px;
+  }
+
+  
+  .tarjeta p {
+    font-size: 14px;
+  }
+  /* Fuera botones en mobile */
+  .btnNav {
+    display: none;
+  }
+
+  .gridGen::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .carruselGeneros .btnNav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+}
 
 
 
@@ -227,10 +348,28 @@ h1.generos-title{
 
 
 
+@media (max-width: 768px) {
+
+  .generos-top {
+    flex-direction: column;
+  }
+
+  .generos-left,
+  .generos-right {
+    width: 100%;
+  }
+
+  .hero-search-container {
+    width: 100%;      /* mata el scroll lateral */
+    height: 260px;
+  }
+}
+
+
 /* Tu caja blanca intacta */
 .hero-search-box {
   width: 260px;
-  height: 65px;
+  height: 60px;
   background: white;
   border-radius: 20px;
   padding-inline: 20px;
@@ -372,3 +511,11 @@ h1.generos-title{
   }
 }
 
+
+
+
+@media (max-width: 768px) {
+  .hero-search-container {
+    width: 100%;
+  }
+}

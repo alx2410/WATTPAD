@@ -55,7 +55,7 @@ export default function Explorar() {
   return (
     <div className="explorar-container">
       <h1 className="titulo-explorar">
-        {filtroGenero
+        Historias de {filtroGenero
           ? filtroGenero.charAt(0).toUpperCase() + filtroGenero.slice(1)
           : busqueda
           ? `Resultados para "${busqueda}"`
@@ -65,21 +65,20 @@ export default function Explorar() {
       {cargando ? (
         <p>Cargando libros...</p>
       ) : (
-        <div className="grid-libros">
+        <div className="grid-libros-explorar">
           {librosFiltrados.length > 0 ? (
             librosFiltrados.map((libro) => (
               <Link
                 to={`/libro/${libro.id}`}
                 key={libro.id}
-                className="libro-card"
+                className="libro-card-explorar"
               >
                 {libro.portada && (
                   <img src={libro.portada} alt={libro.titulo} />
                 )}
-                <div className="info-libro">
+                <div className="info-libro-explorar">
                   <h2>{libro.titulo}</h2>
-                  <p>{libro.genero}</p>
-                  <p>Autor: {libro.autorNombre}</p>
+                  <p> {libro.autorNombre}</p>
                 </div>
               </Link>
             ))

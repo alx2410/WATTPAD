@@ -102,6 +102,36 @@ nav ul {
   width: 100%;
 }
 
+/* Botón “Escribir” igual que los links */
+.btn-escribir {
+  all: unset;              /* quita todos los estilos por defecto de button */
+  cursor: pointer;
+  display: inline-block;
+  color: inherit;
+  font-weight: 700;
+  position: relative;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+/* Efecto underline igual que nav-links */
+.btn-escribir::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #000;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.btn-escribir:hover::after {
+  width: 100%;
+}
+
+
 /* BOTÓN */
 .boton-navbar {
   background-color: #000;
@@ -117,25 +147,114 @@ nav button:hover {
   transform: translateY(-1px);
 }
 
-/* RESPONSIVE NAV */
+/* ===============================
+   NAVBAR MOBILE LIMPIO
+================================ */
 @media (max-width: 768px) {
   nav {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 12px 20px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 8px 14px;
   }
 
-  nav ul {
-    flex-direction: column;
-    gap: 12px;
+  /* Ocultamos cosas desktop */
+  .links-left,
+  .links-right,
+  .boton-navbar,
+  .user-toolkit {
+    display: none;
+  }
+
+  /* El buscador NO se rompe */
+  .buscador-navbar {
+    flex: 1;
+    max-width: 55%;
+  }
+
+  .input-buscador {
     width: 100%;
-    margin-top: 10px;
-  }
-
-  nav button {
-    align-self: flex-end;
+    font-size: 14px;
   }
 }
+
+.mobile-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex;
+  }
+}
+
+
+.mobile-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  padding: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+}
+
+.mobile-menu a,
+.mobile-menu button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  text-align: left;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.mobile-menu .cta {
+  background: #000;
+  color: #fff;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+
+
+.search-mobile-modal {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 3000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-mobile-modal input {
+  font-size: 1.1rem;
+  padding: 14px;
+  border: 1px solid #ccc;
+}
+
 
 
 
@@ -570,14 +689,12 @@ nav button:hover {
   font-weight: 500;
 }
 
-.biblioteca-tabs button:hover {
-  background: #ffe6dd;
-}
+
 
 .biblioteca-tabs .active {
-  background: #ff9874;
-  color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+ background-color: #ccc;
+  color: #333;
+
 }
 
 /* GRID */
@@ -621,32 +738,32 @@ nav button:hover {
 .btn-azul {
   width: 100%;
   padding: 8px 12px;
-  background: #4a86ff;
+  background: #eee;
   border: none;
   border-radius: 8px;
-  color: white;
+  color: #1f1f1f;
   margin-bottom: 8px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .btn-azul:hover {
-  background: #2f6af5;
+  background:#e0dada;
 }
 
 .btn-rojo {
   width: 100%;
   padding: 8px 12px;
-  background: #ff6767;
+  background: #eee;
   border: none;
   border-radius: 8px;
-  color: white;
+  color: #1f1f1f;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .btn-rojo:hover {
-  background: #e75454;
+  background: #e0dada;
 }
 
 /* ANIMACIÓN */
@@ -798,4 +915,24 @@ nav button:hover {
   height: 1px;
   background-color: #d6c8c8;
   margin: 1px 0;
+}
+
+
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex;
+  }
+
+  .desktop-only {
+    display: none;
+  }
 }

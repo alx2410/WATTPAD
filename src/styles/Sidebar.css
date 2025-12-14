@@ -1,0 +1,92 @@
+/* ============================
+   Sidebar de libros - Profesional
+============================ */
+
+.sidebar-libro {
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidebar-title {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.sidebar-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.sidebar-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  gap: 10px;
+}
+
+.sidebar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.sidebar-portada {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.sidebar-info {
+  display: flex;
+  flex-direction: column;
+  margin-left: 8px;
+  flex: 1;
+}
+
+.sidebar-titulo {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-estados {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sidebar-estado.borrador { color: gray; }
+.sidebar-estado.publicado { color: green; }
+.sidebar-progreso.en_proceso { color: blue; }
+.sidebar-progreso.terminado { color: goldenrod; }
+
+.sidebar-sin-libros {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 16px;
+}
+
+/*CSS PARA EL FORMULARIO*/

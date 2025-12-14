@@ -129,7 +129,7 @@ export default function CrearLibroForm({ onCreated }) {
         <option value="terminado">Terminado</option>
       </select>
 
-      <button type="submit" disabled={loading || subiendo}>
+      <button className="boton-crear" type="submit" disabled={loading || subiendo}>
         {loading ? "Creando..." : "Crear libro"}
       </button>
     </form>

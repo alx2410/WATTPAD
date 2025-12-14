@@ -5,12 +5,15 @@ import { db } from "../firebase/config";
 import { auth } from "../firebase/auth";
 import ReseñassLibro from "../paginas/ReseñasLibro";
 import { Link } from "react-router-dom";
+import "../styles/LibroDetalle.css";
 
 export default function LibroDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [libro, setLibro] = useState(null);
   const [recomendados, setRecomendados] = useState([]);
+  const [verCompleto, setVerCompleto] = useState(false);
+  const [mensajeSesion, setMensajeSesion] = useState("");
 
   useEffect(() => {
     const fetchLibro = async () => {
@@ -33,9 +36,44 @@ export default function LibroDetalle() {
     fetchLibro();
   }, [id]);
 
+  const empezarALeer = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      setMensajeSesion("Por favor, inicia sesión para empezar a leer.");
+      return;
+    }
+
+    // Guarda en biblioteca
+    await setDoc(doc(db, "usuarios", user.uid, "biblioteca", id), libro);
+
+    // Buscar capítulos del libro
+    const q = query(
+      collection(db, "capitulos"),
+      where("libroId", "==", id)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      alert("Este libro aún no tiene capítulos.");
+      return;
+    }
+
+    // Ordenar capítulos
+    const capitulos = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.numero || 0) - (b.numero || 0));
+
+    // Ir directo al primer capítulo
+    navigate(`/leer/${id}/${capitulos[0].id}`);
+  };
+
   const agregarABiblioteca = async (seccion) => {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user) {
+      setMensajeSesion("Por favor, inicia sesión para añadir a tu lista.");
+      return;
+    }
 
     await setDoc(doc(db, "usuarios", user.uid, seccion, id), libro);
 
@@ -46,57 +84,109 @@ export default function LibroDetalle() {
   if (!libro) return <p>Cargando...</p>;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "40px", padding: "30px" }}>
-      <div style={{ display: "flex", gap: "40px", alignItems: "flex-start" }}>
-        <img src={libro.portada} alt={libro.titulo} style={{ width: "300px", borderRadius: "8px", objectFit: "cover" }} />
-        <div style={{ maxWidth: "600px" }}>
-          <h1>{libro.titulo}</h1>
-          <h3 style={{ color: "#555" }}>
-            <Link to={`/perfil/${libro.autorId}`} style={{ textDecoration: "none", color: "#555", fontWeight: "bold" }}>
-              {libro.autor}
+    <div className="detalle-contenedor">
+
+      {/* HERO */}
+      <section className="detalle-hero">
+        <img
+          src={libro.portada}
+          alt={libro.titulo}
+          className="detalle-portada"
+        />
+
+        <div className="detalle-info">
+          <h1 className="detalle-titulo">{libro.titulo}</h1>
+          <h3 className="detalle-autor">
+            <Link to={`/perfil/${libro.autorId}`}>
+              {libro.autorNombre || libro.autor}
             </Link>
           </h3>
-          <p><strong>Género:</strong> {libro.genero}</p>
-          <p style={{ marginTop: "15px" }}>{libro.sipnosis}</p>
 
-          <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
-            <button className="btn-leer" onClick={() => agregarABiblioteca("biblioteca")}>
-              Empezar a leer
-            </button>
+          {libro.estadoProgreso && (
+            <span className={`detalle-badge detalle-${libro.estadoProgreso}`}>
+              {libro.estadoProgreso === "terminado"
+                ? "📘 Historia terminada"
+                : "✍️ En proceso"}
+            </span>
+          )}
 
-            <button className="btn-lista" onClick={() => agregarABiblioteca("lista")}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
+          <p className="detalle-genero">
+            <strong>Género:</strong> {libro.genero}
+          </p>
 
-            <button className="btn-favorito" onClick={() => agregarABiblioteca("favoritos")}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 21s-6-4.35-9-8.7C-1 6 3 2 7.5 3.5 9.2 4.1 10.4 5.4 12 7c1.6-1.6 2.8-2.9 4.5-3.5C21 2 25 6 21 12.3 18 16.7 12 21 12 21z"
-                  stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-              </svg>
+          <p className={`detalle-sinopsis ${verCompleto ? "expandida" : ""}`}>
+            {libro.sinopsis}
+          </p>
+
+          {libro.sinopsis.length > 180 && (
+            <button
+              className="detalle-ver-mas"
+              onClick={() => setVerCompleto(!verCompleto)}
+            >
+              {verCompleto ? "Ver menos" : "Ver más"}
             </button>
-          </div>
+          )}
+
+         <div className="detalle-acciones">
+  <button
+    className="detalle-btn-leer"
+    onClick={empezarALeer}
+  >
+    Empezar a leer
+  </button>
+
+  {mensajeSesion && <p className="mensaje-sesion">{mensajeSesion}</p>}
+
+  <button
+    className="detalle-btn-icon"
+    onClick={() => agregarABiblioteca("lista")}
+    title="Añadir a lista"
+  >
+    ➕
+  </button>
+
+  <button
+    className="detalle-btn-icon"
+    onClick={() => agregarABiblioteca("favoritos")}
+    title="Favoritos"
+  >
+    ❤️
+  </button>
+</div>
+
         </div>
-      </div>
+      </section>
 
+      <br /><br />
+
+      {/* RECOMENDADOS */}
       {recomendados.length > 0 && (
-        <div className="vibes">
-          <h2>Historias con la misma vibe</h2>
-          <div style={{ display: "flex", gap: "20px", overflowX: "auto", paddingBottom: "10px" }}>
+        <section className="detalle-recomendados">
+          <h2 className="detalle-subtitulo">Historias con la misma vibe.</h2>
+
+          <div className="detalle-recomendados-scroll">
             {recomendados.map((rec) => (
-              <div key={rec.id} style={{ minWidth: "150px" }}>
-                <img src={rec.portada} alt={rec.titulo} style={{ width: "150px", height: "220px", objectFit: "cover", borderRadius: "6px" }} />
-                <p style={{ marginTop: "10px", fontWeight: "bold" }}>{rec.titulo}</p>
-              </div>
+              <Link
+                to={`/libro/${rec.id}`}
+                key={rec.id}
+                className="detalle-card"
+              >
+                <img
+                  src={rec.portada}
+                  alt={rec.titulo}
+                  className="detalle-card-img"
+                />
+              </Link>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      <div className="reseñas">
+      {/* RESEÑAS */}
+      <section className="detalle-reseñas">
         <ReseñassLibro libroId={id} usuario={auth.currentUser} />
-      </div>
+      </section>
+
     </div>
   );
 }
