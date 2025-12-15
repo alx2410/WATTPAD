@@ -1,3 +1,4 @@
+// src/paginas/Explorar.jsx
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { db } from "../firebase/config";
@@ -14,11 +15,20 @@ export default function Explorar() {
   const queryParams = new URLSearchParams(location.search);
   const categoriaURL = queryParams.get("genero") || "";
   const searchURL = queryParams.get("search") || "";
-  const querySearch = searchURL.toLowerCase();
 
+  // Actualizar filtros desde URL
   useEffect(() => {
-    // Solo libros publicados
+    if (categoriaURL) setFiltroGenero(categoriaURL);
+    else setFiltroGenero("");
+
+    if (searchURL) setBusqueda(searchURL);
+    else setBusqueda("");
+  }, [categoriaURL, searchURL]);
+
+  // Traer libros publicados
+  useEffect(() => {
     const q = query(collection(db, "libros"), where("estado", "==", "publicado"));
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const librosArray = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -31,22 +41,20 @@ export default function Explorar() {
     return () => unsubscribe();
   }, []);
 
-  // Aplicar filtros
-  useEffect(() => {
-    if (categoriaURL) setFiltroGenero(categoriaURL.toLowerCase());
-    if (searchURL) setBusqueda(searchURL.toLowerCase());
-  }, [categoriaURL, searchURL]);
-
+  // Filtrar libros
   const librosFiltrados = libros.filter((libro) => {
-    const generoLibro = libro.genero?.toLowerCase() || "";
-    const tituloLibro = libro.titulo?.toLowerCase() || "";
-    const autorLibro = libro.autorNombre?.toLowerCase() || "";
+    const generoLibro = (libro.genero || "").toLowerCase();
+    const tituloLibro = (libro.titulo || "").toLowerCase();
+    const autorLibro = (libro.autorNombre || "").toLowerCase();
 
-    const coincideGenero = filtroGenero ? generoLibro === filtroGenero : true;
-    const coincideBusqueda = querySearch
-      ? tituloLibro.includes(querySearch) ||
-        autorLibro.includes(querySearch) ||
-        generoLibro.includes(querySearch)
+    const coincideGenero = filtroGenero
+      ? generoLibro === filtroGenero.toLowerCase()
+      : true;
+
+    const coincideBusqueda = busqueda
+      ? tituloLibro.includes(busqueda.toLowerCase()) ||
+        autorLibro.includes(busqueda.toLowerCase()) ||
+        generoLibro.includes(busqueda.toLowerCase())
       : true;
 
     return coincideGenero && coincideBusqueda;
@@ -73,12 +81,10 @@ export default function Explorar() {
                 key={libro.id}
                 className="libro-card-explorar"
               >
-                {libro.portada && (
-                  <img src={libro.portada} alt={libro.titulo} />
-                )}
+                {libro.portada && <img src={libro.portada} alt={libro.titulo} />}
                 <div className="info-libro-explorar">
                   <h2>{libro.titulo}</h2>
-                  <p> {libro.autorNombre}</p>
+                  <p>{libro.autorNombre || "Autor desconocido"}</p>
                 </div>
               </Link>
             ))

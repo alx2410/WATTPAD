@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
 import logo from "../assets/fictory-trans.png";
-import "../styles/Explorar.css"; // NUEVO
+import "../styles/Explorar.css";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -14,13 +14,19 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState("");
 
-  // Para mostrar solo el primer nombre
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (busqueda.trim()) {
+      navigate(`/explorar?search=${encodeURIComponent(busqueda.trim())}`);
+      setBusqueda("");
+    }
+  };
+
   const mostrarNombre = () => {
-    const nombre = user.displayName || "Usuario";
+    const nombre = user?.username || user?.displayName || "Usuario";
     return nombre.length <= 15 ? nombre : nombre.split(" ")[0];
   };
 
-  // Categorías para el modal de explorar
   const categorias = [
     "romance",
     "fantasia",
@@ -41,16 +47,6 @@ export default function Navbar() {
     setShowCategories(false);
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    navigate(`/explorar?search=${busqueda}`);
-    setBusqueda(""); 
-  };
-
-  // Manejo de la búsqueda en móvil
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
-
   return (
     <nav className="navbar">
       {/* LOGO */}
@@ -60,11 +56,8 @@ export default function Navbar() {
         </Link>
       </div>
 
-     
-
       {/* LINKS IZQUIERDA */}
       <ul className="links-left">
-        {/* EXPLORAR CON MENÚ */}
         <li
           className="explorar-wrapper nav-links"
           style={{ position: "relative" }}
@@ -107,14 +100,7 @@ export default function Navbar() {
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              const q = encodeURIComponent(busqueda.trim());
-              if (q) {
-                navigate(`/explorar?search=${q}`);
-                setBusqueda("");
-              }
-            }
+            if (e.key === "Enter") handleSearch(e);
           }}
           aria-label="buscar libros"
           className="input-buscador"
@@ -123,10 +109,7 @@ export default function Navbar() {
         <button
           type="button"
           className="btn-buscar lupa"
-          onClick={() => {
-            const q = encodeURIComponent(busqueda.trim());
-            if (q) navigate(`/explorar?search=${q}`);
-          }}
+          onClick={handleSearch}
           aria-label="Buscar"
         >
           <svg
@@ -144,30 +127,10 @@ export default function Navbar() {
           </svg>
         </button>
       </div>
- {/* BOTONES MOBILE */}
-      <div className="mobile-actions">
-        <button
-          className="icon-btn mobile-only"
-          onClick={() => setShowMobileMenu(true)}
-          aria-label="Menú"
-        >
-          ☰
-        </button>
-      </div>
+
       {/* LINKS DERECHA */}
       <ul className="links-right">
-        <li>
-  <button
-    className="nav-links btn-escribir"
-    onClick={() => {
-      if (!user) setShowAuth(true); // abre modal si no hay usuario
-      else navigate("/escribir");   // si hay usuario, va a la página
-    }}
-  >
-    Escribir
-  </button>
-</li>
-
+        <li><Link to="/escribir" className="nav-links">Escribir</Link></li>
         <li><Link to="/biblioteca" className="nav-links">Biblioteca</Link></li>
       </ul>
 
@@ -185,9 +148,7 @@ export default function Navbar() {
             setShowMenu(true);
           }}
           onMouseLeave={() => {
-            closeTimer.current = setTimeout(() => {
-              setShowMenu(false);
-            }, 2000);
+            closeTimer.current = setTimeout(() => setShowMenu(false), 2000);
           }}
         >
           <img
@@ -197,7 +158,15 @@ export default function Navbar() {
           />
 
           {showMenu && (
-            <div className="dropdown-menu">
+            <div
+              className="dropdown-menu"
+              onMouseEnter={() => {
+                if (closeTimer.current) clearTimeout(closeTimer.current);
+              }}
+              onMouseLeave={() => {
+                closeTimer.current = setTimeout(() => setShowMenu(false), 100);
+              }}
+            >
               <div className="user-info">
                 <img
                   src={user.photoURL || "https://via.placeholder.com/50"}
