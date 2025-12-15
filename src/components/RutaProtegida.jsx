@@ -1,13 +1,11 @@
-// RutaProtegida.jsx
-import { useAuth } from "../context/AuthContext"; //Me lleva al modal y despues el contenido
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default function RutaProtegida({ children, abrirModal }) {
-  const { user } = useAuth();
+export default function RutaProtegida({ children }) {
+  const { user, loading } = useAuth();
 
-  if (!user) {
-    if (abrirModal) abrirModal();
-    return null;
-  }
+  if (loading) return null;
+  if (!user) return <Navigate to="/" replace />;
 
   return children;
 }

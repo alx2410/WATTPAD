@@ -28,7 +28,10 @@ export default function App() {
     <LibrosProvider>
       <Navbar />
 
-      {modalOpen && <AuthModal onClose={() => setModalOpen(false)} />}
+     <AuthModal
+  isOpen={modalOpen}
+  onClose={() => setModalOpen(false)}
+/>
 
       <Routes>
         <Route path="/" element={<MiniWattpad />} />

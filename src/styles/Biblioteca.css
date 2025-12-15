@@ -1,0 +1,146 @@
+/* ===============================
+   GRID GENERAL
+================================= */
+.biblioteca-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+/* ===============================
+   TARJETA DEL LIBRO
+================================= */
+.biblioteca-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* ===============================
+   PORTADA
+================================= */
+.biblioteca-card-portada-wrapper {
+  width: 100%;
+  height: 180px; /* tamaño uniforme desktop */
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px; /* bordes redondeados */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.biblioteca-card-portada-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.3s;
+}
+
+.biblioteca-card-portada-wrapper:hover img {
+  transform: scale(1.05); /* efecto zoom sutil */
+}
+
+/* ===============================
+   HOVER BOTONES SOLO PORTADA
+================================= */
+.biblioteca-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  gap: 8px;
+  background-color: rgba(0,0,0,0.4);
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.biblioteca-card-portada-wrapper:hover .biblioteca-card-overlay {
+  opacity: 1;
+}
+
+.biblioteca-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #1e90ff;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.biblioteca-btn:hover {
+  background-color: #187bcd;
+}
+
+.biblioteca-btn-rojo {
+  background-color: #e74c3c;
+}
+
+.biblioteca-btn-rojo:hover {
+  background-color: #c0392b;
+}
+
+/* ===============================
+   BARRA DE PROGRESO
+================================= */
+.biblioteca-card-progreso-wrapper {
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  margin-top: 6px;
+}
+
+.biblioteca-card-progreso-bar {
+  height: 100%;
+  background-color: #1e90ff;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* ===============================
+   TITULO
+================================= */
+.biblioteca-card-titulo {
+  margin-top: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  color: #222;
+  word-wrap: break-word;
+}
+
+/* ===============================
+   RESPONSIVE MÓVIL
+================================= */
+@media (max-width: 768px) {
+  .biblioteca-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .biblioteca-card-portada-wrapper {
+    height: 140px;
+  }
+
+  .biblioteca-card-titulo {
+    font-size: 12px;
+  }
+
+  .biblioteca-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}

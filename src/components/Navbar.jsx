@@ -130,7 +130,22 @@ export default function Navbar() {
 
       {/* LINKS DERECHA */}
       <ul className="links-right">
-        <li><Link to="/escribir" className="nav-links">Escribir</Link></li>
+        <li>
+  <button
+    className="nav-links"
+    onClick={() => {
+      if (!user) {
+        setShowAuth(true);   // abre login
+      } else {
+        navigate("/escribir"); // entra normal
+      }
+    }}
+    style={{ background: "none", border: "none", cursor: "pointer" }}
+  >
+    Escribir
+  </button>
+</li>
+
         <li><Link to="/biblioteca" className="nav-links">Biblioteca</Link></li>
       </ul>
 

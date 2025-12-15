@@ -1,15 +1,33 @@
 import { useEffect, useState } from "react";
-import { db } from "../../firebase/config";
+import { db,storage } from "../../firebase/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export default function EditarLibro({ libroId }) {
   const [titulo, setTitulo] = useState("");
   const [sinopsis, setSinopsis] = useState("");
   const [genero, setGenero] = useState("");
   const [portada, setPortada] = useState("");
   const [estado, setEstado] = useState("borrador"); // borrador / publicado
+  const [estadoProgreso, setEstadoProgreso] = useState("en_proceso"); // en proceso / terminado
   const [loading, setLoading] = useState(false);
+  const [subiendo, setSubiendo] = useState(false);
 
+
+   const handlePortadaUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+  
+      setSubiendo(true);
+      try {
+        const fileRef = ref(storage, `portadas/${Date.now()}-${file.name}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        setPortada(url);
+      } catch (err) {
+        console.error("Error subiendo portada:", err);
+      }
+      setSubiendo(false);
+    };
   // CARGAR DATOS DEL LIBRO
   useEffect(() => {
     const cargarDatos = async () => {
@@ -24,6 +42,7 @@ export default function EditarLibro({ libroId }) {
           setGenero(d.genero || "");
           setPortada(d.portada || "");
           setEstado(d.estado || "borrador");
+          setEstadoProgreso(d.estadoProgreso || "en_proceso");
         }
       } catch (err) {
         console.error("Error cargando libro:", err);
@@ -35,28 +54,30 @@ export default function EditarLibro({ libroId }) {
 
   // GUARDAR CAMBIOS
   const guardarCambios = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const ref = doc(db, "libros", libroId);
+  try {
+    const ref = doc(db, "libros", libroId);
 
-      await updateDoc(ref, {
-        titulo,
-        sinopsis,
-        genero,
-        portada,
-        estado,
-      });
+    await updateDoc(ref, {
+      titulo,
+      sinopsis,
+      genero,
+      portada,
+      estado,
+      estadoProgreso
+    });
 
-      alert("Libro actualizado");
-    } catch (err) {
-      console.error("Error actualizando libro:", err);
-    }
+    // ❌ Eliminado alert
+  } catch (err) {
+    console.error("Error actualizando libro:", err);
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
+  
   return (
     <form className="editar-libro-form" onSubmit={guardarCambios}>
       <h2>Editar libro</h2>
@@ -84,17 +105,25 @@ export default function EditarLibro({ libroId }) {
         required
       />
 
-      <label>Portada (URL)</label>
-      <input
-        type="text"
-        value={portada}
-        onChange={(e) => setPortada(e.target.value)}
-      />
+       <label>Portada</label>
+      <input type="file" accept="image/*" onChange={handlePortadaUpload} />
+      {subiendo && <p>Subiendo portada...</p>}
+      {portada && <img src={portada} alt="portada" style={{ width: 140, borderRadius: 10, marginTop: 12 }} />}
+
 
       <label>Estado</label>
       <select value={estado} onChange={(e) => setEstado(e.target.value)}>
         <option value="borrador">Borrador</option>
         <option value="publicado">Publicado</option>
+      </select>
+
+      <label>Progreso de la historia</label>
+      <select
+        value={estadoProgreso}
+        onChange={(e) => setEstadoProgreso(e.target.value)}
+      >
+        <option value="en_proceso">En proceso</option>
+        <option value="terminado">Terminado</option>
       </select>
 
       <button type="submit" disabled={loading}>
