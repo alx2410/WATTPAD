@@ -17,6 +17,8 @@ import PopularBooks from "./components/PopularBooks";
 import LibroDetalle from "./components/LibroDetalle";
 import LeerCapitulo from "./paginas/LeerCapitulo";
 
+import Ficwin from "./paginas/Ficwin";
+
 import { LibrosProvider } from "./context/LibrosContext";
 
 import "./App.css";
@@ -51,9 +53,13 @@ export default function App() {
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/miniwattpad" element={<MiniWattpad />} />
         <Route path="/notificaciones" element={<Notificaciones />} />
+        
+        
 
         <Route path="/libro/:id" element={<LibroDetalle />} />
         <Route path="/leer/:libroId/:capituloId" element={<LeerCapitulo />} />
+
+         <Route path="/ficwin" element={<Ficwin />} />
       </Routes>
     </LibrosProvider>
   );
