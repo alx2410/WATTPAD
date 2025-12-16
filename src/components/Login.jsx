@@ -70,10 +70,13 @@ export default function Login({ onRegistroClick, onLoginExitoso, onClose }) {
 </button>
 
 
-        <div>
-          ¿No tienes cuenta?{" "}
-          <button onClick={onRegistroClick} className="login-link">Regístrate</button>
-        </div>
+        <div style={{ marginTop: "5%" }}>
+  ¿No tienes cuenta?{" "}
+  <button onClick={onRegistroClick} className="login-link">
+    Regístrate
+  </button>
+</div>
+
       </div>
   );
 }

@@ -4,9 +4,11 @@ import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
 import logo from "../assets/fictory-trans.png";
 import "../styles/Explorar.css";
+import { useNotifications } from "../context/NotificationContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications(); // ← está aquí arriba
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
@@ -166,11 +168,35 @@ export default function Navbar() {
             closeTimer.current = setTimeout(() => setShowMenu(false), 2000);
           }}
         >
-          <img
-            src={user.photoURL || "https://via.placeholder.com/40"}
-            alt="avatar"
-            className="avatar"
-          />
+            <div style={{ position: "relative", display: "inline-block" }}>
+  <img
+    src={user.photoURL || "https://via.placeholder.com/40"}
+    alt="avatar"
+    className="avatar"
+  />
+  {unreadCount > 0 && (
+    <span
+      style={{
+        position: "absolute",
+        top: "-4px",    // ajusta para que quede en la esquina superior
+        right: "-4px",  // ajusta para que quede pegada a la derecha
+        width: "14px",
+        height: "14px",
+        backgroundColor: "red",
+        color: "white",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "0.7rem",
+        fontWeight: "bold",
+        boxShadow: "0 0 2px rgba(0,0,0,0.3)"
+      }}
+    >
+      {unreadCount}
+    </span>
+  )}
+</div>
 
           {showMenu && (
             <div
@@ -196,7 +222,25 @@ export default function Navbar() {
                 <li><Link to="/cuenta">Mi cuenta</Link></li>
                 <hr />
                 <li><Link to="/biblioteca">Mi biblioteca</Link></li>
-                <li><Link to="/notificaciones">Mis notificaciones</Link></li>
+                <li>
+  <Link to="/notificaciones" style={{ position: "relative" }}>
+          Mis notificaciones
+          {unreadCount > 0 && (
+            <span style={{
+              position: "absolute",
+              top: -5,
+              right: -25,
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "0.7rem"
+            }}>
+              {unreadCount}
+            </span>
+          )}
+        </Link>
+</li>
                 <hr />
                 <li className="cerrar-sesion" onClick={logout}>
                   Cerrar sesión

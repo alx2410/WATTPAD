@@ -235,9 +235,51 @@
     padding-top: 20px;
   }
 
-  .ultimo-post-texto {
+.ultimo-post-card {
+  margin-top: 10px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #faf8ff, #ffffff);
+  border: 1px solid #e8e0ff;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ultimo-post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* TEXTO */
+.ultimo-post-texto {
+  font-size: 0.95rem;
+  color: #222;
+  line-height: 1.4;
+  margin: 0;
+
   white-space: normal;
   word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* CTA */
+.ultimo-post-cta {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6a00ff;
+}
+
+/* SIN POSTS */
+.ultimo-post-vacio {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #8a8a8a;
 }
 
 
@@ -254,7 +296,7 @@
   }
 
   .info-col-1 h3 {
-    margin-top: 10px;
+    margin-top: 10%;
     color: #ff6b3d;
   }
 
@@ -312,15 +354,18 @@
     
     overflow-wrap: break-word;
     word-break: break-word;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .muro-publicar textarea {
-    width: 90%;
-    min-height: 90px;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #ffd2c3;
-  }
+.muro-publicar textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ffd2c3;
+  resize: vertical;
+}
 
 
   /* === POST INDIVIDUAL === */
@@ -930,11 +975,28 @@
 
 
   /* ========== REACCIONES (LIKE / DISLIKE / GUARDAR) ========== */
+
   .post-reacciones {
     margin-top: 14px;
     display: flex;
     gap: 12px;
   }
+
+  .icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn .icon {
+  font-size: 15px; /* el tamaño que te guste */
+}
+
+.icon-btn .count {
+  font-size: 15px; /* mismo tamaño que el icono */
+  line-height: 1;
+}
+
   /* ============================================
     CONTENEDOR PRINCIPAL
   ============================================ */
@@ -1009,4 +1071,40 @@ body, html, .perfil-container, .perfil-header {
 
 .resultado-item:hover {
   background: #ffe1d8;
+}
+
+
+/* ///////////////////////////////////////////////
+LA BOLITAAAAAAAAAAA
+/////////////////////////////////////////////////////*/
+
+.avatar-wrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.dot {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+
+  border: 2px solid white;
+  background-color: gray;
+
+  z-index: 10;
+}
+
+/* ONLINE */
+.dot.online {
+  background-color: #2ecc71;
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.8);
+}
+
+/* OFFLINE */
+.dot.offline {
+  background-color: #e74c3c;
 }

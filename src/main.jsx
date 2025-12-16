@@ -4,12 +4,19 @@ import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { PresenceProvider } from "./context/PresenceContext";
+import { NotificationProvider } from "./context/NotificationContext";
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter >
-    <AuthProvider>  {/* 👈 Envuelve aquí */}
+    <AuthProvider>
+      <NotificationProvider>
+        <PresenceProvider>
       <App />
+      </PresenceProvider>
+      </NotificationProvider>
     </AuthProvider>
     </BrowserRouter>
     

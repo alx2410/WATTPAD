@@ -3,7 +3,8 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Registro({ onRegistroExitoso, onLoginExitoso, irALogin, onClose }) {
     const { register, loginWithGoogle } = useAuth();
-
+    const DEFAULT_AVATAR =
+  "https://ui-avatars.com/api/?name=User&background=e5e7eb&color=374151";
     const [username, setUsername] = useState("");
     const [avatarFile, setAvatarFile] = useState(null);
     const [email, setEmail] = useState("");

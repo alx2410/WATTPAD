@@ -16,16 +16,34 @@ import {
 
 import { db } from "../firebase/config";
 import { query, orderBy, onSnapshot } from "firebase/firestore";
+import { useLocation } from "react-router-dom";
+
+
+import { onValue } from "firebase/database";
+import { rtdb } from "../firebase/config";
+
+
 
 import "../styles/Perfil.css";
 
+import { usePresence } from "../context/PresenceContext";
+
+
+
 export default function Perfil() {
+  
   const { uid: uidPerfil } = useParams();
   const navigate = useNavigate();
   const { user, getMuro, publicarPost, seguirUsuario, dejarSeguirUsuario, updateProfileData } = useAuth();
 
   const esPerfilAjeno = Boolean(uidPerfil);
   const uidObjetivo = esPerfilAjeno ? uidPerfil : user?.uid;
+
+  const { listenToPresence } = usePresence();
+  const [estadoPerfil, setEstadoPerfil] = useState("offline");
+
+
+
 
   // ===== ESTADOS =====
   const [datosPerfil, setDatosPerfil] = useState(null);
@@ -64,6 +82,10 @@ const [leyendoAhora, setLeyendoAhora] = useState(null);
 
 const [notificaciones, setNotificaciones] = useState([]);
 
+const LIMITE_CARACTERES = 6000;
+
+  const location = useLocation();
+
 
 
   // =========================
@@ -94,6 +116,46 @@ const [notificaciones, setNotificaciones] = useState([]);
   }, [uidObjetivo, uidPerfil, user]);
 
   /////////////////////////////////////////////
+  /* AAAAAAAACTIVOOOOOOOOO*/
+  ////////////////////////////////////
+
+useEffect(() => {
+  if (!uidObjetivo) return;
+
+  const unsubscribe = listenToPresence(uidObjetivo, (data) => {
+    setEstadoPerfil(data.estado || "offline");
+  });
+
+  return () => unsubscribe();
+}, [uidObjetivo, listenToPresence]);
+
+
+  //////////////////////////////////////////////////
+
+useEffect(() => {
+    // Leer el parámetro `tab` de la URL y actualizar el estado de la pestaña
+    const urlParams = new URLSearchParams(location.search);
+    const tabParam = urlParams.get("tab");
+    if (tabParam) {
+      setTab(tabParam);
+    }
+  }, [location]);
+
+  //////////////////////////////////////////////////
+
+  useEffect(() => {
+  const hash = location.hash.replace("#", "");
+  if (hash) {
+    const el = document.getElementById(hash);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  }
+}, [posts, location.hash]);
+
+
+
+
+
+  /////////////////////////////////
 
 useEffect(() => {
   async function buscar() {
@@ -103,22 +165,24 @@ useEffect(() => {
     }
 
     try {
-      const snap = await getDocs(collection(db, "historias")); // ← AQUÍ EL CAMBIO
+      const snap = await getDocs(collection(db, "libros")); // ✅ MISMA QUE EXPLORAR
 
       const lista = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
         .filter(lib =>
+          lib.estado === "publicado" && // 🔒 SOLO LOS DE EXPLORAR
           lib.titulo?.toLowerCase?.().includes(busquedaLibro.toLowerCase())
         );
 
       setResultadosBusqueda(lista);
     } catch (err) {
-      console.error("Error al buscar historias:", err);
+      console.error("Error al buscar libros:", err);
     }
   }
 
   buscar();
 }, [busquedaLibro]);
+
 
   // =========================
   // NOTIFICACIONES
@@ -147,25 +211,21 @@ const seleccionarLeyendoAhora = async (libro) => {
   if (!user) return;
 
   try {
-    const refLeyendo = doc(db, "usuarios", user.uid, "leyendo", libro.id);
+    const refLeyendo = doc(db, "usuarios", user.uid, "leyendo", "actual");
 
     await setDoc(refLeyendo, {
       libroId: libro.id,
-      titulo: libro.titulo,
-      descripcion: libro.descripcion || "",
-      portada: libro.portada || "",
       timestamp: serverTimestamp()
     });
 
-    setLeyendoAhora(libro);
-    setBusquedaLibro("");         // limpia barra
-    setResultadosBusqueda([]);    // limpia lista
-
-    alert("Lectura actual actualizada.");
+    setLeyendoAhora(libro); // solo para UI inmediata
+    setBusquedaLibro("");
+    setResultadosBusqueda([]);
   } catch (err) {
     console.error("Error al guardar lectura:", err);
   }
 };
+
 
 
 ///////////////////////////////////////////////
@@ -175,24 +235,40 @@ useEffect(() => {
 
   async function cargarLeyendo() {
     try {
-      const ref = collection(db, "usuarios", uidObjetivo, "leyendo");
-      const snap = await getDocs(ref);
+      // 1️⃣ Leer referencia del libro
+      const refLeyendo = doc(db, "usuarios", uidObjetivo, "leyendo", "actual");
+      const snapLeyendo = await getDoc(refLeyendo);
 
-      if (snap.empty) {
+      if (!snapLeyendo.exists()) {
         setLeyendoAhora(null);
         return;
       }
 
-      // Solo hay 1 lectura, así tomamos la primera
-      const data = snap.docs[0].data();
-      setLeyendoAhora(data);
+      const { libroId } = snapLeyendo.data();
+
+      // 2️⃣ Buscar el libro REAL en la colección correcta
+      const refLibro = doc(db, "libros", libroId);
+      const snapLibro = await getDoc(refLibro);
+
+      if (!snapLibro.exists()) {
+        console.warn("Libro ya no existe");
+        setLeyendoAhora(null);
+        return;
+      }
+
+      setLeyendoAhora({
+        id: snapLibro.id,
+        ...snapLibro.data()
+      });
     } catch (err) {
       console.error("Error cargando lectura actual:", err);
+      setLeyendoAhora(null);
     }
   }
 
   cargarLeyendo();
 }, [uidObjetivo]);
+
 
 
 
@@ -684,7 +760,15 @@ setPosts(prev =>
            ENCABEZADO
       ======================================================= */}
       <div className="perfil-header">
-        <img src={preview} alt="avatar" className="perfil-avatar" />
+        <div className="avatar-wrapper">
+  <img src={preview} alt="avatar" className="perfil-avatar" />
+
+<span className={`dot ${estadoPerfil}`} />
+
+
+
+</div>
+
 
         <div>
           {!editMode ? (
@@ -695,9 +779,6 @@ setPosts(prev =>
               <div className="perfil-stats">
                 <span>
                   <strong>Historias:</strong> {historias.length}
-                </span>
-                <span>
-                  <strong>Listas:</strong> 1
                 </span>
                 <span>
                   <strong>Seguidores:</strong> {seguidoresCount}
@@ -787,11 +868,19 @@ setPosts(prev =>
       {/* =======================================================
            PESTAÑAS
       ======================================================= */}
+      <div>
+      {/* Aquí va el código para las pestañas */}
       <div className="perfil-tabs">
         <button onClick={() => setTab("info")} className={tab === "info" ? "active" : ""}>INFO</button>
         <button onClick={() => setTab("muro")} className={tab === "muro" ? "active" : ""}>MURO</button>
         <button onClick={() => setTab("seguidores")} className={tab === "seguidores" ? "active" : ""}>SEGUIDORES</button>
       </div>
+
+      {/* Mostrar contenido según la pestaña activa */}
+      {tab === "info" && <div></div>}
+      {tab === "muro" && <div></div>}
+      {tab === "seguidores" && <div></div>}
+    </div>
 
 <div className="perfil-contenido">
       {/* =======================================================
@@ -803,14 +892,10 @@ setPosts(prev =>
             <h3>Biografía</h3>
             <p>{bio || "Aún no has escrito tu biografía."}</p>
 
-            <h3>Lectura actual</h3>
+            <h3>Te recomiendo...</h3>
 
 {leyendoAhora ? (
   <div className="leyendo-ahora-card" style={{ marginTop: "10px" }}>
-    <p style={{ margin: "0 0 6px 0" }}>
-      Estás leyendo ahora mismo:
-    </p>
-
     <div
       className="historia-card"
       onClick={() => navigate(`/libro/${leyendoAhora.id}`)}
@@ -827,24 +912,40 @@ setPosts(prev =>
     </div>
   </div>
 ) : (
-  <p>No tienes una lectura actual.</p>
+  <p>Tomar agua y tocar pasto. Hoy no recomiendo, mañana sí. </p>
 )}
 
 
-            <h3>Último post</h3>
+<h3 className="ultimo-post-titulo">Último post</h3>
+
 {(() => {
   const postsUsuario = posts
     .filter(p => p.uid === uidObjetivo)
     .sort((a, b) => {
       const fechaA = a.fecha?.seconds ? a.fecha.toDate() : new Date(a.fecha);
       const fechaB = b.fecha?.seconds ? b.fecha.toDate() : new Date(b.fecha);
-      return fechaB - fechaA; // Más nuevo arriba
+      return fechaB - fechaA;
     });
 
-  return postsUsuario.length
-    ? <p className="ultimo-post-texto">{postsUsuario[0].texto}</p>
-    : <p>No has publicado aún.</p>;
+  return postsUsuario.length ? (
+    <div
+      className="ultimo-post-card"
+      onClick={() => setTab("muro")}
+      role="button"
+    >
+      <p className="ultimo-post-texto">
+        {postsUsuario[0].texto}
+      </p>
+
+      <span className="ultimo-post-cta">
+        Ver en el muro →
+      </span>
+    </div>
+  ) : (
+    <p className="ultimo-post-vacio">No has publicado aún.</p>
+  );
 })()}
+
 
           </div>
 
@@ -888,15 +989,29 @@ setPosts(prev =>
     {/* Solo mostrar textarea si es tu perfil */}
     {esPropio && (
       <div className="muro-publicar">
-        <textarea
-          value={nuevoPost}
-          onChange={(e) => setNuevoPost(e.target.value)}
-          placeholder="Escribe algo en tu muro..."
-        ></textarea>
-        <button onClick={publicarEnMuro} className="btn-editar">
-          Publicar
-        </button>
-      </div>
+  <textarea
+    value={nuevoPost}
+    onChange={(e) => {
+      if (e.target.value.length <= LIMITE_CARACTERES) {
+        setNuevoPost(e.target.value);
+      }
+    }}
+    placeholder="Escribe algo en tu muro..."
+  />
+
+  <div
+    className={`contador-caracteres ${
+      nuevoPost.length >= LIMITE_CARACTERES * 0.8 ? "cerca-limite" : ""
+    }`}
+  >
+    {nuevoPost.length} / {LIMITE_CARACTERES}
+  </div>
+
+  <button onClick={publicarEnMuro} className="btn-editar">
+    Publicar
+  </button>
+</div>
+
     )}
 
     {posts.length ? (
@@ -912,7 +1027,7 @@ setPosts(prev =>
           return fechaB - fechaA; // 🔥 Más nuevo arriba
         })
         .map((post) => (
-          <div key={post.id} className="muro-post">
+          <div key={post.id} id={post.id} className="muro-post">
 
             {/* 🔥 AQUI REGRESAMOS LA FOTO COMO ANTES */}
             {post.foto && (
@@ -987,13 +1102,16 @@ setPosts(prev =>
 
   {/* REACCIONES */}
   <div className="post-reacciones">
-    <button className="icon-btn" onClick={() => toggleLike(post.id)}>
-      <span className="material-icons">thumb_up</span> {post.likes || 0}
-    </button>
+<button className="icon-btn" onClick={() => toggleLike(post.id)}>
+  <span className="material-icons icon">thumb_up</span>
+  <span className="count">{post.likes || 0}</span>
+</button>
 
-    <button className="icon-btn" onClick={() => darDislike(post.id)}>
-      <span className="material-icons">thumb_down</span> {post.dislikes || 0}
-    </button>
+<button className="icon-btn" onClick={() => darDislike(post.id)}>
+  <span className="material-icons icon">thumb_down</span>
+  <span className="count">{post.dislikes || 0}</span>
+</button>
+
 
     {post.editando && (
       <button className="icon-btn" onClick={() => guardarEdicion(post.id)}>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { useNotifications } from "../context/NotificationContext";
+import { collection, onSnapshot, query, orderBy, doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 export default function Notificaciones() {
   const { user } = useAuth();
+  const { setUnreadCount } = useNotifications();
   const [notifs, setNotifs] = useState([]);
   const navigate = useNavigate();
 
@@ -15,81 +17,81 @@ export default function Notificaciones() {
     const ref = collection(db, "usuarios", user.uid, "notificaciones");
     const q = query(ref, orderBy("fecha", "desc"));
 
-    const unsub = onSnapshot(q, (snap) => {
-      setNotifs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const unsub = onSnapshot(q, async (snap) => {
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setNotifs(data);
+
+      // Marcar todas como vistas
+      snap.docs.forEach(async (docSnap) => {
+        if (!docSnap.data().visto) {
+          await updateDoc(doc(db, `usuarios/${user.uid}/notificaciones/${docSnap.id}`), {
+            visto: true
+          });
+        }
+      });
+
+      // Actualizar el contexto inmediatamente
+      setUnreadCount(0);
     });
 
     return () => unsub();
-  }, [user]);
+  }, [user, setUnreadCount]);
+
+  const handleClickNoti = (n) => {
+    switch (n.tipo) {
+      case "follow": navigate(`/perfil/${n.fromUID}`); break;
+      case "muro": 
+        navigate(n.postId 
+          ? `/perfil/${n.fromUID}?tab=muro#${n.postId}` 
+          : `/perfil/${n.fromUID}?tab=muro`
+        );
+        break;
+      case "historia":
+      case "comentario":
+        navigate(n.historiaID 
+          ? `/historia/${n.historiaID}` 
+          : `/perfil/${n.fromUID}`
+        );
+        break;
+      default: break;
+    }
+  };
 
   if (!user) {
     return <div style={{ padding: 20 }}>Debes iniciar sesión para ver tus notificaciones.</div>;
   }
 
-  const handleClickNoti = (n) => {
-    switch (n.tipo) {
-      case "follow":
-        navigate(`/perfil/${n.fromUID}`);
-        break;
-
-      case "muro":
-        navigate(`/perfil/${n.fromUID}`);
-        break;
-
-      case "historia":
-        navigate(n.historiaID ? `/historia/${n.historiaID}` : `/perfil/${n.fromUID}`);
-        break;
-
-      case "comentario":
-        navigate(n.historiaID ? `/historia/${n.historiaID}` : `/perfil/${n.fromUID}`);
-        break;
-
-      default:
-        break;
-    }
-  };
-
   const renderMensaje = (n) => {
+    const limite = 1000;
+    const textoTruncado = n.texto?.length > limite ? `${n.texto.slice(0, limite)}...` : n.texto;
+
     switch (n.tipo) {
       case "follow":
-        return (
-          <p style={{ margin: 0, fontWeight: 600 }}>
-            {n.nombreAutor} comenzó a seguirte
-          </p>
-        );
-
+        return <p style={{ margin: 0, fontWeight: 600 }}>{n.nombreAutor} comenzó a seguirte</p>;
       case "muro":
         return (
           <>
-            <p style={{ margin: 0, fontWeight: 600 }}>
-              {n.nombreAutor} publicó un nuevo anuncio
+            <p style={{ margin: 0, fontWeight: 600 }}>{n.nombreAutor} publicó un nuevo anuncio</p>
+            <p style={{ marginTop: 6, fontSize: "0.9rem" }}>
+              {textoTruncado}
             </p>
-            <p style={{ marginTop: 6, fontSize: "0.9rem" }}>{n.texto}</p>
           </>
         );
-
       case "historia":
         return (
           <>
-            <p style={{ margin: 0, fontWeight: 600 }}>
-              {n.nombreAutor} publicó una nueva historia
-            </p>
+            <p style={{ margin: 0, fontWeight: 600 }}>{n.nombreAutor} publicó una nueva historia</p>
             <p style={{ marginTop: 6, fontStyle: "italic" }}>{n.tituloHistoria}</p>
           </>
         );
-
       case "comentario":
         return (
           <>
-            <p style={{ margin: 0, fontWeight: 600 }}>
-              {n.nombreAutor} ha respondido:
-            </p>
-            <p style={{ marginTop: 6, fontSize: "0.9rem" }}>{n.texto}</p>
+            <p style={{ margin: 0, fontWeight: 600 }}>{n.nombreAutor} ha respondido:</p>
+            <p style={{ marginTop: 6, fontSize: "0.9rem" }}>{textoTruncado}</p>
           </>
         );
-
-      default:
-        return <p>Notificación desconocida</p>;
+      default: return <p>Notificación desconocida</p>;
     }
   };
 
@@ -129,17 +131,10 @@ export default function Notificaciones() {
               onMouseEnter={(e) => e.currentTarget.style.background = "#ffe9df"}
               onMouseLeave={(e) => e.currentTarget.style.background = "#fff7f3"}
             >
-              <span className="material-icons" style={{ fontSize: 32 }}>
-                {icono(n.tipo)}
-              </span>
-
+              <span className="material-icons" style={{ fontSize: 32 }}>{icono(n.tipo)}</span>
               <div style={{ flex: 1 }}>
                 {renderMensaje(n)}
-                <p style={{
-                  marginTop: 6,
-                  fontSize: "0.8rem",
-                  opacity: 0.6
-                }}>
+                <p style={{ marginTop: 6, fontSize: "0.8rem", opacity: 0.6 }}>
                   {n.fecha?.toDate().toLocaleString()}
                 </p>
               </div>

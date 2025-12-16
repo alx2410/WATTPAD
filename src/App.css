@@ -936,3 +936,29 @@ nav button:hover {
     display: none;
   }
 }
+
+.file-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #1f2937; /* gris oscuro elegante */
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.file-upload:hover {
+  background: #111827;
+}
+
+.file-upload:active {
+  transform: scale(0.98);
+}
+
+.file-upload input {
+  display: none;
+}
