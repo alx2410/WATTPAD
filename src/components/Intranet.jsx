@@ -1,18 +1,13 @@
-import { Outlet, Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default function Intranet() {
-  return (
-    <div>
-      <nav>
-        <Link to="dashboard">Dashboard</Link>
-        <Link to="lectores">Lectores</Link>
-        <Link to="escritores">Escritores</Link>
-        <Link to="admin/usuarios">Usuarios (solo admin)</Link>
-      </nav>
+export default function Intranet({ children }) {
+  const { user } = useAuth();
 
-      <div>
-        <Outlet />
-      </div>
-    </div>
-  );
+  // Solo admins pueden acceder
+  if (!user || user.role !== "admin") {
+    return <Navigate to="/" replace />; // redirige al home si no es admin
+  }
+
+  return children; // aquí se renderiza el contenido real (Moderacion.jsx)
 }

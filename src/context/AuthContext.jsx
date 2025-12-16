@@ -43,11 +43,13 @@ export function AuthProvider({ children }) {
     if (snap.exists()) {
       const data = snap.data();
       setUser({
-        ...firebaseUser,
-        username: data.username || firebaseUser.displayName || "Usuario",
-        avatar: data.avatar || firebaseUser.photoURL || "",
-        ...data,
-      });
+  ...firebaseUser,
+  username: data.username || firebaseUser.displayName || "Usuario",
+  avatar: data.avatar || firebaseUser.photoURL || "",
+  role: data.role || "user", // 🔐 CLAVE
+  ...data,
+});
+
     } else {
       setUser({
         ...firebaseUser,
@@ -89,6 +91,7 @@ export function AuthProvider({ children }) {
       avatar: avatarUrl,
       bio: "",
       provider: "password",
+      role: "user",
       createdAt: serverTimestamp(),
         seguirUsuario,
   dejarSeguirUsuario,
@@ -121,6 +124,7 @@ export function AuthProvider({ children }) {
         avatar: gUser.photoURL || "",
         bio: "",
         provider: "google",
+        role: "user",
         createdAt: serverTimestamp(),
       });
     }
@@ -128,6 +132,24 @@ export function AuthProvider({ children }) {
     await cargarUsuarioCompleto(gUser);
     return gUser;
   };
+
+  // Cambiar el rol de un usuario
+const cambiarRolUsuario = async (uid, nuevoRol) => {
+  if (!uid) return;
+
+  try {
+    await updateDoc(doc(db, "usuarios", uid), { role: nuevoRol });
+    
+    // Si el usuario que estás viendo es el mismo que está logueado, recargar datos
+    if (user?.uid === uid) {
+      setUser(prev => ({ ...prev, role: nuevoRol }));
+    }
+
+  } catch (err) {
+    console.error("Error cambiando rol del usuario:", err);
+  }
+};
+
 
   // Agrega dentro de AuthProvider, antes de return
 const seguirUsuario = async (uidActual, uidObjetivo) => {
@@ -153,6 +175,75 @@ const seguirUsuario = async (uidActual, uidObjetivo) => {
   });
 };
 
+// Función para borrar subcolecciones
+const deleteSubcollection = async (parentId, subcollection) => {
+  const subColRef = collection(db, "usuarios", parentId, subcollection);
+  const snap = await getDocs(subColRef);
+  for (let d of snap.docs) {
+    await deleteDoc(doc(db, "usuarios", parentId, subcollection, d.id));
+  }
+};
+
+// Función principal para eliminar usuario
+const eliminarUsuario = async (uid) => {
+  if (!uid) return;
+
+  try {
+    // Primero borramos subcolecciones
+    await deleteSubcollection(uid, "biblioteca");
+    await deleteSubcollection(uid, "favoritos");
+    await deleteSubcollection(uid, "lecturas");
+    await deleteSubcollection(uid, "notificaciones");
+    await deleteSubcollection(uid, "seguidores");
+    await deleteSubcollection(uid, "siguiendo");
+
+    // Luego borramos sus libros y reseñas (si quieres eliminar todo)
+    const librosRef = collection(db, "libros");
+    const librosSnap = await getDocs(librosRef);
+    for (let l of librosSnap.docs) {
+      if (l.data().autorId === uid) {
+        await deleteDoc(doc(db, "libros", l.id));
+      }
+    }
+
+    const reseñasRef = collection(db, "reseñas");
+    const reseñasSnap = await getDocs(reseñasRef);
+    for (let r of reseñasSnap.docs) {
+      if (r.data().usuarioId === uid) {
+        await deleteDoc(doc(db, "reseñas", r.id));
+      }
+    }
+
+    // Finalmente borramos el usuario
+    await deleteDoc(doc(db, "usuarios", uid));
+
+    console.log("Usuario eliminado completamente ✅");
+  } catch (err) {
+    console.error("Error eliminando usuario:", err);
+  }
+};
+
+// Bloquear usuario
+const bloquearUsuario = async (uid) => {
+  if (!uid) return;
+  try {
+    await updateDoc(doc(db, "usuarios", uid), { bloqueado: true });
+  } catch (err) {
+    console.error("Error bloqueando usuario:", err);
+  }
+};
+
+// Desbloquear usuario
+const desbloquearUsuario = async (uid) => {
+  if (!uid) return;
+  try {
+    await updateDoc(doc(db, "usuarios", uid), { bloqueado: false });
+  } catch (err) {
+    console.error("Error desbloqueando usuario:", err);
+  }
+};
+
+
 const dejarSeguirUsuario = async (uidActual, uidObjetivo) => {
   if (!uidActual || !uidObjetivo) return;
 
@@ -170,6 +261,13 @@ const dejarSeguirUsuario = async (uidActual, uidObjetivo) => {
     setUser(null);
   };
 
+  useEffect(() => {
+  if (user?.bloqueado) {
+    alert("Tu cuenta ha sido suspendida hasta tiempo indefinido. Puedes leer libros, pero no subir ni escribir contenido.");
+  }
+}, [user]);
+
+
  const value = {
   user,
   loading,
@@ -177,8 +275,12 @@ const dejarSeguirUsuario = async (uidActual, uidObjetivo) => {
   login,
   loginWithGoogle,
   logout,
-  seguirUsuario,       // <-- agregar
-  dejarSeguirUsuario,  // <-- agregar
+  seguirUsuario,      
+  dejarSeguirUsuario,  
+  cambiarRolUsuario, 
+    eliminarUsuario,
+  bloquearUsuario,
+  desbloquearUsuario,
   updateProfileData: async ({ displayName, bio, file }) => {
     if (!user) return;
     const uid = user.uid;
@@ -201,10 +303,9 @@ const dejarSeguirUsuario = async (uidActual, uidObjetivo) => {
   },
 };
 
-    return (
-  <AuthContext.Provider value={value}>
-    {children}
-  </AuthContext.Provider>
-);
-
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }

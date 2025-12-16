@@ -6,6 +6,7 @@ import logo from "../assets/fictory-trans.png";
 import "../styles/Explorar.css";
 import { useNotifications } from "../context/NotificationContext";
 
+
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications(); // ← está aquí arriba
@@ -15,6 +16,8 @@ export default function Navbar() {
   const closeTimer = useRef(null);
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState("");
+   const esAdmin =
+    user?.role === "admin" || user?.role === "moderador";
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -39,7 +42,7 @@ export default function Navbar() {
     "comedia",
     "aventura",
     "fanfic",
-    "LGBTQ",
+    "LGTBQ",
     "motivacional",
     "thriller"
   ];
@@ -50,7 +53,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar">
+    <nav className="main-navbar">
       {/* LOGO */}
       <div className="logo-container">
         <Link to="/miniwattpad">
@@ -148,8 +151,20 @@ export default function Navbar() {
   </button>
 </li>
 
-        <li><Link to="/biblioteca" className="nav-links">Biblioteca</Link></li>
+        <li><Link to="/biblioteca" className="nav-links intranet-nav">Biblioteca</Link></li>
+
+        {esAdmin && (
+  <li>
+    <Link to="/intranet/moderacion" className="nav-links" >
+      Intranet  
+    </Link>
+  </li>
+)}
+
       </ul>
+
+      
+
 
       {/* USUARIO */}
       {!user ? (
@@ -197,6 +212,8 @@ export default function Navbar() {
     </span>
   )}
 </div>
+
+
 
           {showMenu && (
             <div

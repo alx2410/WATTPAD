@@ -23,6 +23,8 @@ main {
   padding: 24px;
   max-width: 1000px;
   margin: auto;
+  position: relative;
+  z-index: 1;
 }
 
 hr {
@@ -36,7 +38,7 @@ hr {
    NAVBAR (NUEVA VERSIÓN: fondo blanco + letras negras)
 ========================================================= */
 
-nav {
+.main-navbar {
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -46,7 +48,7 @@ nav {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
   flex-wrap: nowrap;    /* prohibido envolver */
 }
 
@@ -76,8 +78,10 @@ nav ul {
   padding: 0;
 }
 
+
+
 /* CLASE BASE PARA <a> Y <button> */
-.nav-links, .nav-links a {
+.nav-links, .nav-links a, a.nav-links {
   all: unset;                 /* normaliza button y a */
   cursor: pointer;
   display: inline-block;
@@ -106,28 +110,13 @@ nav ul {
   width: 100%;
 }
 
-.nav-links::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0%;
-  height: 2px;
-  background-color: #000;
-  border-radius: 2px;
-  transition: width 0.3s ease;
-}
-
-.nav-links:hover::after {
-  width: 100%;
-}
 
 /* BOTÓN */
 .boton-navbar {
   background-color: #000;
   border: none;
   color: #fff;
-  font-weight: 600;
+  font-weight: 00;
   border-radius: 6px;
   padding: 8px 14px;
   cursor: pointer;
@@ -346,7 +335,7 @@ nav button:hover {
   width: 100vw; height: 100vh;
   background-color: rgba(0,0,0,0.5);
   display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
+  z-index: 3000;
 }
 
 .modal-contenido {
@@ -514,6 +503,7 @@ nav button:hover {
   border-radius: 18px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.15);
   position: relative;
+  z-index: 4000;
   animation: modalFade 0.25s ease-out;
 }
 
@@ -891,7 +881,7 @@ nav button:hover {
 }
 
 .menu-options .cerrar-sesion {
-  color: #d30000;
+  color: #721b1b;
   font-weight: 700;
   cursor: pointer;
 }
@@ -925,4 +915,8 @@ nav button:hover {
   .desktop-only {
     display: none;
   }
+}
+
+.navbar li {
+  list-style: none;
 }

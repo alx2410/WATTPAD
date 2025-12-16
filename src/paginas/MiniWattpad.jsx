@@ -25,7 +25,7 @@ export default function MiniWattpad() {
   { nombre: "Motivacional", icono: "/icons/motivacional.jpeg" },
   { nombre: "Thriller", icono: "/icons/trhiller.jpeg" },
 
-  // Si quieres más, agrégalos. Igual solo muestra 8.
+  //  8.
 ];
 
   return (
@@ -143,7 +143,7 @@ export default function MiniWattpad() {
 
       
 
-      {/* FOOTER */}
+     
  {/* FOOTER */}
 <footer className="footer">
   <div className="footer-container">

@@ -21,6 +21,9 @@ import Ficwin from "./paginas/Ficwin";
 
 import Cuenta from "./paginas/Cuenta";
 
+import IntranetLayout from "./components/IntranetLayout";
+import Moderacion from "./paginas/intranet/Moderacion";
+
 import { LibrosProvider } from "./context/LibrosContext";
 
 import "./App.css";
@@ -65,7 +68,16 @@ export default function App() {
         <Route path="/miniwattpad" element={<MiniWattpad />} />
         <Route path="/notificaciones" element={<Notificaciones />} />
         
-        
+        <Route
+  path="/intranet"
+  element={
+    <RutaProtegida rolePermitido={["admin", "moderador"]}>
+      <IntranetLayout />
+    </RutaProtegida>
+  }
+>
+  <Route path="moderacion" element={<Moderacion />} />
+</Route>
 
         <Route path="/libro/:id" element={<LibroDetalle />} />
         <Route path="/leer/:libroId/:capituloId" element={<LeerCapitulo />} />
