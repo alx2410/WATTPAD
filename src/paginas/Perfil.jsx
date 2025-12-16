@@ -17,7 +17,6 @@ import {
 import { db } from "../firebase/config";
 import { query, orderBy, onSnapshot } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
-import EncuestaButton from "../components/EncuestaButton";
 
 
 import { onValue } from "firebase/database";
@@ -87,6 +86,9 @@ const LIMITE_CARACTERES = 6000;
 
   const location = useLocation();
 
+const [encuestaAbierta, setEncuestaAbierta] = useState(false);
+const [tituloEncuesta, setTituloEncuesta] = useState("");
+const [opcionesEncuesta, setOpcionesEncuesta] = useState(["", ""]);
 
 
   // =========================
@@ -227,6 +229,56 @@ const seleccionarLeyendoAhora = async (libro) => {
   }
 };
 
+/*//////////////////
+//   encuestaaa 
+///////////////////////*/
+
+const agregarOpcion = () => setOpcionesEncuesta([...opcionesEncuesta, ""]);
+
+const cambiarOpcion = (index, valor) => {
+  const nuevasOpciones = [...opcionesEncuesta];
+  nuevasOpciones[index] = valor;
+  setOpcionesEncuesta(nuevasOpciones);
+};
+
+const crearEncuesta = async () => {
+  const opcionesValidas = opcionesEncuesta.filter(o => o.trim() !== "");
+  if (!tituloEncuesta.trim() || opcionesValidas.length < 2) {
+    alert("Debe tener título y al menos 2 opciones válidas");
+    return;
+  }
+
+  try {
+    const encuestaRef = await addDoc(collection(db, "encuestas"), {
+      autorId: user.uid,
+      autorNombre: user.displayName || "Autor",
+      titulo: tituloEncuesta,
+      opciones: opcionesValidas,
+      fechaCreacion: serverTimestamp(),
+    });
+
+    await addDoc(collection(db, "muro"), {
+      uid: user.uid,
+      autor: user.displayName || user.email || "Autor",
+      encuesta: {
+        id: encuestaRef.id,
+        titulo: tituloEncuesta,
+        opciones: opcionesValidas.map(o => ({ texto: o, votos: 0 }))
+      },
+      fecha: serverTimestamp(),
+      foto: user.photoURL || "",
+      likesUsuarios: [],
+      dislikesUsuarios: []
+    });
+
+    setTituloEncuesta("");
+    setOpcionesEncuesta(["", ""]);
+    setEncuestaAbierta(false);
+    console.log("Encuesta creada y publicada en el muro ✅");
+  } catch (err) {
+    console.error("Error creando encuesta:", err);
+  }
+};
 
 
 ///////////////////////////////////////////////
@@ -567,33 +619,15 @@ useEffect(() => {
     const fotoPerfil = datosPerfil?.avatar || user.photoURL || "";
 
     // 1. Publicar en muro
-{muroDocs.map(doc => {
-  const data = doc.data();
-
-  // Si es una encuesta
-  if (data.encuesta) {
-    return (
-      <div key={doc.id} style={{ border: "1px solid #ccc", padding: 10, borderRadius: 8, marginBottom: 10 }}>
-        <h3>{data.encuesta.titulo}</h3>
-        {data.encuesta.opciones.map((op, i) => (
-          <div key={i}>
-            {op.texto} - Votos: {op.votos}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // Si es un mensaje normal
-  return (
-    <div key={doc.id} style={{ padding: 10, marginBottom: 10 }}>
-      {data.texto}
-    </div>
-  );
-})}
-
-
-
+    const postRef = await addDoc(collection(db, "muro"), {
+      uid: user.uid,
+      autor: datosPerfil?.username || user.displayName || user.email,
+      texto: nuevoPost.trim(),
+      fecha: serverTimestamp(),
+      foto: fotoPerfil,
+      likesUsuarios: [],
+      dislikesUsuarios: []
+    });
 
     setNuevoPost("");
 
@@ -619,23 +653,6 @@ useEffect(() => {
         }
       );
     }
-
-    const opcionesValidas = opciones.filter(o => o.trim() !== "");
-
-await addDoc(collection(db, "muro"), {
-  uid: user.uid,
-  autor: user.displayName || user.email || "Autor",
-  fecha: serverTimestamp(),
-  foto: user.photoURL || "",
-  likesUsuarios: [],
-  dislikesUsuarios: [],
-  encuesta: {
-    id: encuestaRef.id,
-    titulo,
-    opciones: opcionesValidas.map(o => ({ texto: o, votos: 0 }))
-  }
-});
-
 
   } catch (err) {
     console.error("publicarEnMuro error:", err);
@@ -1036,7 +1053,6 @@ setPosts(prev =>
     placeholder="Escribe algo en tu muro..."
   />
 
-
   <div
     className={`contador-caracteres ${
       nuevoPost.length >= LIMITE_CARACTERES * 0.8 ? "cerca-limite" : ""
@@ -1045,13 +1061,71 @@ setPosts(prev =>
     {nuevoPost.length} / {LIMITE_CARACTERES}
   </div>
 
-<div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
   <button onClick={publicarEnMuro} className="btn-editar">
     Publicar
   </button>
 
-  <EncuestaButton /> 
-</div>
+  {user && (
+  <div style={{ margin: "10px 0" }}>
+    <button onClick={() => setEncuestaAbierta(true)} className="btn-editar">
+      Crear encuesta
+    </button>
+
+    {encuestaAbierta && (
+      <div style={{
+        position: "fixed",
+        top: 0, left: 0,
+        width: "100%", height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 10,
+        boxSizing: "border-box",
+      }}>
+        <div style={{
+          background: "#fff",
+          borderRadius: 12,
+          width: "400px",
+          maxHeight: "80vh",
+          display: "flex",
+          flexDirection: "column",
+          padding: 16,
+        }}>
+          <input
+            type="text"
+            placeholder="Título de la encuesta"
+            value={tituloEncuesta}
+            onChange={(e) => setTituloEncuesta(e.target.value)}
+            style={{ width: "100%", padding: 8, borderRadius: 12, border: "1px solid #ccc", outline: "none", fontSize: 14, marginBottom: 6 }}
+          />
+
+          <div style={{ overflowY: "auto", flexGrow: 1, maxHeight: 120 }}>
+            {opcionesEncuesta.map((op, i) => (
+              <input
+                key={i}
+                type="text"
+                placeholder={`Opción ${i + 1}`}
+                value={op}
+                onChange={(e) => cambiarOpcion(i, e.target.value)}
+                style={{ width: "100%", padding: 8, borderRadius: 12, border: "1px solid #ccc", outline: "none", fontSize: 14, marginBottom: 6 }}
+              />
+            ))}
+          </div>
+
+          <button onClick={agregarOpcion} className="file-label" style={{ marginTop: 10, marginBottom: 6 }}>
+            + Agregar opción
+          </button>
+
+          <div style={{ display: "flex", marginTop: 10 }}>
+            <button onClick={crearEncuesta} className="btn-editar">Publicar encuesta</button>
+            <button onClick={() => setEncuestaAbierta(false)} className="btn-cancelar" style={{ marginLeft: 10 }}>Cancelar</button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+)}
 
 </div>
 

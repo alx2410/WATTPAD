@@ -3,7 +3,7 @@ import { db } from "../firebase/config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 
-export default function EncuestaButton() {
+export default function EncuestaButton({ onEncuestaCreada }) {
   const { user } = useAuth();
   const [abierto, setAbierto] = useState(false);
   const [titulo, setTitulo] = useState("");
@@ -40,20 +40,30 @@ export default function EncuestaButton() {
       });
 
       // Guardar también en "muro"
-await addDoc(collection(db, "muro"), {
-  uid: user.uid,
-  autor: user.displayName || user.email || "Autor",
-  encuesta: {
-    id: encuestaRef.id,
-    titulo,
-    opciones: opcionesValidas.map((o) => ({ texto: o, votos: 0 }))
-  },
-  fecha: serverTimestamp(),
-  foto: user.photoURL || "",
-  likesUsuarios: [],
-  dislikesUsuarios: []
-});
+      await addDoc(collection(db, "muro"), {
+        uid: user.uid,
+        autor: user.displayName || user.email || "Autor",
+        encuesta: {
+          id: encuestaRef.id,
+          titulo,
+          opciones: opcionesValidas.map((o) => ({ texto: o, votos: 0 }))
+        },
+        fecha: serverTimestamp(),
+        foto: user.photoURL || "",
+        likesUsuarios: [],
+        dislikesUsuarios: []
+      });
 
+      // Llamar al callback si existe
+      if (onEncuestaCreada) {
+        onEncuestaCreada({
+          id: encuestaRef.id,
+          titulo,
+          opciones: opcionesValidas.map((o) => ({ texto: o, votos: 0 })),
+          autor: user.displayName || user.email || "Autor",
+          fecha: new Date(),
+        });
+      }
 
       // Resetear estado
       setTitulo("");
