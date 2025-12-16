@@ -19,6 +19,8 @@ import LeerCapitulo from "./paginas/LeerCapitulo";
 
 import Ficwin from "./paginas/Ficwin";
 
+import Cuenta from "./paginas/Cuenta";
+
 import { LibrosProvider } from "./context/LibrosContext";
 
 import "./App.css";
@@ -49,6 +51,15 @@ export default function App() {
             </RutaProtegida>
           }
         />
+
+        <Route
+  path="/cuenta"
+  element={
+    <RutaProtegida abrirModal={() => setModalOpen(true)}>
+      <Cuenta />
+    </RutaProtegida>
+  }
+/>
         <Route path="/perfil/:uid?" element={<Perfil />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/miniwattpad" element={<MiniWattpad />} />

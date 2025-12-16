@@ -1,7 +1,9 @@
+// LeerCapitulo.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase/config";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { auth } from "../firebase/auth";
 import "../styles/Leer.css";
 
 export default function LeerCapitulo() {
@@ -16,6 +18,8 @@ export default function LeerCapitulo() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
+        if (!auth.currentUser) return;
+
         // Capítulo actual
         const capRef = doc(db, "capitulos", capituloId);
         const capSnap = await getDoc(capRef);
@@ -28,7 +32,7 @@ export default function LeerCapitulo() {
 
         setCapitulo({ id: capSnap.id, ...capSnap.data() });
 
-        // Lista de capítulos
+        // Lista de capítulos del libro
         const q = query(
           collection(db, "capitulos"),
           where("libroId", "==", libroId)
@@ -36,9 +40,18 @@ export default function LeerCapitulo() {
 
         const snap = await getDocs(q);
         const lista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
         lista.sort((a, b) => (a.numero || 0) - (b.numero || 0));
         setCapitulos(lista);
+
+        // Actualizar progreso y último capítulo
+        const index = lista.findIndex(c => c.id === capituloId);
+        const progreso = Math.round(((index + 1) / lista.length) * 100);
+
+        const usuarioLibroRef = doc(db, "usuarios", auth.currentUser.uid, "biblioteca", libroId);
+        await updateDoc(usuarioLibroRef, {
+          ultimoCapitulo: capituloId,
+          progreso,
+        });
 
       } catch (error) {
         console.error("Error cargando capítulo:", error);
@@ -60,15 +73,10 @@ export default function LeerCapitulo() {
   return (
     <div className="leer-layout">
 
-      {/* BOTÓN HAMBURGUESA (solo móvil) */}
-      <button
-        className="btn-menu"
-        onClick={() => setMenuAbierto(true)}
-      >
+      <button className="btn-menu" onClick={() => setMenuAbierto(true)}>
         ☰
       </button>
 
-      {/* CONTENIDO PRINCIPAL */}
       <div className="leer-capitulo">
         <h1>{capitulo.titulo}</h1>
         <p>{capitulo.contenido}</p>
@@ -87,7 +95,6 @@ export default function LeerCapitulo() {
         </div>
       </div>
 
-      {/* MENÚ LATERAL (desktop) */}
       <aside className="menu-capitulos desktop">
         <h3>Capítulos</h3>
         <ul>
@@ -104,13 +111,9 @@ export default function LeerCapitulo() {
         </ul>
       </aside>
 
-      {/* MENÚ HAMBURGUESA (mobile) */}
       {menuAbierto && (
         <div className="menu-overlay" onClick={() => setMenuAbierto(false)}>
-          <aside
-            className="menu-capitulos mobile"
-            onClick={e => e.stopPropagation()}
-          >
+          <aside className="menu-capitulos mobile" onClick={e => e.stopPropagation()}>
             <h3>Capítulos</h3>
             <ul>
               {capitulos.map((cap, i) => (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { db } from "../firebase/config";
+import { db, storage } from "../firebase/config";
 import {
   collection,
   addDoc,
@@ -8,45 +8,72 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Comunidad.css";
 
 export default function Respuestas({ postId }) {
   const { user } = useAuth();
+
   const [comentarios, setComentarios] = useState([]);
   const [nuevoComentario, setNuevoComentario] = useState("");
+  const [imgComentario, setImgComentario] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [desplegado, setDesplegado] = useState(false);
 
-  // Cargar comentarios en tiempo real
+  // 🔄 Cargar comentarios en tiempo real
   useEffect(() => {
     if (!postId) return;
+
     const q = query(
       collection(db, "feed", postId, "comentarios"),
       orderBy("fecha", "asc")
     );
 
     const unsub = onSnapshot(q, (snapshot) => {
-      setComentarios(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setComentarios(snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })));
     });
 
     return () => unsub();
   }, [postId]);
 
-  // Publicar comentario
+  // ☁️ Subir imagen del comentario
+  const subirImagenComentario = async () => {
+    if (!imgComentario) return "";
+
+    const imgRef = ref(
+      storage,
+      `comentarios/${postId}/${Date.now()}-${imgComentario.name}`
+    );
+
+    await uploadBytes(imgRef, imgComentario);
+    return await getDownloadURL(imgRef);
+  };
+
+  // ✍️ Publicar comentario (texto + imagen opcional)
   const publicarComentario = async () => {
-    if (!nuevoComentario.trim() || !user) return;
+    if (!nuevoComentario.trim() && !imgComentario) return;
+    if (!user) return;
+
     try {
+      const imgUrl = await subirImagenComentario();
+
       await addDoc(collection(db, "feed", postId, "comentarios"), {
         uid: user.uid,
         autor: user.displayName || user.username || "Anon",
         texto: nuevoComentario.trim(),
+        imgUrl: imgUrl || "",
         fecha: serverTimestamp(),
         fotoPerfil: user.photoURL || "/default-profile.png",
       });
+
       setNuevoComentario("");
+      setImgComentario(null);
       setModalAbierto(false);
-      setDesplegado(true); // Mostrar automáticamente al comentar
+      setDesplegado(true);
     } catch (err) {
       console.error("Error al publicar comentario:", err);
     }
@@ -55,7 +82,7 @@ export default function Respuestas({ postId }) {
   return (
     <div className="respuestas-container">
 
-      {/* Icono para abrir modal */}
+      {/* 💬 Icono abrir comentarios */}
       <button
         className="icon-btn"
         onClick={() => setModalAbierto(true)}
@@ -64,40 +91,73 @@ export default function Respuestas({ postId }) {
         <span className="material-icons">chat_bubble</span>
       </button>
 
-      {/* Modal para escribir comentario */}
+      {/* 🪟 Modal comentario */}
       {modalAbierto && (
-        <div className="modal-bg" onClick={() => setModalAbierto(false)}>
-          <div
-            className="modal-comentario"
-            onClick={(e) => e.stopPropagation()}
+  <div className="modal-bg" onClick={() => setModalAbierto(false)}>
+    <div
+      className="modal-comentario comunidad-composer"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3>Responder al post</h3>
+
+      {/* Texto */}
+      <textarea
+        className="comunidad-composer-textarea"
+        value={nuevoComentario}
+        onChange={(e) => setNuevoComentario(e.target.value)}
+        placeholder="Escribe tu respuesta..."
+      />
+
+      {/* Vista previa de imagen */}
+      {imgComentario && (
+        <div className="comunidad-composer-preview">
+          <img
+            src={URL.createObjectURL(imgComentario)}
+            alt="preview"
+          />
+          <button
+            className="comunidad-preview-remove"
+            onClick={() => setImgComentario(null)}
           >
-            <h3>Escribe un comentario</h3>
-            <textarea
-              value={nuevoComentario}
-              onChange={(e) => setNuevoComentario(e.target.value)}
-              placeholder="Escribe tu comentario..."
-            />
-            <button className="btn-comentar" onClick={publicarComentario}>
-              Publicar
-            </button>
-            <button
-              className="btn-cancelar"
-              onClick={() => setModalAbierto(false)}
-            >
-              Cancelar
-            </button>
-          </div>
+            ✕
+          </button>
         </div>
       )}
 
-      {/* Sección plegable de comentarios */}
+      {/* Acciones */}
+      <div className="comunidad-composer-actions">
+        <label className="comunidad-btn-img">
+          📷 Imagen
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => setImgComentario(e.target.files[0])}
+          />
+        </label>
+
+        <button
+          className="comunidad-btn-publicar"
+          onClick={publicarComentario}
+        >
+          Publicar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {/* 📂 Lista de comentarios */}
       {comentarios.length > 0 && (
         <div className="comentarios-desplegable">
           <button
             className="btn-desplegar"
             onClick={() => setDesplegado(!desplegado)}
           >
-            {desplegado ? "Ocultar comentarios" : `Ver comentarios (${comentarios.length})`}
+            {desplegado
+              ? "Ocultar comentarios"
+              : `Ver comentarios (${comentarios.length})`}
           </button>
 
           {desplegado && (
@@ -109,9 +169,20 @@ export default function Respuestas({ postId }) {
                     alt="Foto"
                     className="foto-perfil"
                   />
+
                   <div>
                     <p className="nombre-usuario">{c.autor}</p>
                     <p className="post-texto">{c.texto}</p>
+
+                    {c.imgUrl && (
+  <div
+    className="comentario-img-wrapper"
+    onClick={() => window.open(c.imgUrl, "_blank")}
+  >
+    <img src={c.imgUrl} alt="comentario" />
+  </div>
+)}
+
                   </div>
                 </div>
               ))}

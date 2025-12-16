@@ -4,7 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase/auth";
 import { db } from "../firebase/config";
 import "../styles/Biblioteca.css";
-import { collection, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+  deleteDoc,
+  query,
+  where,
+} from "firebase/firestore";
 
 export default function Biblioteca() {
   const navigate = useNavigate();
@@ -13,10 +21,10 @@ export default function Biblioteca() {
   const [enLectura, setEnLectura] = useState([]);
   const [miLista, setMiLista] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
-
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Detectar usuario
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -25,6 +33,7 @@ export default function Biblioteca() {
     return () => unsub();
   }, []);
 
+  // Cargar datos de Firestore
   const cargarDatos = async (user) => {
     if (!user) return;
     const cargarSeccion = async (ruta, setState) => {
@@ -42,16 +51,57 @@ export default function Biblioteca() {
     if (currentUser) cargarDatos(currentUser);
   }, [currentUser]);
 
+  // -------------------------------
+  // FUNCIONES DE NAVEGACIÓN
+  // -------------------------------
+
   const empezarALeer = async (libro) => {
     if (!currentUser) return;
-    await setDoc(doc(db, "usuarios", currentUser.uid, "biblioteca", libro.id), libro);
+
+    // Buscar primer capítulo
+    const q = query(collection(db, "capitulos"), where("libroId", "==", libro.id));
+    const snap = await getDocs(q);
+    const lista = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    lista.sort((a, b) => (a.numero || 0) - (b.numero || 0));
+    const primerCap = lista.length > 0 ? lista[0].id : null;
+
+    // Guardar en biblioteca con último capítulo y progreso inicial
+    await setDoc(doc(db, "usuarios", currentUser.uid, "biblioteca", libro.id), {
+      ...libro,
+      ultimoCapitulo: primerCap,
+      progreso: primerCap ? 0 : 0,
+    });
+
     await deleteDoc(doc(db, "usuarios", currentUser.uid, "lista", libro.id));
     setMiLista(miLista.filter((l) => l.id !== libro.id));
-    setEnLectura([...enLectura, libro]);
-    navigate(`/leer/${libro.id}`);
+    setEnLectura([...enLectura, { ...libro, ultimoCapitulo: primerCap, progreso: 0 }]);
+
+    if (primerCap) navigate(`/leer/${libro.id}/${primerCap}`);
   };
 
-  const seguirLeyendo = (libro) => navigate(`/leer/${libro.id}`);
+  const seguirLeyendo = async (libro) => {
+    if (!currentUser) return;
+
+    let capId = libro.ultimoCapitulo;
+
+    // Si no hay último capítulo, buscamos el primero
+    if (!capId) {
+      const q = query(collection(db, "capitulos"), where("libroId", "==", libro.id));
+      const snap = await getDocs(q);
+      const lista = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (lista.length === 0) return;
+      lista.sort((a, b) => (a.numero || 0) - (b.numero || 0));
+      capId = lista[0].id;
+
+      await setDoc(doc(db, "usuarios", currentUser.uid, "biblioteca", libro.id), {
+        ...libro,
+        ultimoCapitulo: capId,
+        progreso: 0,
+      });
+    }
+
+    navigate(`/leer/${libro.id}/${capId}`);
+  };
 
   const quitarLibro = async (libro, seccion) => {
     if (!currentUser) return;
@@ -62,6 +112,10 @@ export default function Biblioteca() {
     if (seccion === "miLista") setMiLista(miLista.filter((l) => l.id !== libro.id));
     if (seccion === "favoritos") setFavoritos(favoritos.filter((l) => l.id !== libro.id));
   };
+
+  // -------------------------------
+  // COMPONENTE LIBRO CARD
+  // -------------------------------
 
   const LibroCard = ({ libro, seccion }) => (
     <div className="biblioteca-card">
@@ -83,7 +137,10 @@ export default function Biblioteca() {
         </div>
       </div>
       <div className="biblioteca-card-progreso-wrapper">
-        <div className="biblioteca-card-progreso-bar" style={{ width: `${libro.progreso || 0}%` }}></div>
+        <div
+          className="biblioteca-card-progreso-bar"
+          style={{ width: `${libro.progreso || 0}%` }}
+        ></div>
       </div>
       <p className="biblioteca-card-titulo">{libro.titulo}</p>
     </div>
@@ -92,7 +149,8 @@ export default function Biblioteca() {
   const renderTab = () => {
     let libros =
       activeTab === "enLectura" ? enLectura : activeTab === "miLista" ? miLista : favoritos;
-    if (libros.length === 0) return <p className="biblioteca-empty">No hay libros en esta sección.</p>;
+    if (libros.length === 0)
+      return <p className="biblioteca-empty">No hay libros en esta sección.</p>;
     return (
       <div className="biblioteca-grid">
         {libros.map((libro) => (

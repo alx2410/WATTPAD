@@ -117,9 +117,6 @@ const handleDislike = async (post) => {
         {/* LEFT */}
         <aside className="comunidad-sidebar-left">
           <h2 className="comunidad-sidebar-titulo">📰 Categorías</h2>
-          <Link to="/top-ventas" className="comunidad-sidebar-item">🔥 Top ventas del mes</Link>
-          <Link to="/mejores-calificados" className="comunidad-sidebar-item">⭐ Mejores calificados</Link>
-          <Link to="/actualizaciones" className="comunidad-sidebar-item">📢 Actualizaciones</Link>
           <Link to="/ficwin" className="comunidad-sidebar-item">📖 Ficwin</Link>
         </aside>
 
@@ -210,7 +207,7 @@ const handleDislike = async (post) => {
 
         {/* RIGHT */}
         <aside className="comunidad-sidebar-right">
-          <h2 className="comunidad-sidebar-right-title">📚 Recomendados</h2>
+          <h2 className="comunidad-sidebar-right-title">Te Recomendamos</h2>
           <PopularBooksSidebar />
         </aside>
 

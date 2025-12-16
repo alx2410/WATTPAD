@@ -347,3 +347,180 @@
 .comunidad-icon-btn.activo:nth-child(2) {
   color: #f44336;
 }
+
+/* ==========================================
+   IMÁGENES EN COMENTARIOS (TAMAÑO CONTROLADO)
+========================================== */
+
+/* Contenedor fijo para imagen del comentario */
+.comentario-img-wrapper {
+  width: 180px;        /* ancho fijo */
+  height: 180px;       /* alto fijo */
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;    /* recorta lo que sobresale */
+  cursor: zoom-in;
+  background: #f3f4f6;
+}
+
+/* Imagen se adapta al contenedor */
+.comentario-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* 🔑 clave: ajusta sin deformar */
+  display: block;
+}
+/* ==========================================
+   DISEÑO REAL PARA RESPUESTAS (CLASES CORRECTAS)
+========================================== */
+
+.comentarios-desplegable {
+  margin-top: 10px;
+}
+
+.btn-desplegar {
+  background: transparent;
+  border: none;
+  color: #6366f1;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.btn-desplegar:hover {
+  text-decoration: underline;
+}
+
+.comentarios-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comentario-card {
+  display: flex;
+  gap: 10px;
+  background: #f9fafb;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.comentario-card .foto-perfil {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nombre-usuario {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.post-texto {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ==========================================
+   COMPOSER RESPUESTA AL POST
+========================================== */
+
+.comunidad-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comunidad-composer h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Textarea */
+.comunidad-composer-textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+}
+
+.comunidad-composer-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* Vista previa imagen */
+.comunidad-composer-preview {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+}
+
+.comunidad-composer-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Botón eliminar preview */
+.comunidad-preview-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+/* Acciones */
+.comunidad-composer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botón imagen */
+.comunidad-btn-img {
+  font-size: 13px;
+  color: #6366f1;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.comunidad-btn-img:hover {
+  text-decoration: underline;
+} 
+/* ==========================================
+   BOTÓN ELIMINAR POST
+========================================== */
+.comunidad-btn-eliminar {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+.comunidad-btn-eliminar:hover {
+  text-decoration: underline;
+}
