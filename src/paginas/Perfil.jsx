@@ -17,6 +17,7 @@ import {
 import { db } from "../firebase/config";
 import { query, orderBy, onSnapshot } from "firebase/firestore";
 import { useLocation } from "react-router-dom";
+import EncuestaButton from "../components/EncuestaButton";
 
 
 import { onValue } from "firebase/database";
@@ -566,15 +567,33 @@ useEffect(() => {
     const fotoPerfil = datosPerfil?.avatar || user.photoURL || "";
 
     // 1. Publicar en muro
-    const postRef = await addDoc(collection(db, "muro"), {
-      uid: user.uid,
-      autor: datosPerfil?.username || user.displayName || user.email,
-      texto: nuevoPost.trim(),
-      fecha: serverTimestamp(),
-      foto: fotoPerfil,
-      likesUsuarios: [],
-      dislikesUsuarios: []
-    });
+{muroDocs.map(doc => {
+  const data = doc.data();
+
+  // Si es una encuesta
+  if (data.encuesta) {
+    return (
+      <div key={doc.id} style={{ border: "1px solid #ccc", padding: 10, borderRadius: 8, marginBottom: 10 }}>
+        <h3>{data.encuesta.titulo}</h3>
+        {data.encuesta.opciones.map((op, i) => (
+          <div key={i}>
+            {op.texto} - Votos: {op.votos}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Si es un mensaje normal
+  return (
+    <div key={doc.id} style={{ padding: 10, marginBottom: 10 }}>
+      {data.texto}
+    </div>
+  );
+})}
+
+
+
 
     setNuevoPost("");
 
@@ -600,6 +619,23 @@ useEffect(() => {
         }
       );
     }
+
+    const opcionesValidas = opciones.filter(o => o.trim() !== "");
+
+await addDoc(collection(db, "muro"), {
+  uid: user.uid,
+  autor: user.displayName || user.email || "Autor",
+  fecha: serverTimestamp(),
+  foto: user.photoURL || "",
+  likesUsuarios: [],
+  dislikesUsuarios: [],
+  encuesta: {
+    id: encuestaRef.id,
+    titulo,
+    opciones: opcionesValidas.map(o => ({ texto: o, votos: 0 }))
+  }
+});
+
 
   } catch (err) {
     console.error("publicarEnMuro error:", err);
@@ -999,7 +1035,6 @@ setPosts(prev =>
     }}
     placeholder="Escribe algo en tu muro..."
   />
-  <EncuestaButton />
 
 
   <div
@@ -1010,9 +1045,14 @@ setPosts(prev =>
     {nuevoPost.length} / {LIMITE_CARACTERES}
   </div>
 
+<div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
   <button onClick={publicarEnMuro} className="btn-editar">
     Publicar
   </button>
+
+  <EncuestaButton /> 
+</div>
+
 </div>
 
     )}

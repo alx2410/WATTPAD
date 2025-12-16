@@ -6,6 +6,8 @@ import LibroSidebar from "../components/escribir/LibroSidebar";
 import EditarLibro from "../components/escribir/EditarLibro";
 import CapitulosEditor from "../components/escribir/CapitulosEditor";
 import "../styles/Escribir.css";
+import EncuestaButton from "../components/EncuestaButton";
+
 
 export default function Escribir() {
   const { user } = useAuth();
