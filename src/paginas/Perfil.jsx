@@ -999,6 +999,8 @@ setPosts(prev =>
     }}
     placeholder="Escribe algo en tu muro..."
   />
+  <EncuestaButton />
+
 
   <div
     className={`contador-caracteres ${
