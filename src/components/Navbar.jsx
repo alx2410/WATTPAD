@@ -39,7 +39,7 @@ export default function Navbar() {
     "comedia",
     "aventura",
     "fanfic",
-    "LGTBQ",
+    "LGBTQ",
     "motivacional",
     "thriller"
   ];

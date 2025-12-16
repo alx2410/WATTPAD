@@ -64,7 +64,10 @@ nav h1:hover {
   transform: scale(1.05);
 }
 
-/* LINKS */
+/* ===============================
+   LINKS NAVBAR (UNIFICADO)
+================================ */
+
 nav ul {
   list-style: none;
   display: flex;
@@ -73,24 +76,41 @@ nav ul {
   padding: 0;
 }
 
-.nav-links {
+/* CLASE BASE PARA <a> Y <button> */
+.nav-links, .nav-links a {
+  all: unset;                 /* normaliza button y a */
+  cursor: pointer;
+  display: inline-block;
   color: #000;
-  text-decoration: none;
   font-weight: 700;
   position: relative;
   transition: 0.3s ease;
-}
-
-.nav-links a {
-  color: #000 !important;
   text-decoration: none;
+  font-size: 19px;      
 }
 
+/* underline */
 .nav-links::after {
   content: "";
   position: absolute;
   bottom: -5px;
   left: 0;
+  width: 0%;
+  height: px;
+  background-color: #000;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.nav-links:hover::after {
+  width: 100%;
+}
+
+.nav-links::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
   width: 0%;
   height: 2px;
   background-color: #000;
@@ -101,36 +121,6 @@ nav ul {
 .nav-links:hover::after {
   width: 100%;
 }
-
-/* Botón “Escribir” igual que los links */
-.btn-escribir {
-  all: unset;              /* quita todos los estilos por defecto de button */
-  cursor: pointer;
-  display: inline-block;
-  color: inherit;
-  font-weight: 700;
-  position: relative;
-  transition: 0.3s ease;
-  text-decoration: none;
-}
-
-/* Efecto underline igual que nav-links */
-.btn-escribir::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background-color: #000;
-  border-radius: 2px;
-  transition: width 0.3s ease;
-}
-
-.btn-escribir:hover::after {
-  width: 100%;
-}
-
 
 /* BOTÓN */
 .boton-navbar {
@@ -901,7 +891,7 @@ nav button:hover {
 }
 
 .menu-options .cerrar-sesion {
-  color: #721b1b;
+  color: #d30000;
   font-weight: 700;
   cursor: pointer;
 }
@@ -936,4 +926,3 @@ nav button:hover {
     display: none;
   }
 }
-

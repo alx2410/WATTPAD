@@ -1,0 +1,104 @@
+/* ===========================
+   CONTENEDOR ENCUESTA
+   =========================== */
+.encuesta {
+  margin: 4rem auto;
+  padding: 2.5rem 2rem;
+  background: #fdfdfd; /* fondo suave */
+  border-radius: 12px;
+  max-width: 1200px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* TÍTULO */
+.encuesta h2 {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222222;
+  position: relative;
+}
+
+.encuesta h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #7a71ad;
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+/* GRID */
+.encuesta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.8rem;
+}
+
+/* TARJETA */
+.encuesta-card {
+  background: #ffffff;
+  border-radius: 10px;        /* más suave */
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.encuesta-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* PORTADA */
+.encuesta-card img {
+  width: 100%;
+  height: 260px;               /* portada más alta */
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.encuesta-card img:hover {
+  transform: scale(1.05);
+}
+
+/* TÍTULO LIBRO */
+.encuesta-card h4 {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.3;
+  height: 2.6rem; /* altura fija para alinear todas */
+  overflow: hidden;
+}
+
+/* BOTÓN */
+.encuesta-card button {
+  margin-top: 0.8rem;
+  background: linear-gradient(135deg, #7a71ad, #5f58a8);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.encuesta-card button:hover {
+  background: linear-gradient(135deg, #5f58a8, #7a71ad);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.encuesta-card button:disabled {
+  background: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+  box-shadow: none;
+}

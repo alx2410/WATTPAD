@@ -258,3 +258,69 @@
 
 
 
+.detalle-vistas-bloque {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px 0;
+  gap: 4px;
+}
+
+.detalle-vistas-icono {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #6b7280; /* gris elegante */
+}
+
+.detalle-vistas-numero {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+
+/* src/styles/LibroDetalle.css */
+
+/* Bloque horizontal de stats */
+.detalle-stats-bloque {
+  display: flex;
+  gap: 30px;
+  margin: 15px 0;
+}
+
+.detalle-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detalle-stat-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+.detalle-stat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-stat-text span {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.detalle-stat-text strong {
+  font-size: 16px;
+  color: #222;
+}
+
+.detalle-stat-text small {
+  font-size: 12px;
+  color: #999;
+}
