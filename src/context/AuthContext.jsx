@@ -90,6 +90,8 @@ export function AuthProvider({ children }) {
       bio: "",
       provider: "password",
       createdAt: serverTimestamp(),
+        seguirUsuario,
+  dejarSeguirUsuario,
     });
 
     await cargarUsuarioCompleto(firebaseUser);
@@ -127,40 +129,77 @@ export function AuthProvider({ children }) {
     return gUser;
   };
 
+  // Agrega dentro de AuthProvider, antes de return
+const seguirUsuario = async (uidActual, uidObjetivo) => {
+  if (!uidActual || !uidObjetivo) return;
+
+  // Agregar en seguidores del usuario objetivo
+  await setDoc(doc(db, "usuarios", uidObjetivo, "seguidores", uidActual), {
+    timestamp: serverTimestamp(),
+  });
+
+  // Agregar en siguiendo del usuario actual
+  await setDoc(doc(db, "usuarios", uidActual, "siguiendo", uidObjetivo), {
+    timestamp: serverTimestamp(),
+  });
+
+  // Opcional: notificación
+  await addDoc(collection(db, "usuarios", uidObjetivo, "notificaciones"), {
+    tipo: "follow",
+    fromUID: uidActual,
+    nombreAutor: user?.username || "Usuario",
+    fecha: serverTimestamp(),
+    leida: false
+  });
+};
+
+const dejarSeguirUsuario = async (uidActual, uidObjetivo) => {
+  if (!uidActual || !uidObjetivo) return;
+
+  // Eliminar de seguidores del usuario objetivo
+  await deleteDoc(doc(db, "usuarios", uidObjetivo, "seguidores", uidActual));
+
+  // Eliminar de siguiendo del usuario actual
+  await deleteDoc(doc(db, "usuarios", uidActual, "siguiendo", uidObjetivo));
+};
+
+
   // Logout
   const logout = async () => {
     await signOut(auth);
     setUser(null);
   };
 
-  const value = {
-    user,
-    loading,
-    register,
-    login,
-    loginWithGoogle,
-    logout,
-    updateProfileData: async ({ displayName, bio, file }) => {
-      if (!user) return;
-      const uid = user.uid;
-      let photoURL = user.photoURL;
+ const value = {
+  user,
+  loading,
+  register,
+  login,
+  loginWithGoogle,
+  logout,
+  seguirUsuario,       // <-- agregar
+  dejarSeguirUsuario,  // <-- agregar
+  updateProfileData: async ({ displayName, bio, file }) => {
+    if (!user) return;
+    const uid = user.uid;
+    let photoURL = user.photoURL;
 
-      if (file) {
-        const imgRef = ref(storage, `usuario/${uid}-${Date.now()}`);
-        await uploadBytes(imgRef, file);
-        photoURL = await getDownloadURL(imgRef);
-        await updateProfile(auth.currentUser, { photoURL });
-      }
+    if (file) {
+      const imgRef = ref(storage, `usuario/${uid}-${Date.now()}`);
+      await uploadBytes(imgRef, file);
+      photoURL = await getDownloadURL(imgRef);
+      await updateProfile(auth.currentUser, { photoURL });
+    }
 
-      await updateDoc(doc(db, "usuarios", uid), {
-        username: displayName,
-        bio: bio || "",
-        avatar: photoURL,
-      });
+    await updateDoc(doc(db, "usuarios", uid), {
+      username: displayName,
+      bio: bio || "",
+      avatar: photoURL,
+    });
 
-      await cargarUsuarioCompleto(auth.currentUser);
-    },
-  };
+    await cargarUsuarioCompleto(auth.currentUser);
+  },
+};
 
   return (
     <AuthContext.Provider value={value}>

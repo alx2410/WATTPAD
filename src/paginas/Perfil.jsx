@@ -371,9 +371,32 @@ useEffect(() => {
 const toggleFollow = async () => {
   if (!user) return;
 
-  setYaSigo(prev => !prev);
+  const seguirAhora = !yaSigo; // usamos el valor actualizado en memoria
+  setYaSigo(seguirAhora);
 
-  if (yaSigo) {
+  if (seguirAhora) {
+    // SEGUIR
+    await seguirUsuario(user.uid, uidPerfil);
+
+    setDatosPerfil(prev => ({
+      ...prev,
+      seguidores: [...prev.seguidores, user.uid],
+    }));
+
+    setSeguidoresCount(prev => prev + 1);
+
+    // Crear notificación
+    await addDoc(
+      collection(db, "usuarios", uidPerfil, "notificaciones"),
+      {
+        tipo: "follow",
+        fromUID: user.uid,
+        nombreAutor: user.displayName || user.email || "Usuario",
+        fecha: serverTimestamp(),
+        leida: false,
+      }
+    );
+  } else {
     // DEJAR DE SEGUIR
     await dejarSeguirUsuario(user.uid, uidPerfil);
 
@@ -383,32 +406,10 @@ const toggleFollow = async () => {
     }));
 
     setSeguidoresCount(prev => prev - 1);
-
-  } else {
-    // SEGUIR
-    await seguirUsuario(user.uid, uidPerfil);
-
-    // Actualizar estado local primero
-    setDatosPerfil(prev => ({
-      ...prev,
-      seguidores: [...prev.seguidores, user.uid],
-    }));
-
-    setSeguidoresCount(prev => prev + 1);
-
-    // Crear notificación después
-    await addDoc(
-      collection(db, "usuarios", uidPerfil, "notificaciones"),
-      {
-        tipo: "follow",
-        fromUID: user.uid,
-        nombreAutor: user.displayName || user.email || "Usuario",
-        fecha: serverTimestamp(),
-        leida: false
-      }
-    );
   }
 };
+
+
 
   
 
