@@ -1,110 +1,263 @@
-.moderacion-layout {
+/* ===============================
+   LAYOUT GENERAL
+=============================== */
+.intranet-moderacion-layout {
   display: flex;
   height: 100vh;
-  font-family: "Inter", sans-serif;
-  background: #f9f9f9;
+  font-family: "Inter", system-ui, sans-serif;
+  background: #f6f7fb;
+  color: #111;
 }
 
-.moderacion-sidebar {
+/* ===============================
+   SIDEBAR
+=============================== */
+.intranet-moderacion-sidebar {
   width: 220px;
-  background: #fff;
-  border-right: 1px solid #e0e0e0;
-  padding: 2rem 1rem;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
 }
 
-.moderacion-sidebar h2 {
-  margin-bottom: 2rem;
-  font-size: 1.5rem;
+.intranet-moderacion-sidebar h2 {
+  font-size: 1.4rem;
   font-weight: 600;
+  margin-bottom: 2rem;
 }
 
-.moderacion-sidebar ul {
+.intranet-moderacion-sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.moderacion-sidebar li {
-  padding: 0.75rem 0;
-  cursor: pointer;
+.intranet-moderacion-sidebar li {
+  padding: 0.65rem 0.75rem;
   border-radius: 8px;
-  transition: background 0.2s;
+  cursor: pointer;
+  margin-bottom: 0.25rem;
+  transition: background 0.2s, font-weight 0.2s;
 }
 
-.moderacion-sidebar li:hover,
-.moderacion-sidebar li.active {
-  background: #f0f0f0;
+.intranet-moderacion-sidebar li:hover {
+  background: #f1f3f9;
+}
+
+.intranet-active {
+  background: #e9ecf8;
   font-weight: 600;
 }
 
-.moderacion-content {
+/* ===============================
+   CONTENIDO
+=============================== */
+.intranet-moderacion-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
 }
 
-.moderacion-content header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.moderacion-content header p {
-  margin: 0;
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.moderacion-filtro {
+.intranet-moderacion-content header {
   margin-bottom: 1.5rem;
 }
 
-.moderacion-filtro input {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  border: 1px solid #ccc;
-  outline: none;
+.intranet-moderacion-content header h2 {
+  font-size: 1.5rem;
+  margin: 0;
 }
 
+.intranet-moderacion-content header p {
+  margin: 0.25rem 0 0;
+  color: #6b7280;
+}
+
+/* ===============================
+   FILTRO
+=============================== */
+.intranet-moderacion-filtro {
+  margin-bottom: 1.5rem;
+}
+
+.intranet-moderacion-filtro input {
+  width: 97%;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  background: #fff;
+}
+
+.intranet-moderacion-filtro input:focus {
+  border-color: #6366f1;
+}
+
+/* ===============================
+   TABLAS
+=============================== */
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 0.5rem;
+  background: #ffffff;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
-table th,
-table td {
+thead {
+  background: #f1f3f9;
+}
+
+th {
   padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  color: #374151;
 }
 
-table th {
-  background: #f3f3f3;
+td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #eef0f4;
+  font-size: 0.9rem;
+}
+
+tbody tr:hover {
+  background: #f9fafc;
+}
+
+/* ===============================
+   ESTADOS
+=============================== */
+.intranet-estado-cuenta {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-table tr:hover {
-  background: #f9f9f9;
+.intranet-estado-activo {
+  background: #e6f6ed;
+  color: #047857;
 }
 
+.intranet-estado-bloqueado {
+  background: #fdecea;
+  color: #b91c1c;
+}
+
+.intranet-actividad {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.intranet-actividad-online {
+  color: #059669;
+}
+
+.intranet-actividad-offline {
+  color: #9ca3af;
+}
+
+.intranet-fila-bloqueada {
+  opacity: 0.6;
+}
+
+/* ===============================
+   BOTONES
+=============================== */
 button {
-  padding: 0.4rem 0.8rem;
-  border-radius: 9999px;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
+  font-size: 0.75rem;
   margin-right: 0.25rem;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.btn-primario {
-  background: #3b82f6;
-  color: #fff;
+button:active {
+  transform: scale(0.97);
 }
 
-.btn-secundario {
+.intranet-btn-primario {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.intranet-btn-primario:hover {
+  background: #4f46e5;
+}
+
+.intranet-btn-secundario {
   background: #e5e7eb;
-  color: #111;
+  color: #111827;
+}
+
+.intranet-btn-secundario:hover {
+  background: #d1d5db;
+}
+
+/* ===============================
+   PAGINACIÓN
+=============================== */
+.intranet-paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.25rem;
+}
+
+.intranet-paginacion button {
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  font-size: 0.75rem;
+}
+
+.intranet-paginacion button:hover {
+  background: #f1f3f9;
+}
+
+.intranet-paginacion button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.intranet-paginacion .activo {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+.intranet-moderacion-sidebar ul li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #374151;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.intranet-moderacion-sidebar ul li:hover {
+  background: #f3f4f6;
+}
+
+.intranet-moderacion-sidebar ul li.intranet-active {
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.intranet-sidebar-icon {
+  stroke-width: 2;
+  flex-shrink: 0;
 }

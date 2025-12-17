@@ -10,7 +10,8 @@ import {
   setDoc,
   updateDoc,
   increment,
-  onSnapshot
+  onSnapshot,
+  addDoc
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { auth } from "../firebase/auth";
@@ -29,6 +30,9 @@ export default function LibroDetalle() {
   const [denunciado, setDenunciado] = useState(false);
   const [activoLista, setActivoLista] = useState(false);
 const [activoFavoritos, setActivoFavoritos] = useState(false);
+const [openDenuncia, setOpenDenuncia] = useState(false);
+const [motivoDenuncia, setMotivoDenuncia] = useState("");
+
 
 
   //Votos y ranting
@@ -51,28 +55,41 @@ const [activoFavoritos, setActivoFavoritos] = useState(false);
 
   // Denuncias
 
-  const handleDenunciar = async () => {
+ const handleDenunciar = async () => {
   const user = auth.currentUser;
   if (!user) {
     setMensajeSesion("Inicia sesión para denunciar este libro.");
     return;
   }
 
-  try {
-    const libroRef = doc(db, "libros", id);
+  if (!motivoDenuncia) return;
 
-    await updateDoc(libroRef, {
+  try {
+    await updateDoc(doc(db, "libros", id), {
       denuncias: increment(1),
       usuariosDenunciaron: arrayUnion(user.uid)
     });
 
-    setLibro(prev => ({ ...prev, denuncias: (prev.denuncias || 0) + 1 }));
+    await addDoc(collection(db, "denuncias"), {
+      libroId: id,
+      tituloLibro: libro.titulo,
+      autorId: libro.autorId,
+      denunciadoPor: user.uid,
+      motivo: motivoDenuncia,
+      estado: "pendiente",
+      fecha: new Date()
+    });
+
     setDenunciado(true);
-    alert("Libro denunciado correctamente. Gracias por ayudar a mantener la comunidad segura.");
+    setOpenDenuncia(false);
+    setMotivoDenuncia("");
+    setMensajeSesion("Denuncia enviada correctamente.");
+
   } catch (err) {
     console.error("Error denunciando libro:", err);
   }
 };
+
 
 
   // Votos en tiempo real
@@ -112,6 +129,12 @@ const [activoFavoritos, setActivoFavoritos] = useState(false);
       if (snap.exists()) {
         const data = snap.data();
         setLibro(data);
+
+        const user = auth.currentUser;
+if (user && data.usuariosDenunciaron?.includes(user.uid)) {
+  setDenunciado(true);
+}
+
 
         if (!data.autorNombre && data.autorId) {
           const autorRef = doc(db, "usuarios", data.autorId);
@@ -299,7 +322,7 @@ const [activoFavoritos, setActivoFavoritos] = useState(false);
 
             <button
   className="detalle-btn-icon"
-  onClick={handleDenunciar}
+  onClick={() => setOpenDenuncia(true)}
   disabled={denunciado || libro.usuariosDenunciaron?.includes(auth.currentUser?.uid)}
   title={denunciado ? "Ya has denunciado este libro" : "Denunciar libro"}
 >
@@ -331,6 +354,39 @@ const [activoFavoritos, setActivoFavoritos] = useState(false);
       <section className="detalle-reseñas">
         <ReseñassLibro libroId={id} usuario={auth.currentUser} />
       </section>
+
+      {openDenuncia && (
+  <div className="modal-overlay">
+    <div className="modal-denuncia">
+      <h3>Denunciar libro</h3>
+      <p>Selecciona el motivo</p>
+
+      <select
+        value={motivoDenuncia}
+        onChange={(e) => setMotivoDenuncia(e.target.value)}
+      >
+        <option value="">Seleccionar</option>
+        <option value="plagio">Plagio</option>
+        <option value="contenido_inapropiado">Contenido inapropiado</option>
+        <option value="lenguaje_ofensivo">Lenguaje ofensivo</option>
+        <option value="spam">Spam</option>
+      </select>
+
+      <div className="acciones">
+        <button onClick={() => setOpenDenuncia(false)}>
+          Cancelar
+        </button>
+        <button
+          onClick={handleDenunciar}
+          disabled={!motivoDenuncia}
+        >
+          Enviar denuncia
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

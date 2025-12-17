@@ -24,6 +24,7 @@ import AnuncioCard from "../components/AnuncioCard";
 export default function Comunidad() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [avatars, setAvatars] = useState({});
 
   const [posts, setPosts] = useState([]);
   const [texto, setTexto] = useState("");
@@ -39,6 +40,20 @@ export default function Comunidad() {
     });
     return () => unsub();
   }, []);
+
+
+  useEffect(() => {
+  const unsub = onSnapshot(collection(db, "usuarios"), (snap) => {
+    const map = {};
+    snap.forEach(doc => {
+      map[doc.id] = doc.data().avatar;
+    });
+    setAvatars(map);
+  });
+
+  return () => unsub();
+}, []);
+
 
   // ================== IMAGEN ==================
   const handleFileChange = (e) => {
@@ -67,7 +82,7 @@ export default function Comunidad() {
       texto,
       imgUrl,
       autor: user.displayName || user.username,
-      fotoPerfil: user.photoURL || "/default-profile.png",
+      fotoPerfil: user.avatar || "/default-profile.png",
       uid: user.uid,
       fecha: serverTimestamp(),
       likesUsuarios: [],
@@ -174,7 +189,11 @@ export default function Comunidad() {
 
                 <div className="comunidad-post-card">
                   <Link to={`/perfil/${p.uid}`} className="comunidad-usuario-info">
-                    <img src={p.fotoPerfil} className="comunidad-foto-perfil" />
+                    <img
+  src={avatars[p.uid] || p.fotoPerfil || "/default-profile.png"}
+  className="comunidad-foto-perfil"
+/>
+
                     <span>{p.autor}</span>
                   </Link>
 

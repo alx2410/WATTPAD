@@ -183,30 +183,54 @@ nav button:hover {
 }
 
 
+/* ===============================
+   MENÚ HAMBURGUESA MOBILE (LATERAL IZQUIERDO)
+================================ */
+
 .mobile-menu {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #fff;
-  border-radius: 18px 18px 0 0;
-  padding: 20px;
-  z-index: 2000;
+  position: absolute;
+  top: 65px;          /* justo debajo del navbar */
+  left: 12px;         /* nace desde el lateral izquierdo */
+  width: 33vw;        /* UN TERCIO de la pantalla */
+  min-width: 200px;
+  max-width: 280px;
+
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+  gap: 10px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  z-index: 3000;
+
+  animation: slideFromLeft 0.18s ease-out;
 }
 
+/* Reset visual SOLO para el menú mobile */
 .mobile-menu a,
 .mobile-menu button {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  text-align: left;
-  padding: 12px;
+  all: unset;                /* borra estilos feos */
   cursor: pointer;
+
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  transition: background 0.15s ease;
 }
+
+/* Hover limpio */
+.mobile-menu a:hover,
+.mobile-menu button:hover {
+  background: #f2f2f2;
+}
+
 
 .mobile-menu .cta {
   background: #000;
@@ -235,6 +259,13 @@ nav button:hover {
 }
 
 
+.mobile-menu .cta {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  margin-top: 6px;
+}
 
 
 /* =========================================================
@@ -919,4 +950,19 @@ nav button:hover {
 
 .navbar li {
   list-style: none;
+}
+
+.mobile-menu {
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

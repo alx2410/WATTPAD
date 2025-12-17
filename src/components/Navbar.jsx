@@ -18,6 +18,8 @@ export default function Navbar() {
   const [busqueda, setBusqueda] = useState("");
    const esAdmin =
     user?.role === "admin" || user?.role === "moderador";
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -54,6 +56,20 @@ export default function Navbar() {
 
   return (
     <nav className="main-navbar">
+
+      {/* BOTONES MOBILE */}
+<div className="mobile-actions mobile-only">
+  <button
+    className="icon-btn"
+    onClick={() => setShowMobileMenu((v) => !v)}
+    aria-label="Menú"
+  >
+    ☰
+  </button>
+</div>
+
+
+
       {/* LOGO */}
       <div className="logo-container">
         <Link to="/miniwattpad">
@@ -185,7 +201,8 @@ export default function Navbar() {
         >
             <div style={{ position: "relative", display: "inline-block" }}>
   <img
-    src={user.photoURL || "https://via.placeholder.com/40"}
+    src={user.avatar || user.photoURL || "https://via.placeholder.com/40"}
+
     alt="avatar"
     className="avatar"
   />
@@ -227,7 +244,8 @@ export default function Navbar() {
             >
               <div className="user-info">
                 <img
-                  src={user.photoURL || "https://via.placeholder.com/50"}
+                  src={user.avatar || user.photoURL || "https://via.placeholder.com/40"}
+
                   className="avatar-big"
                   alt="avatar"
                 />
@@ -269,6 +287,51 @@ export default function Navbar() {
       )}
 
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
+
+        {showMobileMenu && (
+  <div className="mobile-menu">
+
+    <Link to="/explorar" onClick={() => setShowMobileMenu(false)}>
+      Explorar
+    </Link>
+
+    <Link to="/comunidad" onClick={() => setShowMobileMenu(false)}>
+      Comunidad
+    </Link>
+
+    <Link to="/biblioteca" onClick={() => setShowMobileMenu(false)}>
+      Biblioteca
+    </Link>
+
+    {esAdmin && (
+      <Link to="/intranet/moderacion" onClick={() => setShowMobileMenu(false)}>
+        Intranet
+      </Link>
+    )}
+
+    {!user ? (
+      <button
+        className="cta"
+        onClick={() => {
+          setShowAuth(true);
+          setShowMobileMenu(false);
+        }}
+      >
+        Iniciar sesión
+      </button>
+    ) : (
+      <>
+        <Link to="/perfil" onClick={() => setShowMobileMenu(false)}>
+          Mi perfil
+        </Link>
+
+        <button onClick={logout}>Cerrar sesión</button>
+      </>
+    )}
+  </div>
+)}
+
+
     </nav>
   );
 }

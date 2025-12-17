@@ -42,6 +42,7 @@ export default function Perfil() {
   const { listenToPresence } = usePresence();
   const [estadoPerfil, setEstadoPerfil] = useState("offline");
 
+  const [siguiendoUIDs, setSiguiendoUIDs] = useState([]);
 
 
 
@@ -115,6 +116,7 @@ const LIMITE_CARACTERES = 6000;
     fetchPerfil();
   }, [uidObjetivo, uidPerfil, user]);
 
+
   /////////////////////////////////////////////
   /* AAAAAAAACTIVOOOOOOOOO*/
   ////////////////////////////////////
@@ -153,9 +155,46 @@ useEffect(() => {
 
 
 
-
-
   /////////////////////////////////
+
+
+  ////////////////////////////////////
+
+
+  // =========================
+// 🔥 FOLLOW EN TIEMPO REAL (FUENTE ÚNICA)
+// =========================
+useEffect(() => {
+  if (!uidObjetivo) return;
+
+  // Seguidores del perfil
+  const refSeguidores = collection(db, "usuarios", uidObjetivo, "seguidores");
+
+  const unsubSeguidores = onSnapshot(refSeguidores, (snap) => {
+    setSeguidoresCount(snap.size);
+    setListaSeguidores(
+      snap.docs.map(d => ({ uid: d.id }))
+    );
+
+    if (user) {
+      setYaSigo(snap.docs.some(d => d.id === user.uid));
+    }
+  });
+
+  // Siguiendo del perfil
+  const refSiguiendo = collection(db, "usuarios", uidObjetivo, "siguiendo");
+  const unsubSiguiendo = onSnapshot(refSiguiendo, (snap) => {
+    setSiguiendoCount(snap.size);
+  });
+
+  return () => {
+    unsubSeguidores();
+    unsubSiguiendo();
+  };
+}, [uidObjetivo, user]);
+ 
+
+////////////////////////////////
 
 useEffect(() => {
   async function buscar() {
@@ -269,54 +308,21 @@ useEffect(() => {
   cargarLeyendo();
 }, [uidObjetivo]);
 
+/*/////////////////// SEGUIENDO MODAL /////////////////////////*/
+
+useEffect(() => {
+  if (!uidObjetivo) return;
+
+  const ref = collection(db, "usuarios", uidObjetivo, "siguiendo");
+
+  const unsub = onSnapshot(ref, (snap) => {
+    setSiguiendoUIDs(snap.docs.map(d => d.id));
+  });
+
+  return () => unsub();
+}, [uidObjetivo]);
 
 
-
-  // =========================
-  // 2. Cargar seguidores y siguiendo
-  // =========================
-  useEffect(() => {
-    if (!user || !datosPerfil || !uidObjetivo) return;
-
-    async function cargarCounts() {
-      const snapSeguidores = await getDocs(collection(db, "usuarios", uidObjetivo, "seguidores"));
-      const seguidores = snapSeguidores.docs.map(d => d.id);
-
-      const snapSiguiendo = await getDocs(collection(db, "usuarios", uidObjetivo, "siguiendo"));
-      const siguiendo = snapSiguiendo.docs.map(d => d.id);
-
-      setSeguidoresCount(seguidores.length);
-      setSiguiendoCount(siguiendo.length);
-
-      setDatosPerfil(prev => ({
-        ...prev,
-        seguidores,
-        siguiendo,
-      }));
-
-      // reset de paginación si cambia de perfil
-      if (ultimaCargaUid !== uidObjetivo) {
-        setPaginaSiguiendo(1);
-        setListaSiguiendo([]);
-        setUltimaCargaUid(uidObjetivo);
-      }
-    }
-    cargarCounts();
-  }, [uidObjetivo, user, datosPerfil, ultimaCargaUid]);
-
-  // =========================
-  // 3. Saber si ya sigo
-  // =========================
-  useEffect(() => {
-    if (!user || !esPerfilAjeno) return;
-
-    async function checkFollow() {
-      const snap = await getDocs(collection(db, "usuarios", user.uid, "siguiendo"));
-      const siguiendo = snap.docs.map(d => d.id);
-      setYaSigo(siguiendo.includes(uidPerfil));
-    }
-    checkFollow();
-  }, [user, uidPerfil, esPerfilAjeno]);
 
   // =========================
   // 4. Cargar muro
@@ -364,60 +370,34 @@ useEffect(() => {
 
   return () => unsubscribe();
 }, [uidObjetivo]);
-
 // =========================
-// 5. Toggle Follow
+// 5. Toggle Follow (VERSIÓN CORRECTA)
 // =========================
 const toggleFollow = async () => {
-  if (!user) return;
+  if (!user || !uidPerfil) return;
 
-  const seguirAhora = !yaSigo; // usamos el valor actualizado en memoria
-  setYaSigo(seguirAhora);
+  try {
+    if (yaSigo) {
+      await dejarSeguirUsuario(user.uid, uidPerfil);
+    } else {
+      await seguirUsuario(user.uid, uidPerfil);
 
-  if (seguirAhora) {
-    // SEGUIR
-    await seguirUsuario(user.uid, uidPerfil);
-
-    setDatosPerfil(prev => ({
-      ...prev,
-      seguidores: [...prev.seguidores, user.uid],
-    }));
-
-    setSeguidoresCount(prev => prev + 1);
-
-    // Crear notificación
-    await addDoc(
-      collection(db, "usuarios", uidPerfil, "notificaciones"),
-      {
-        tipo: "follow",
-        fromUID: user.uid,
-        nombreAutor: user.displayName || user.email || "Usuario",
-        fecha: serverTimestamp(),
-        leida: false,
-      }
-    );
-  } else {
-    // DEJAR DE SEGUIR
-    await dejarSeguirUsuario(user.uid, uidPerfil);
-
-    setDatosPerfil(prev => ({
-      ...prev,
-      seguidores: prev.seguidores.filter(id => id !== user.uid),
-    }));
-
-    setSeguidoresCount(prev => prev - 1);
+      // notificación
+      await addDoc(
+        collection(db, "usuarios", uidPerfil, "notificaciones"),
+        {
+          tipo: "follow",
+          fromUID: user.uid,
+          nombreAutor: user.displayName || "Usuario",
+          fecha: serverTimestamp(),
+          leida: false,
+        }
+      );
+    }
+  } catch (err) {
+    console.error("Follow error:", err);
   }
 };
-
-
-
-  
-
-
-  const toggleMenu = (postId) => {
-  setMenuAbierto(prev => (prev === postId ? null : postId));
-};
-
 
 
   // =========================
@@ -721,7 +701,8 @@ setPosts(prev =>
   // =========================
   const cargarSiguiendo = async reset => {
     if (!datosPerfil) return;
-    const segs = datosPerfil.siguiendo || [];
+    const segs = siguiendoUIDs;
+
 
     if (segs.length <= ITEMS_POR_PAGINA) {
       const lista = await Promise.all(segs.map(async uid => {
@@ -1032,7 +1013,11 @@ setPosts(prev =>
 
             {/* 🔥 AQUI REGRESAMOS LA FOTO COMO ANTES */}
             {post.foto && (
-              <img src={post.foto} className="post-avatar" alt="foto" />
+             <img
+  src={datosPerfil?.avatar || "/default-profile.png"}
+  className="post-avatar"
+/>
+
             )}
 
             <div className="post-contenido">
@@ -1163,7 +1148,8 @@ setPosts(prev =>
         <div className="modal-overlay" onClick={() => setShowSiguiendoModal(false)}>
           <div className="modal-siguiendo" onClick={(e) => e.stopPropagation()}>
             <button className="cerrar-modal" onClick={() => setShowSiguiendoModal(false)}>✕</button>
-            <h3 className="titulo-modal">({datosPerfil.siguiendo.length}) Siguiendo</h3>
+            <h3 className="titulo-modal">({siguiendoUIDs.length}) Siguiendo</h3>
+
 
             <div className="modal-lista">
               {listaSiguiendo.map((u) => (
@@ -1177,7 +1163,8 @@ setPosts(prev =>
               ))}
             </div>
 
-            {listaSiguiendo.length < datosPerfil.siguiendo.length && (
+            {listaSiguiendo.length < siguiendoUIDs.length && (
+
               <button className="btn-cargar" onClick={() => cargarSiguiendo(false)} disabled={cargandoMas}>
                 {cargandoMas ? "Cargando..." : "Cargar más"}
               </button>
