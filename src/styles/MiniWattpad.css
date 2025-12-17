@@ -334,9 +334,9 @@ h1.generos-title{
 /* CAJA BUSCADOR */
 .hero-search-container {
   position: relative;
-  width: 200%;
+  width: 300%;
   height: 400px;
-  background-image: url("/fondo.png");
+  background-image: url("/sin.png");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -369,7 +369,7 @@ h1.generos-title{
 /* Tu caja blanca intacta */
 .hero-search-box {
   width: 260px;
-  height: 60px;
+  height: 55px;
   background: white;
   border-radius: 20px;
   padding-inline: 20px;

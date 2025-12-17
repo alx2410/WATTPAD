@@ -119,7 +119,7 @@ export default function MiniWattpad() {
             <AnimatedText 
               frases={[
                 "Romance prohibido",
-                "Suspenso que te desvela",
+                "Plot twist",
                 "Historias que enganchan",
                 "Levi 4ever"
               ]}
