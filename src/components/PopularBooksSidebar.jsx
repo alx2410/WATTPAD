@@ -8,12 +8,12 @@ export default function PopularBooksSidebar() {
   const [libros, setLibros] = useState([]);
 
   const librosDestacados = [
-    "l7yvPwJZrwDNl2RcZ0U4",
-    "yKZ0IpdaKPO2Chragu0T",
-    "Udvsg9bIIAfk3XPksPd1",
-    "em2xANLHSSXtACJzeCWO",
-    "XwO6nzTo1RJrVWasLxqQ",
-    "72s5PgE1c7tJGN3eMjnE"
+   "gynokUb5HufslhzFCU2u",
+"k8AvfgWMunknnhigSho4",
+"l7yvPwJZrwDNl2RcZ0U4",
+"lzwX7riIsEGfBIh8RNog",
+"nJOW7S2hb2VdgwRqq8Wq",
+"ojDdoYOU1yW0SLYqdLH3",
   ];
 
   useEffect(() => {

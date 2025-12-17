@@ -16,21 +16,18 @@ export default function Ficwin() {
   const [masLeidos, setMasLeidos] = useState([]);
 
   useEffect(() => {
-    const qLeidos = query(
+    // Cambié "leidas" por "vistas" para mostrar los libros con más vistas
+    const qMasVistos = query(
       collection(db, "libros"),
-      orderBy("leidas", "desc"),
+      orderBy("vistas", "desc"), // <-- aquí está el cambio
       limit(5)
     );
 
-    const unsubLeidos = onSnapshot(qLeidos, (snap) => {
-      setMasLeidos(
-        snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
+    const unsub = onSnapshot(qMasVistos, (snap) => {
+      setMasLeidos(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
-    return () => {
-      unsubLeidos();
-    };
+    return () => unsub();
   }, []);
 
   return (

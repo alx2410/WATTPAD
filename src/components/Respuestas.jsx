@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import { db, storage } from "../firebase/config";
 import {
   collection,
@@ -127,7 +127,7 @@ export default function Respuestas({ postId }) {
       {/* Acciones */}
       <div className="comunidad-composer-actions">
         <label className="comunidad-btn-img">
-          📷 Imagen
+          📷 Img
           <input
             type="file"
             accept="image/*"

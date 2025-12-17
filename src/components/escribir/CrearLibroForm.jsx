@@ -37,18 +37,23 @@ export default function CrearLibroForm({ onCreated }) {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "libros"), {
-        titulo: titulo.trim(),
-        sinopsis: sinopsis.trim(),
-        genero: genero.trim().toLowerCase(),
-        portada,
-        autorId: user.uid,
-        autorNombre: user.username || user.displayName || "Sin nombre", // ✅ Nombre correcto
-        estado: estado.trim().toLowerCase(),
-        estadoProgreso: progreso,
-        permitirCalificacion: true,
-        createdAt: serverTimestamp(),
-      });
+await addDoc(collection(db, "libros"), {
+  titulo: titulo.trim(),
+  sinopsis: sinopsis.trim(),
+  genero: genero.trim().toLowerCase(),
+  portada,
+  autorId: user.uid,
+  autorNombre: user.username || user.displayName || "Sin nombre",
+  estado: estado.trim().toLowerCase(),
+  estadoProgreso: progreso,
+  permitirCalificacion: true,
+  createdAt: serverTimestamp(),
+  
+  // ✅ Campos de denuncias inicializados
+  denuncias: 0,
+  usuariosDenunciaron: []
+});
+
 
       onCreated && onCreated();
 

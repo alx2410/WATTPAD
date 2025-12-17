@@ -1,4 +1,227 @@
 /* ==========================================
+   RESET Y GLOBAL
+========================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden; /* evita scroll horizontal */
+  font-family: "Inter", "Poppins", sans-serif;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==========================================
+   HERO
+========================================== */
+/* ==========================================
+   HERO ESTILO WATTPAD
+========================================== */
+.comunidad-hero-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 80px 20px;
+  background: #cfc9f1; /* morado más sobrio */
+  color: rgb(117, 31, 113);
+  overflow: hidden;
+}
+
+.comunidad-hero-container::before,
+.comunidad-hero-container::after {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: rgba(49, 46, 46, 0.05);
+  transform: rotate(45deg);
+  top: -100px;
+  left: -100px;
+  z-index: 0;
+  border-radius: 20px;
+}
+
+.comunidad-hero-container::after {
+  top: auto;
+  bottom: -120px;
+  right: -120px;
+  left: auto;
+}
+
+.comunidad-hero-texto {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+}
+
+.comunidad-hero-titulo {
+  font-family: 'Fraunces', serif; /* tipografía similar a la imagen */
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.comunidad-hero-subtitulo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  margin: 16px 0;
+  color: #664c80; /* morado más suave */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.comunidad-hero-btn {
+  margin-top: 24px;
+  background: #5a4e8f;
+  color: rgb(184, 163, 163);
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.comunidad-hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.comunidad-hero-texto-sec {
+  margin-top: 16px;
+  font-size: 15px;
+  color: #d1c0ff;
+}
+
+.comunidad-hero-texto-sec span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Cubos decorativos detrás */
+.comunidad-hero-cubo {
+  position: absolute;
+  font-size: 48px;
+  font-weight: 700;
+  color: rgba(105, 98, 98, 0.07);
+  transform: rotate(-25deg);
+  z-index: 0;
+  user-select: none;
+}
+
+.comunidad-hero-cubo-1 { top: 20%; left: 5%; }
+.comunidad-hero-cubo-2 { top: 50%; right: 10%; }
+.comunidad-hero-cubo-3 { bottom: 10%; left: 20%; }
+
+/* RESPONSIVE HERO */
+@media (max-width: 768px) {
+  .comunidad-hero-titulo {
+    font-size: 42px;
+  }
+  .comunidad-hero-subtitulo {
+    font-size: 14px;
+  }
+  .comunidad-hero-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}
+
+
+/* ==========================================
+   MEDIA QUERIES HERO
+========================================== */
+@media (max-width: 768px) {
+  .comunidad-hero-container {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 30px;
+    text-align: center;
+  }
+  .comunidad-hero-titulo {
+    font-size: 42px;
+    line-height: 48px;
+  }
+  .comunidad-hero-descripcion {
+    font-size: 16px;
+  }
+  .comunidad-hero-btn {
+    padding: 12px 22px;
+    font-size: 15px;
+  }
+  .comunidad-hero-imagen {
+    gap: 16px;
+    align-items: center;
+  }
+  .comunidad-hero-imagen .comunidad-hero-caja {
+    align-self: center !important;
+  }
+}
+
+/* ==========================================
+   GÉNEROS
+========================================== */
+.generos-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+}
+
+h1.generos-title {
+  font-size: 55px;
+  font-weight: 750;
+  line-height: 1.1;
+  color: #2e2e2e;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  h1.generos-title {
+    font-size: 32px;
+    text-align: center;
+  }
+}
+
+.generos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 40px;
+}
+
+.genero-item {
+  background: #f6f7fb;
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  border: 1px solid #e5e5e5;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.genero-item:hover {
+  transform: scale(1.03);
+}
+
+.genero-item img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* ==========================================
    CONTENEDOR PRINCIPAL
 ========================================== */
 .comunidad-container {
@@ -71,6 +294,7 @@
 
 .comunidad-form-publicar textarea,
 .comunidad-form-publicar input {
+  font-family: Arial, Helvetica, sans-serif;
   width: 94%;
   border: 1px solid #d1d5db;
   border-radius: 10px;
@@ -104,6 +328,18 @@
 .comunidad-btn-publicar:hover {
   background: #4f46e5;
 }
+ .comunidad-preview-img {
+  position: relative;
+  width: 120px;
+  height: 170px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  margin-bottom: 2%;
+}
+
+
 
 /* ==========================================
    POST CARD
@@ -445,7 +681,8 @@
 
 /* Textarea */
 .comunidad-composer-textarea {
-  width: 100%;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  width: 94%;
   min-height: 90px;
   resize: vertical;
   border-radius: 12px;
@@ -523,4 +760,37 @@
 
 .comunidad-btn-eliminar:hover {
   text-decoration: underline;
+}
+.comunidad-anuncio-card {
+  background: linear-gradient(135deg, #f0f4ff, #d9e3ff);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.comunidad-anuncio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.comunidad-anuncio-card h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.comunidad-anuncio-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.comunidad-anuncio-banner {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
 }

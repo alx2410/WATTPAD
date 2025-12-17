@@ -1,139 +1,226 @@
-/* ===============================
-   GRID GENERAL
-================================= */
+/* -------------------
+   Contenedor general
+-------------------- */
+.biblioteca-contenedor {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+/* -------------------
+   Tabs
+-------------------- */
+/* Contenedor de tabs */
+.biblioteca-tabs {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Tabs individuales */
+.biblioteca-tab {
+  position: relative;
+  padding: 0.5rem 0;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #a5a5a5;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+/* Hover suave */
+.biblioteca-tab:hover {
+  color: #aacbe6;
+}
+
+/* Indicador animado para tab activa */
+.biblioteca-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #aacbe6;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Animación al cambiar de tab */
+.biblioteca-tab:not(.active)::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background-color: #aacbe6;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* -------------------
+   Grid de libros
+-------------------- */
 .biblioteca-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, auto)); /* ancho fijo máximo de card */
+  gap: 1rem; /* menos espacio entre filas y columnas */
+  justify-content: start; /* que se alineen a la izquierda */
   justify-items: center;
 }
 
-/* ===============================
-   TARJETA DEL LIBRO
-================================= */
-.biblioteca-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-/* ===============================
-   PORTADA
-================================= */
+/* -------------------
+   Portada independiente
+-------------------- */
 .biblioteca-card-portada-wrapper {
-  width: 100%;
-  height: 180px; /* tamaño uniforme desktop */
   position: relative;
   overflow: hidden;
-  border-radius: 8px; /* bordes redondeados */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
+  border-radius: 8px;
+  width: 180px; /* tamaño ajustable */
+  height: 270px; /* tamaño ajustable para ver portada completa */
 }
 
-.biblioteca-card-portada-wrapper img {
+.biblioteca-card-portada {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  object-fit: cover;
+  display: block;
   transition: transform 0.3s;
 }
 
-.biblioteca-card-portada-wrapper:hover img {
-  transform: scale(1.05); /* efecto zoom sutil */
+.biblioteca-card-portada-wrapper:hover .biblioteca-card-portada {
+  transform: scale(1.03);
 }
 
-/* ===============================
-   HOVER BOTONES SOLO PORTADA
-================================= */
+/* Overlay solo sobre la portada */
 .biblioteca-card-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); /* ligeramente más suave */
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  gap: 10px;
-  background-color: rgba(0,0,0,0.45);
-  border-radius: 10px;
+  gap: 0.6rem;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s;
+  border-radius: 8px;
 }
 
 .biblioteca-card-portada-wrapper:hover .biblioteca-card-overlay {
   opacity: 1;
 }
 
-/* Estilo para los botones dentro del overlay */
+/* Botones elegantes y del mismo tamaño */
 .biblioteca-card-overlay button {
-  padding: 8px 20px;      /* tamaño cómodo */
-  width: auto;            /* no se expande */
-  min-width: 100px;       /* opcional, para que no sean demasiado pequeños */
-  text-align: center;
-  border: none;
-  border-radius: 5px;
-  background-color: #c7cfe4;
-  color: #575151;
+  width: 120px; /* mismo tamaño para todos */
+  padding: 0.45rem 0; /* altura uniforme */
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 6px;
+  background-color: rgba(255,255,255,0.1); /* transparente sutil */
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.biblioteca-card-overlay button:hover {
+  background-color: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+
+/* Botones específicos si quieres colores suaves */
+.biblioteca-card-overlay button:first-child {
+background-color: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+
+.btn-rojo {
+  background-color: rgba(229, 57, 53, 0.2); /* rojo suave */
+  border-color: rgba(229,57,53,0.4);
+  color: #fff;
 }
 
 
-/* ===============================
-   BARRA DE PROGRESO
-================================= */
+/* -------------------
+   Barra de progreso independiente
+-------------------- */
 .biblioteca-card-progreso-wrapper {
-  width: 100%;
+  width: 180px; /* mismo ancho que la portada */
   height: 6px;
-  background-color: #e0e0e0;
+  background: #eee;
   border-radius: 3px;
-  margin-top: 6px;
+  overflow: hidden;
+  margin-top: 0.25rem;
 }
 
 .biblioteca-card-progreso-bar {
   height: 100%;
-  background-color: #1e90ff;
+  background: linear-gradient(90deg, #bcc6d3, #aacbe6);
+  transition: width 0.3s ease;
   border-radius: 3px;
-  transition: width 0.3s;
 }
 
-/* ===============================
-   TITULO
-================================= */
+/* -------------------
+   Título independiente
+-------------------- */
 .biblioteca-card-titulo {
-  margin-top: 6px;
+  width: 180px; /* mismo ancho que portada y barra */
+  margin-top: 0.5rem;
+  font-size: 1rem;
   font-weight: 700;
-  font-size: 13px;
   text-align: center;
   color: #222;
-  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* ===============================
-   RESPONSIVE MÓVIL
-================================= */
+/* -------------------
+   Mensajes y loading
+-------------------- */
+.biblioteca-empty,
+.biblioteca-loading {
+  text-align: center;
+  color: #888;
+  font-size: 1rem;
+  margin: 3rem 0;
+}
+
+/* -------------------
+   Responsive
+-------------------- */
 @media (max-width: 768px) {
-  .biblioteca-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+  .biblioteca-card-portada-wrapper,
+  .biblioteca-card-progreso-wrapper,
+  .biblioteca-card-titulo {
+    width: 140px;
   }
 
-  .biblioteca-card-portada-wrapper {
-    height: 140px;
+  .biblioteca-card-portada {
+    height: 210px;
+  }
+
+  /* Reducir márgenes entre portada, barra y título */
+  .biblioteca-card-progreso-wrapper {
+    margin-top: 0.15rem;
   }
 
   .biblioteca-card-titulo {
-    font-size: 12px;
+    margin-top: 0.25rem;
+    font-size: 0.95rem; /* opcional, ajustar tamaño */
   }
 
-  .biblioteca-btn {
-    font-size: 11px;
-    padding: 4px 8px;
+  .biblioteca-tab {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
   }
 }

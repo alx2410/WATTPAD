@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
@@ -17,6 +16,7 @@ import { db } from "../firebase/config";
 import { auth } from "../firebase/auth";
 import ReseñassLibro from "../paginas/ReseñasLibro";
 import "../styles/LibroDetalle.css";
+import { arrayUnion } from "firebase/firestore"; // ya tienes updateDoc, doc, etc.
 
 export default function LibroDetalle() {
   const { id } = useParams();
@@ -26,6 +26,10 @@ export default function LibroDetalle() {
   const [verCompleto, setVerCompleto] = useState(false);
   const [mensajeSesion, setMensajeSesion] = useState("");
   const [autorNombre, setAutorNombre] = useState("");
+  const [denunciado, setDenunciado] = useState(false);
+  const [activoLista, setActivoLista] = useState(false);
+const [activoFavoritos, setActivoFavoritos] = useState(false);
+
 
   //Votos y ranting
   const [votos, setVotos] = useState(0);
@@ -44,6 +48,32 @@ export default function LibroDetalle() {
       <circle cx="12" cy="12" r="3" />
     </svg>
   );
+
+  // Denuncias
+
+  const handleDenunciar = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    setMensajeSesion("Inicia sesión para denunciar este libro.");
+    return;
+  }
+
+  try {
+    const libroRef = doc(db, "libros", id);
+
+    await updateDoc(libroRef, {
+      denuncias: increment(1),
+      usuariosDenunciaron: arrayUnion(user.uid)
+    });
+
+    setLibro(prev => ({ ...prev, denuncias: (prev.denuncias || 0) + 1 }));
+    setDenunciado(true);
+    alert("Libro denunciado correctamente. Gracias por ayudar a mantener la comunidad segura.");
+  } catch (err) {
+    console.error("Error denunciando libro:", err);
+  }
+};
+
 
   // Votos en tiempo real
   useEffect(() => {
@@ -209,7 +239,7 @@ export default function LibroDetalle() {
     </div>
     <div className="detalle-stat-text">
       <span>Votos</span>
-      <strong>{rating} ★</strong>
+      <strong>{rating} </strong>
       <small>({votos})</small>
     </div>
   </div>
@@ -239,19 +269,43 @@ export default function LibroDetalle() {
               <p className="mensaje-sesion">{mensajeSesion}</p>
             )}
 
-            <button
-              className="detalle-btn-icon"
-              onClick={() => agregarABiblioteca("lista")}
-            >
-              ➕
-            </button>
+           {/* Botón Lista */}
+{/* Botón Lista */}
+<button
+  className={`detalle-btn-icon ${activoLista ? "activo" : ""}`}
+  onClick={() => {
+    agregarABiblioteca("lista"); // tu código existente
+    setActivoLista(!activoLista); // solo para el diseño
+  }}
+>
+  <svg className="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+</button>
+
+{/* Botón Favoritos */}
+<button
+  className={`detalle-btn-icon ${activoFavoritos ? "activo" : ""}`}
+  onClick={() => {
+    agregarABiblioteca("favoritos"); // tu código existente
+    setActivoFavoritos(!activoFavoritos); // solo para el diseño
+  }}
+>
+  <svg className="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318C5.006 5.63 5.97 5.25 7 5.25c1.03 0 1.994.38 2.682 1.068L12 8.636l2.318-2.318c.688-.688 1.652-1.068 2.682-1.068 1.03 0 1.994.38 2.682 1.068.688.688 1.068 1.652 1.068 2.682 0 1.03-.38 1.994-1.068 2.682L12 21.25 4.318 11.682C3.63 10.994 3.25 10.03 3.25 9c0-1.03.38-1.994 1.068-2.682z" />
+  </svg>
+</button>
+
 
             <button
-              className="detalle-btn-icon"
-              onClick={() => agregarABiblioteca("favoritos")}
-            >
-              ❤️
-            </button>
+  className="detalle-btn-icon"
+  onClick={handleDenunciar}
+  disabled={denunciado || libro.usuariosDenunciaron?.includes(auth.currentUser?.uid)}
+  title={denunciado ? "Ya has denunciado este libro" : "Denunciar libro"}
+>
+  ⚠️
+</button>
+
           </div>
         </div>
       </section>
