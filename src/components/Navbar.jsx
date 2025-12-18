@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "./AuthModal";
 import logo from "../assets/fictory-trans.png";
@@ -19,6 +19,8 @@ export default function Navbar() {
    const esAdmin =
     user?.role === "admin" || user?.role === "moderador";
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+const [lastScrollY, setLastScrollY] = useState(0);
 
 
   const handleSearch = (e) => {
@@ -28,6 +30,8 @@ export default function Navbar() {
       setBusqueda("");
     }
   };
+
+  
 
   const mostrarNombre = () => {
     const nombre = user?.username || user?.displayName || "Usuario";
@@ -54,8 +58,34 @@ export default function Navbar() {
     setShowCategories(false);
   }
 
+ useEffect(() => {
+  const handleScroll = () => {
+    // Solo aplica en móvil
+    if (window.innerWidth <= 600) {
+      if (window.scrollY > lastScrollY) {
+        setShowNavbar(false); // scroll down → ocultar
+      } else {
+        setShowNavbar(true);  // scroll up → mostrar
+      }
+      setLastScrollY(window.scrollY);
+    } else {
+      // En escritorio siempre visible
+      setShowNavbar(true);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  window.addEventListener("resize", handleScroll); // para recalcular al cambiar tamaño
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+    window.removeEventListener("resize", handleScroll);
+  };
+}, [lastScrollY]);
+
+
   return (
-    <nav className="main-navbar">
+    <nav className={`main-navbar ${showNavbar ? "visible" : "hidden"}`}>
 
       {/* BOTONES MOBILE */}
 <div className="mobile-actions mobile-only">
@@ -291,12 +321,30 @@ export default function Navbar() {
         {showMobileMenu && (
   <div className="mobile-menu">
 
-    <Link to="/explorar" onClick={() => setShowMobileMenu(false)}>
-      Explorar
-    </Link>
+    <div className="mobile-explorar">
+      <p>Explorar</p>
+      <div className="mobile-categorias">
+        {categorias.map((cat) => (
+          <button
+            key={cat}
+            className="categoria-modal"
+            onClick={() => {
+              seleccionar(cat);
+              setShowMobileMenu(false);
+            }}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
 
     <Link to="/comunidad" onClick={() => setShowMobileMenu(false)}>
       Comunidad
+    </Link>
+
+          <Link to="/escribir" onClick={() => setShowMobileMenu(false)}>
+      Escribir
     </Link>
 
     <Link to="/biblioteca" onClick={() => setShowMobileMenu(false)}>

@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Moderacion.css";
+import { ref, onValue } from "firebase/database";
+import { rtdb } from "../../firebase/config";
+
 
 import { db } from "../../firebase/config";
 import {
@@ -61,15 +64,27 @@ const IconUsuarios = () => (
 // ===============================
 function UsuarioRow({ u, cambiarRolUsuario, eliminarUsuario }) {
   const { listenToPresence } = usePresence();
-  const [presencia, setPresencia] = useState({ estado: "offline" });
+  const [presencia, setPresencia] = useState({ estado: "offline", lastChanged: null });
+  
+
 
   useEffect(() => {
-    if (!u?.id) return;
-    const unsub = listenToPresence(u.id, setPresencia);
-    return () => unsub && unsub();
-  }, [u.id, listenToPresence]);
+    if (!u?.uid) return;
 
-  const online = presencia.estado === "online";
+    const unsub = listenToPresence(u.uid, (data) => {
+      setPresencia(data);
+    });
+
+    return () => unsub && unsub();
+  }, [u.uid, listenToPresence]);
+
+    const TIEMPO_EXPIRACION = 60 * 1000; // 1 minuto
+
+  const estaOnline =
+    presencia.estado === "online" &&
+    presencia.lastChanged &&
+    Date.now() - presencia.lastChanged < TIEMPO_EXPIRACION;
+
 
   return (
     <tr className={u.bloqueado ? "intranet-fila-bloqueada" : ""}>
@@ -77,36 +92,26 @@ function UsuarioRow({ u, cambiarRolUsuario, eliminarUsuario }) {
       <td>{u.email}</td>
       <td>{u.role}</td>
       <td>
-        <span
-          className={`intranet-estado-cuenta ${
-            u.bloqueado
-              ? "intranet-estado-bloqueado"
-              : "intranet-estado-activo"
-          }`}
-        >
+        <span className={`intranet-estado-cuenta ${u.bloqueado ? "intranet-estado-bloqueado" : "intranet-estado-activo"}`}>
           {u.bloqueado ? "Bloqueado" : "Activo"}
         </span>
       </td>
       <td>
-        <span
-          className={`intranet-actividad ${
-            online
-              ? "intranet-actividad-online"
-              : "intranet-actividad-offline"
-          }`}
-        >
-          {online ? "En línea" : "Offline"}
-        </span>
+        <span className={`intranet-actividad ${estaOnline ? "intranet-actividad-online" : "intranet-actividad-offline"}`}>
+  {estaOnline
+    ? "En línea"
+    : presencia.lastChanged
+      ? `Offline (hace ${Math.floor((Date.now() - presencia.lastChanged)/1000)} segundos)`
+      : "Offline"}
+</span>
+
+
+
       </td>
       <td>
         <button
           className="intranet-btn-primario"
-          onClick={() =>
-            cambiarRolUsuario(
-              u.id,
-              u.role === "user" ? "admin" : "user"
-            )
-          }
+          onClick={() => cambiarRolUsuario(u.id, u.role === "user" ? "admin" : "user")}
         >
           Cambiar rol
         </button>
@@ -118,7 +123,7 @@ function UsuarioRow({ u, cambiarRolUsuario, eliminarUsuario }) {
             }
           }}
         >
-          Eliminar
+          Silenciar
         </button>
       </td>
     </tr>
@@ -139,6 +144,57 @@ export default function Moderacion() {
   
   const [denuncias, setDenuncias] = useState([]);
 const [libroDenuncias, setLibroDenuncias] = useState(null);
+const [estadoFiltro, setEstadoFiltro] = useState("todos");
+const [presencias, setPresencias] = useState({});
+
+// ===============================
+// 🔧 ORDENAR LIBROS
+// ===============================
+const ordenarLibros = (lista) => {
+  return [...lista].sort((a, b) => {
+    // 1️⃣ libros con denuncias primero
+    if ((a.denuncias || 0) > 0 && (b.denuncias || 0) === 0) return -1;
+    if ((a.denuncias || 0) === 0 && (b.denuncias || 0) > 0) return 1;
+
+    // 2️⃣ en revisión primero
+    if (a.estado === "en revisión" && b.estado !== "en revisión") return -1;
+    if (a.estado !== "en revisión" && b.estado === "en revisión") return 1;
+
+    // 3️⃣ más denuncias arriba
+    return (b.denuncias || 0) - (a.denuncias || 0);
+  });
+};
+
+
+const denunciasPorLibro = denuncias.reduce((acc, d) => {
+  acc[d.libroId] = (acc[d.libroId] || 0) + 1;
+  return acc;
+}, {});
+const [filtroUsuarios, setFiltroUsuarios] = useState("todos");
+
+// ===============================
+// NORMALIZAR PRESENCIAS
+// ===============================
+useEffect(() => {
+  const statusRef = ref(rtdb, "status");
+  const unsub = onValue(statusRef, (snap) => {
+    const data = snap.val() || {};
+    // 🔧 Convertir lastChanged a ms si viene en segundos
+    const normalizado = Object.fromEntries(
+      Object.entries(data).map(([uid, p]) => [
+        uid,
+        {
+          estado: p.estado,
+          lastChanged:
+            p.lastChanged && p.lastChanged < 1e12 ? p.lastChanged * 1000 : p.lastChanged,
+        },
+      ])
+    );
+    setPresencias(normalizado);
+  });
+
+  return () => unsub();
+}, []);
 
 
   // ===============================
@@ -181,20 +237,76 @@ const [libroDenuncias, setLibroDenuncias] = useState(null);
     });
   }, []);
 
+
   // ===============================
   // 🔍 FILTROS
   // ===============================
-  const filtrarLibros = libros.filter(
-    (l) =>
-      l.titulo.toLowerCase().includes(filtro.toLowerCase()) ||
-      (l.autorNombre || "").toLowerCase().includes(filtro.toLowerCase())
-  );
+const filtrarLibros = ordenarLibros(
+  libros
+    .map((l) => ({
+      ...l,
+      denuncias: denunciasPorLibro[l.id] || 0,
+    }))
+    .filter((l) => {
+      const coincideTexto =
+        l.titulo.toLowerCase().includes(filtro.toLowerCase()) ||
+        (l.autorNombre || "").toLowerCase().includes(filtro.toLowerCase());
 
-  const filtrarUsuarios = usuarios.filter(
-    (u) =>
-      (u.username || "").toLowerCase().includes(filtro.toLowerCase()) ||
-      (u.email || "").toLowerCase().includes(filtro.toLowerCase())
-  );
+      const coincideEstado =
+        estadoFiltro === "todos" || l.estado === estadoFiltro;
+
+      return coincideTexto && coincideEstado;
+    })
+);
+
+
+
+
+// Tiempo para considerar online
+const TIEMPO_EXPIRACION = 60 * 1000; // 1 minuto
+
+// Función que devuelve true si el usuario está online
+const estaOnlineUsuario = (u) => {
+  const p = presencias[u.uid];
+  if (!p) return false;
+  // RTDB a veces da lastChanged en segundos
+  const lastChangedMs = p.lastChanged && p.lastChanged < 1e12 ? p.lastChanged * 1000 : p.lastChanged;
+  return p.estado === "online" && lastChangedMs && Date.now() - lastChangedMs < TIEMPO_EXPIRACION;
+};
+
+// ===============================
+// 🔍 FILTROS USUARIOS FUNCIONAL
+// ===============================
+const filtrarUsuarios = usuarios.filter((u) => {
+  const coincideTexto =
+    (u.username || "").toLowerCase().includes(filtro.toLowerCase()) ||
+    (u.email || "").toLowerCase().includes(filtro.toLowerCase());
+  if (!coincideTexto) return false;
+
+  const p = presencias[u.uid] || { estado: "offline", lastChanged: 0 };
+  const estaOnline = p.estado === "online" && p.lastChanged && Date.now() - p.lastChanged < 60 * 1000;
+
+  switch (filtroUsuarios) {
+    case "admins":
+      return u.role === "admin";
+    case "online":
+      return estaOnline;
+    case "admins-online":
+      return u.role === "admin" && estaOnline;
+    default:
+      return true; // todos
+  }
+});
+
+
+
+
+
+
+
+
+
+
 
   // ===============================
   // 📄 PAGINACIÓN
@@ -278,6 +390,8 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
         </ul>
       </aside>
 
+      
+
       <main className="intranet-moderacion-content">
         <header>
           <h2>Hola, {user?.username || "Usuario"} 👋</h2>
@@ -285,16 +399,51 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
         </header>
 
         <div className="intranet-moderacion-filtro">
-          <input
-            placeholder="Filtrar..."
-            value={filtro}
-            onChange={(e) => {
-              setFiltro(e.target.value);
-              setPaginaLibros(1);
-              setPaginaUsuarios(1);
-            }}
-          />
-        </div>
+  <input
+    placeholder="Filtrar por título o autor..."
+    value={filtro}
+    onChange={(e) => {
+      setFiltro(e.target.value);
+      setPaginaLibros(1);
+      setPaginaUsuarios(1);
+    }}
+  />
+
+  {tab === "moderacion" && (
+<div className="select-minimal">
+  <select
+    value={estadoFiltro}
+    onChange={(e) => {
+      setEstadoFiltro(e.target.value);
+      setPaginaLibros(1);
+    }}
+  >
+    <option value="todos">Todos</option>
+    <option value="en revisión">En revisión</option>
+    <option value="publicado">Publicado</option>
+    <option value="borrador">Borrador</option>
+  </select>
+</div>
+  )}
+</div>
+
+{tab === "usuarios" && (
+  <div className="select-minimal">
+    <select
+      value={filtroUsuarios}
+      onChange={(e) => {
+        setFiltroUsuarios(e.target.value);
+        setPaginaUsuarios(1);
+      }}
+    >
+      <option value="todos">Todos</option>
+      <option value="admins">Admins</option>
+      <option value="online">En línea</option>
+      <option value="admins-online">Admins en línea</option>
+    </select>
+  </div>
+)}
+
 
         {/* ================= MODERACIÓN (LIBROS) ================= */}
         {tab === "moderacion" && (
@@ -311,7 +460,16 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
               </thead>
               <tbody>
                 {librosPagina.map((l) => (
-                  <tr key={l.id}>
+                 <tr
+  key={l.id}
+  className={`
+    fila-libro
+    ${l.denuncias > 0 ? `alerta-${l.estado?.replace(" ", "-")}` : ""}
+  `}
+>
+
+
+
                     <td>{l.titulo}</td>
                     <td>{l.autorNombre || "—"}</td>
                     <td>

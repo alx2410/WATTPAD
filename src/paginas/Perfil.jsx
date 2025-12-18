@@ -87,6 +87,9 @@ const LIMITE_CARACTERES = 6000;
 
   const location = useLocation();
 
+  const [colorTema, setColorTema] = useState("#ff6b3d");
+
+
 
 
   // =========================
@@ -399,6 +402,104 @@ const toggleFollow = async () => {
   }
 };
 
+/*////////////////////////////////////////////////*/
+
+useEffect(() => {
+  if (!esPropio) return;
+  if (datosPerfil?.colorTema) {
+    setColorTema(datosPerfil.colorTema);
+  }
+}, [datosPerfil, esPropio]);
+
+/*////////////////////////////////////////////////*/
+
+// =========================
+// UTILIDADES DE COLOR
+// =========================
+
+function hexToHSL(hex) {
+  hex = hex.replace("#", "");
+
+  let r = parseInt(hex.substring(0, 2), 16) / 255;
+  let g = parseInt(hex.substring(2, 4), 16) / 255;
+  let b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100)
+  };
+}
+
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+
+  const k = n => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = n =>
+    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+
+  const r = Math.round(255 * f(0));
+  const g = Math.round(255 * f(8));
+  const b = Math.round(255 * f(4));
+
+  return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+function generarPaleta(hex) {
+  const { h, s, l } = hexToHSL(hex);
+
+  return {
+    primario: hslToHex(h, s, l),
+    suave: hslToHex(h, Math.max(s - 20, 10), Math.min(l + 30, 92)),
+    borde: hslToHex(h, Math.max(s - 10, 15), Math.min(l + 18, 85)),
+    hover: hslToHex(h, Math.min(s + 5, 100), Math.max(l - 10, 0))
+  };
+}
+
+
+  // =========================
+  // COLORESSS
+  // =========================
+
+useEffect(() => {
+  if (!datosPerfil?.colorTema) return;
+
+  const root = document.documentElement;
+  const paleta = generarPaleta(datosPerfil.colorTema);
+
+  root.style.setProperty("--color-primario", paleta.primario);
+  root.style.setProperty("--color-primario-suave", paleta.suave);
+  root.style.setProperty("--color-borde", paleta.borde);
+  root.style.setProperty("--color-hover", paleta.hover);
+
+  return () => {
+    root.style.removeProperty("--color-primario");
+    root.style.removeProperty("--color-primario-suave");
+    root.style.removeProperty("--color-borde");
+    root.style.removeProperty("--color-hover");
+  };
+}, [datosPerfil]);
+
+
 
   // =========================
   // 6. Editar perfil
@@ -426,19 +527,26 @@ const guardarCambios = async () => {
     }
 
     // Actualizamos Firestore
-    await setDoc(
+        await setDoc(
       refUsuario,
-      { username: displayName, bio, avatar: avatarURL },
+      {
+        username: displayName,
+        bio,
+        avatar: avatarURL,
+        colorTema
+      },
       { merge: true }
     );
 
     // Actualizamos estado local
     setDatosPerfil(prev => ({
-      ...prev,
-      username: displayName,
-      bio,
-      avatar: avatarURL
-    }));
+  ...prev,
+  username: displayName,
+  bio,
+  avatar: avatarURL,
+  colorTema
+}));
+
 
     alert("Perfil actualizado ✔");
     setEditMode(false);
@@ -838,6 +946,23 @@ setPosts(prev =>
     </p>
   )}
 </div>
+
+<div className="color-picker-wrapper">
+  <label htmlFor="colorTema" className="color-picker-label">
+    <span className="color-preview" style={{ backgroundColor: colorTema }} />
+    <span className="color-text">Color del perfil</span>
+  </label>
+
+  <input
+    id="colorTema"
+    type="color"
+    value={colorTema}
+    onChange={(e) => setColorTema(e.target.value)}
+    className="color-input-hidden"
+  />
+</div>
+
+
 
           
               <button onClick={guardarCambios} className="btn-editar">Guardar cambios</button>

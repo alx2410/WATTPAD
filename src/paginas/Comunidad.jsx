@@ -7,6 +7,8 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  where,
+  limit,
   doc,
   updateDoc,
   arrayUnion,
@@ -32,6 +34,11 @@ export default function Comunidad() {
   const [previewImg, setPreviewImg] = useState(null);
   const [modalImg, setModalImg] = useState(null);
 
+   // 🔥 CAMPAÑA ACTIVA (HERO)
+  const [campaniaActiva, setCampaniaActiva] = useState(null);
+
+
+
   // ================== FEED ==================
   useEffect(() => {
     const q = query(collection(db, "feed"), orderBy("fecha", "desc"));
@@ -40,6 +47,30 @@ export default function Comunidad() {
     });
     return () => unsub();
   }, []);
+
+   // ================== CAMPAÑA ACTIVA ==================
+  useEffect(() => {
+    const q = query(
+      collection(db, "campañas"),
+      where("activa", "==", true),
+      limit(1)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        setCampaniaActiva({
+          id: snapshot.docs[0].id,
+          ...snapshot.docs[0].data(),
+        });
+      } else {
+        setCampaniaActiva(null);
+      }
+    });
+
+    return () => unsub();
+  }, []);
+
+
 
 
   useEffect(() => {
@@ -121,13 +152,30 @@ export default function Comunidad() {
     <div className="comunidad-page">
 
       {/* ================= HERO ================= */}
-      <section className="comunidad-hero-container">
-  <div className="comunidad-hero-texto">
-    <p className="comunidad-hero-subtitulo">DONDE LOS ESCRITORES SE ESFUERZAN</p>
-    <h1 className="comunidad-hero-titulo">El Recap está aquí</h1>
-    <p className="comunidad-hero-descripcion">
-      Visita Ficwin para ver los libros del momento y no olvides votar por tus obras favoritas
-    </p>
+        <section
+        className="comunidad-hero-container"
+        style={{
+          backgroundImage: campaniaActiva?.hero?.imagen
+            ? `url(${campaniaActiva.hero.imagen})`
+            : undefined,
+        }}
+      >
+        <div className="comunidad-hero-texto">
+          <p className="comunidad-hero-subtitulo">
+            {campaniaActiva?.hero?.subtitulo ||
+              "DONDE LOS ESCRITORES SE ESFUERZAN"}
+          </p>
+
+          <h1 className="comunidad-hero-titulo">
+            {campaniaActiva?.hero?.titulo || "Bienvenida a la Comunidad"}
+          </h1>
+
+          <p className="comunidad-hero-descripcion">
+            {campaniaActiva?.hero?.descripcion ||
+              "Descubre historias increíbles"}
+          </p>
+
+
     <button
       className="comunidad-hero-btn"
       onClick={() => navigate("/ficwin")}

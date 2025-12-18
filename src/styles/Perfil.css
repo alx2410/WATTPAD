@@ -1,3 +1,11 @@
+:root {
+  --color-primario: #a8371b;
+  --color-primario-suave: #fff2ec;
+  --color-borde: #ffd2c3;
+  --color-hover: #ff3f1e;
+}
+
+
 /* ======================================================
     GLOBAL
   ====================================================== */
@@ -49,7 +57,7 @@
     height: 110px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #ff6b3d;
+    border: 3px solid var(--color-primario);
   }
 
   .perfil-nombre {
@@ -72,12 +80,18 @@
   }
 
   .perfil-stats span {
-    background: #fff2ec;
+    background: var(--color-primario-suave);
     padding: 6px 14px;
     border-radius: 14px;
     font-size: 0.9rem;
-    color: #ff6b3d;
-    border: 1px solid #ffd2c3;
+    color: var(--color-primario);
+    border: 1px solid color-mix(
+  in srgb,
+  var(--color-primario-suave) 85%,
+  var(--color-primario)
+);
+
+
   }
 
   /* ================================
@@ -105,7 +119,7 @@
 
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #ff6b3d;
+  border: 3px solid var(--color-primario);
 }
 
 .perfil-nombre {
@@ -127,12 +141,16 @@
 }
 
 .perfil-stats span {
-  background: #fff2ec;
+  background: var(--color-primario-suave);
   padding: 6px 14px;
   border-radius: 14px;
   font-size: 0.9rem;
-  color: #ff6b3d;
-  border: 1px solid #ffd2c3;
+  color: var(--color-primario);
+  border: 1px solid color-mix(
+  in srgb,
+  var(--color-primario-suave) 85%,
+  var(--color-primario)
+);;
 }
 
 
@@ -220,7 +238,7 @@
   }
 
   .perfil-tabs button.active {
-    color: #ff6b3d;
+    color: var(--color-primario);
   }
 
   /* ======================================================
@@ -238,7 +256,12 @@
 .ultimo-post-card {
   margin-top: 10px;
   padding: 16px 18px;
-  background: linear-gradient(135deg, #faf8ff, #ffffff);
+  background: color-mix(
+  in srgb,
+  var(--color-primario-suave) 85%,
+  var(--color-primario)
+);
+
   border: 1px solid #e8e0ff;
   border-radius: 16px;
   cursor: pointer;
@@ -248,6 +271,7 @@
 .ultimo-post-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background-color: var(--color-primario-suave);
 }
 
 /* TEXTO */
@@ -272,7 +296,7 @@
   margin-top: 8px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6a00ff;
+  color: var(--color-primario);
 }
 
 /* SIN POSTS */
@@ -297,7 +321,7 @@
 
   .info-col-1 h3 {
     margin-top: 10%;
-    color: #ff6b3d;
+    color: var(--color-hover);
   }
 
   /* COLUMNA 2 HISTORIAS */
@@ -306,11 +330,11 @@
     justify-content: space-between;
     gap: 15px;
     align-items: center;
-    background: #fff7f3;
+    background: 1px solid var(--color-borde);
     padding: 18px;
     border-radius: 18px;
     margin-bottom: 18px;
-    border: 1px solid #ffd2c3;
+    border: 1px solid var(--color-primario);
     transition: 0.2s;
     min-width: 0; 
   }
@@ -363,7 +387,7 @@
   min-height: 90px;
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid #ffd2c3;
+  border: 1px solid var(--color-primario-suave);
   resize: vertical;
 }
 
@@ -399,7 +423,7 @@
   .post-autor {
     font-weight: bold;
     font-size: 1rem;
-    color: #6a00ff;
+    color: var(--color-hover);
     margin: 0;
   }
 
@@ -556,9 +580,9 @@
     margin-top: 18px;
     margin-bottom: 19px;
     padding: 10px 20px;
-    background: #fff2ec;
-    border: 2px solid #ff6b3d;
-    color: #ff6b3d;
+    background: var(--color-primario-suave);
+    border: 2px solid var(--color-primario);
+    color: var(--color-primario);
     border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -566,7 +590,7 @@
   }
 
   .btn-editar:hover {
-    background: #ff6b3d;
+    background: var(--color-primario);
     color: white;
   }
 
@@ -592,7 +616,9 @@
     padding: 12px 14px;
     font-size: 15px;
     background: #fff7f3;
-    border: 1px solid #ffd2c3;
+    color: var(--color-primario);
+border: 1px solid var(--color-primario);
+
     border-radius: 14px;
     margin-bottom: 14px;
     color: #444;
@@ -602,7 +628,7 @@
   .input-text:focus,
   .textarea-bio:focus {
     background: #fff;
-    border-color: #ff6b3d;
+    border-color: var(--color-primario);
     box-shadow: 0 0 8px rgba(255, 107, 61, 0.35);
     outline: none;
   }
@@ -617,13 +643,13 @@
 
     display: inline-block;
     padding: 10px 16px;
-    background: #ffe1d6;
-    color: #c24f28;
+    background: var(--color-primario-suave);
+    color: var(--color-hover);
     font-weight: 600;
     border-radius: 12px;
     cursor: pointer;
     margin-bottom: 14px;
-    border: 1px solid #ffbca6;
+    border: 1px solid var(--color-borde);
     transition: 0.25s;
     margin-right: 10px;
     
@@ -643,7 +669,7 @@
 
   .btn-guardar {
     padding: 10px 20px;
-    background: #ff6b3d;
+    background: var(--color-primario);
     border: none;
     border-radius: 12px;
     color: white;
@@ -659,10 +685,18 @@
 
   .btn-cancelar {
     padding: 10px 20px;
-    background: #fff7f3;
-    border: 2px solid #ffd2c3;
+    background: color-mix(
+  in srgb,
+  var(--color-borde) 30%,
+  white
+);
+    border: 2px solid color-mix(
+  in srgb,
+  var(--color-borde) 50%,
+  white
+);
     border-radius: 12px;
-    color: #666;
+    color: var(--color-primario);
     font-weight: 600;
     cursor: pointer;
     margin-left: 10px;
@@ -670,7 +704,14 @@
   }
 
   .btn-cancelar:hover {
-    background: #ffeae3;
+    background: var(--color-primario);
+    border: 2px solid color-mix(
+  in srgb,
+  var(--color-borde) 50%,
+  rgba(255, 255, 255, 0)
+);
+    
+
   }
 
   /* ======================================================
@@ -712,7 +753,7 @@
   background: #fff;
   padding: 20px;
   border-radius: 16px;
-  border: 1px solid #ffd2c3;
+  border: 1px solid var(--color-primario);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
@@ -736,7 +777,7 @@
     height: 70px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #ff6b3d;
+    border: 3px solid var(--color-primario);
   }
 
   .seguidor-info h4 {
@@ -756,17 +797,17 @@
   .btn-follow {
     margin-left: auto;
     padding: 8px 16px;
-    background: #fff2ec;
-    border: 2px solid #ff6b3d;
+    background: var(--color-primario-suave);
+    border: 2px solid var(--color-primario);
     border-radius: 12px;
-    color: #ff6b3d;
+    color: var(--color-primario);
     font-weight: 600;
     cursor: pointer;
     transition: 0.25s;
   }
 
   .btn-follow.siguiendo {
-    background: #ff6b3d;
+    background: var(--color-primario);
     color: #fff;
   }
 
@@ -875,7 +916,7 @@
     font-size: 0.9rem;
     font-weight: 600;
     color: #444;
-    background: #ffe4d2;
+    background: var(--color-primario-suave);
     padding: 4px 10px;
     border-radius: 8px;
     display: inline-block;
@@ -1040,8 +1081,12 @@ body, html, .perfil-container, .perfil-header {
 .input-text {
   width: 100%;
   padding: 10px 14px;
-  background: #fff7f3;
-  border: 1px solid #ffd2c3;
+  background: color-mix(
+  in srgb,
+  var(--color-borde) 20%,
+  white
+);
+  border: 1px solid var(--color-borde);
   border-radius: 12px;
   font-size: 15px;
   color: #444;
@@ -1107,4 +1152,64 @@ LA BOLITAAAAAAAAAAA
 /* OFFLINE */
 .dot.offline {
   background-color: #e74c3c;
+}
+
+@media (max-width: 600px) {
+
+  .perfil-container {
+    margin-top: 9%; /* ajustar según la altura de tu navbar */
+  }
+
+}
+
+.color-picker-wrapper {
+  margin-top: 16px;
+}
+
+.color-picker-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  border: 1px solid
+    color-mix(in srgb, var(--color-primario-suave) 85%, var(--color-primario));
+
+  background: var(--color-primario-suave);
+  cursor: pointer;
+
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.color-picker-label:hover {
+  background: color-mix(
+    in srgb,
+    var(--color-primario-suave) 92%,
+    var(--color-primario)
+  );
+}
+
+.color-preview {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+
+  border: 2px solid
+    color-mix(in srgb, var(--color-primario-suave) 70%, var(--color-primario));
+
+  box-shadow: 0 0 0 2px white inset;
+}
+
+.color-text {
+  font-size: 0.95rem;
+  color: var(--color-primario);
+  font-weight: 500;
+}
+
+.color-input-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }

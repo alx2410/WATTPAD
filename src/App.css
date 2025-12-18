@@ -181,7 +181,7 @@ nav button:hover {
     display: flex;
   }
 }
-
+{}
 
 /* ===============================
    MENÚ HAMBURGUESA MOBILE (LATERAL IZQUIERDO)
@@ -515,6 +515,7 @@ nav button:hover {
 ========================================================= */
 
 .login-overlay {
+
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
@@ -536,8 +537,8 @@ nav button:hover {
   position: relative;
   z-index: 4000;
   animation: modalFade 0.25s ease-out;
+    margin: 10%;
 }
-
 @keyframes modalFade {
   from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
@@ -965,4 +966,30 @@ nav button:hover {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.login-overlay {
+
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+}
+
+.login-modal {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem 1.6rem;
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  position: relative;
+  z-index: 4000;
+  animation: modalFade 0.25s ease-out;
+    margin: 10%;
 }
