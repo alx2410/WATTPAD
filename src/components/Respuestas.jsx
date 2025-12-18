@@ -1,4 +1,4 @@
- import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { db, storage } from "../firebase/config";
 import {
   collection,
@@ -11,6 +11,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Comunidad.css";
+import { Link } from "react-router-dom"; // asegúrate de importarlo arriba
 
 export default function Respuestas({ postId }) {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ export default function Respuestas({ postId }) {
   const [imgComentario, setImgComentario] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [desplegado, setDesplegado] = useState(false);
+  const [avatars, setAvatars] = useState({});
 
   // 🔄 Cargar comentarios en tiempo real
   useEffect(() => {
@@ -52,6 +54,18 @@ export default function Respuestas({ postId }) {
     await uploadBytes(imgRef, imgComentario);
     return await getDownloadURL(imgRef);
   };
+
+  useEffect(() => {
+  const unsub = onSnapshot(collection(db, "usuarios"), (snap) => {
+    const map = {};
+    snap.forEach(doc => {
+      map[doc.id] = doc.data().avatar;
+    });
+    setAvatars(map);
+  });
+
+  return () => unsub();
+}, []);
 
   // ✍️ Publicar comentario (texto + imagen opcional)
   const publicarComentario = async () => {
@@ -165,13 +179,21 @@ export default function Respuestas({ postId }) {
               {comentarios.map((c) => (
                 <div key={c.id} className="comentario-card">
                   <img
-                    src={c.fotoPerfil || "/default-profile.png"}
-                    alt="Foto"
-                    className="foto-perfil"
-                  />
+  src={avatars[c.uid] || c.fotoPerfil || "/default-profile.png"}
+  alt="Foto"
+  className="foto-perfil"
+/>
+
+
 
                   <div>
-                    <p className="nombre-usuario">{c.autor}</p>
+                    <Link
+  to={`/perfil/${c.uid}`}
+  style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
+>
+  {c.autor}
+</Link>
+
                     <p className="post-texto">{c.texto}</p>
 
                     {c.imgUrl && (

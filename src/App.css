@@ -156,6 +156,36 @@ nav button:hover {
     width: 100%;
     font-size: 14px;
   }
+
+
+    .categoria-modal {
+    all: unset;
+    cursor: pointer;
+
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid #d6d6d6;
+
+    background: #f4f4f4;
+    color: #333;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+
+    transition: background 0.2s ease;
+  }
+
+  .categoria-modal:hover {
+    background: #eaeaea;
+  }
+
+  .columnas-modal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
 }
 
 .mobile-actions {
@@ -181,7 +211,7 @@ nav button:hover {
     display: flex;
   }
 }
-{}
+
 
 /* ===============================
    MENÚ HAMBURGUESA MOBILE (LATERAL IZQUIERDO)
@@ -230,6 +260,38 @@ nav button:hover {
 .mobile-menu button:hover {
   background: #f2f2f2;
 }
+
+
+/* ===============================
+   CATEGORÍAS — FIX DEFINITIVO
+================================ */
+
+.mobile-menu .categoria-modal {
+  all: unset;
+  cursor: pointer;
+
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 4px;
+
+  border-radius: 999px;
+  border: 1px solid #d6d6d6;
+
+  background: #f7f7f7;
+  color: #333;
+
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  transition: all 0.2s ease;
+}
+
+.mobile-menu .categoria-modal:hover {
+  background: #ededed;
+  border-color: #bfbfbf;
+}
+
 
 
 .mobile-menu .cta {
@@ -454,11 +516,15 @@ nav button:hover {
   border-color: #dcdcdc;
 }
 
-/* Botones principales */
+/* ==========================
+   BOTONES — LILA EDITION
+========================== */
+
+/* Botón primario */
 .btn-primario {
   width: 100%;
-  background: linear-gradient(90deg, #ff9b5a, #ff6b00);
-  color: white;
+  background: linear-gradient(90deg, #8b5cf6, #6b3fc9);
+  color: #ffffff;
   padding: 12px;
   border: none;
   border-radius: 10px;
@@ -466,31 +532,36 @@ nav button:hover {
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
-  transition: 0.3s;
+  transition: 0.3s ease;
 }
+
 .btn-primario:hover {
-  background: linear-gradient(90deg, #ff9b5a, #ff7b00);
+  background: linear-gradient(90deg, #9d75ff, #7a4be0);
   transform: translateY(-2px);
 }
 
-/* Botones secundarios */
+
+/* Botón secundario */
 .btn-secundario {
   width: 100%;
-  background: #fff6f2;
-  border: 2px solid #ffd3b4;
-  color: #ff6b00;
+  background: #f7f3ff;
+  border: 2px solid #e3d7f4;
+  color: #6b3fc9;
   padding: 10px;
   border-radius: 10px;
   margin-top: 8px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.25s ease;
 }
+
 .btn-secundario:hover {
-  background: #ffe9df;
+  background: #ede7ff;
+  border-color: #d6c7f2;
   transform: translateY(-1px);
 }
+
 
 /* Error */
 .modal-error {
@@ -509,17 +580,15 @@ nav button:hover {
   justify-content: center;   /* centra horizontalmente */ 
   gap: 1px;                  /* opcional: separación entre botones */
 }
-
 /* =========================================================
-   MODAL LOGIN — MINI WATTPAD
+   MODAL LOGIN — MINI WATTPAD (LILA EDITION)
 ========================================================= */
 
 .login-overlay {
-
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.45);
+  background: rgba(40, 20, 60, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -533,12 +602,12 @@ nav button:hover {
   max-width: 380px;
   padding: 2rem 1.6rem;
   border-radius: 18px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  box-shadow: 0 14px 45px rgba(90, 50, 140, 0.18);
   position: relative;
   z-index: 4000;
   animation: modalFade 0.25s ease-out;
-    margin: 10%;
 }
+
 @keyframes modalFade {
   from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
@@ -552,12 +621,12 @@ nav button:hover {
   background: none;
   border: none;
   font-size: 1.3rem;
-  color: #777;
+  color: #8b7aa8;
   cursor: pointer;
   transition: 0.2s;
 }
-.login-cerrar:hover {
-  color: #ff6b00;
+.modal-cerrar:hover {
+  color: #6b3fc9;
 }
 
 /* Título */
@@ -565,7 +634,7 @@ nav button:hover {
   text-align: center;
   font-size: 1.45rem;
   font-weight: 700;
-  color: #ff6b00;
+  color: #6b3fc9;
   margin-bottom: 1.4rem;
 }
 
@@ -573,23 +642,23 @@ nav button:hover {
 .login-modal input {
   width: 95%;
   padding: 10px 12px;
-  border: 2px solid #ffd3b4;
+  border: 2px solid #e3d7f4;
   border-radius: 10px;
-  background: #fffdfc;
+  background: #fdfbff;
   outline: none;
   margin-bottom: 14px;
   transition: 0.25s;
 }
 
 .login-modal input:focus {
-  border-color: #ff7b00;
-  box-shadow: 0 0 6px rgba(255, 123, 0, 0.25);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.25);
 }
 
 /* Error */
 .modal-error {
-  background: #ffe1e1;
-  color: #b60000;
+  background: #f4e9ff;
+  color: #5a189a;
   padding: 8px 10px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -601,7 +670,7 @@ nav button:hover {
 /* Botón login */
 .login-btn {
   width: 100%;
-  background: linear-gradient(90deg, #ff8c42, #ff6b00);
+  background: linear-gradient(90deg, #8b5cf6, #6b3fc9);
   color: white;
   padding: 12px;
   border: none;
@@ -613,7 +682,7 @@ nav button:hover {
   transition: 0.3s;
 }
 .login-btn:hover {
-  background: linear-gradient(90deg, #ff9b5a, #ff7b00);
+  background: linear-gradient(90deg, #9d75ff, #7a4be0);
   transform: translateY(-2px);
 }
 
@@ -622,7 +691,7 @@ nav button:hover {
 .login-google-btn {
   width: 100%;
   background: #fff;
-  border: 2px solid #e5e5e5;
+  border: 2px solid #e6def5;
   border-radius: 10px;
   padding: 10px;
   margin-top: 10px;
@@ -640,8 +709,8 @@ nav button:hover {
 }
 
 .login-google-btn:hover {
-  background: #fafafa;
-  border-color: #dcdcdc;
+  background: #faf8ff;
+  border-color: #d8c9f0;
 }
 
 
@@ -649,14 +718,14 @@ nav button:hover {
 .login-link {
   background: none;
   border: none;
-  color: #ff6b00;
+  color: #6b3fc9;
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
 }
 .login-link:hover {
-  color: #ff7b1a;
+  color: #8b5cf6;
 }
 
 /* Centrado de los botones extra */
@@ -882,7 +951,7 @@ nav button:hover {
 }
 
 .user-info .avatar-big:hover {
-  border: 2px solid #f1933b;
+  border: 2px solid #cc7ebf;
 }
 
 .user-info .user-name {
@@ -909,7 +978,7 @@ nav button:hover {
 }
 
 .menu-options li a:hover {
-  color: #ff6b00;
+  color: #958fc7;
 }
 
 .menu-options .cerrar-sesion {
@@ -968,28 +1037,34 @@ nav button:hover {
   }
 }
 
-.login-overlay {
+/* ===============================
+   NAVBAR SCROLL — MOBILE (FIX REAL)
+================================ */
 
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(2px);
-  z-index: 2000;
-}
+@media (max-width: 768px) {
+  .main-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90%;
 
-.login-modal {
-  background: #ffffff;
-  width: 100%;
-  max-width: 380px;
-  padding: 2rem 1.6rem;
-  border-radius: 18px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-  position: relative;
-  z-index: 4000;
-  animation: modalFade 0.25s ease-out;
-    margin: 10%;
+    z-index: 2000;
+
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.25s ease;
+
+    will-change: transform;
+  }
+
+  .main-navbar.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .main-navbar.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
 }

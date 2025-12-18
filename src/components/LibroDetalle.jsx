@@ -34,6 +34,15 @@ const [openDenuncia, setOpenDenuncia] = useState(false);
 const [motivoDenuncia, setMotivoDenuncia] = useState("");
 
 
+const motivos = [
+  { id: "contenido_inapropiado", label: "Contenido inapropiado" },
+  { id: "plagio", label: "Plagio" },
+  { id: "lenguaje_ofensivo", label: "Lenguaje ofensivo" },
+  { id: "violencia", label: "Violencia o abuso" },
+  { id: "odio", label: "Discurso de odio" },
+  { id: "spam", label: "Spam o publicidad" },
+  { id: "informacion_falsa", label: "Información falsa" },
+];
 
   //Votos y ranting
   const [votos, setVotos] = useState(0);
@@ -355,27 +364,42 @@ if (user && data.usuariosDenunciaron?.includes(user.uid)) {
         <ReseñassLibro libroId={id} usuario={auth.currentUser} />
       </section>
 
-      {openDenuncia && (
+ {openDenuncia && (
   <div className="modal-overlay">
     <div className="modal-denuncia">
-      <h3>Denunciar libro</h3>
-      <p>Selecciona el motivo</p>
 
-      <select
-        value={motivoDenuncia}
-        onChange={(e) => setMotivoDenuncia(e.target.value)}
-      >
-        <option value="">Seleccionar</option>
-        <option value="plagio">Plagio</option>
-        <option value="contenido_inapropiado">Contenido inapropiado</option>
-        <option value="lenguaje_ofensivo">Lenguaje ofensivo</option>
-        <option value="spam">Spam</option>
-      </select>
+      <div className="modal-header">
+        <h3>Reportar Historia</h3>
+        <span
+          className="cerrar"
+          onClick={() => setOpenDenuncia(false)}
+        >
+          ✕
+        </span>
+      </div>
 
+      <p className="subtitulo">
+        ¿Cuál es el motivo de tu denuncia?
+      </p>
+
+      <div className="lista-denuncia">
+  {motivos.map((motivo) => (
+    <div
+      key={motivo.id}
+      className={`fila ${
+        motivoDenuncia === motivo.id ? "activa" : ""
+      }`}
+      onClick={() => setMotivoDenuncia(motivo.id)}
+    >
+      <span>{motivo.label}</span>
+      <span className="flecha">›</span>
+    </div>
+  ))}
+</div>
+
+
+      {/* TU FUNCIONALIDAD SIGUE */}
       <div className="acciones">
-        <button onClick={() => setOpenDenuncia(false)}>
-          Cancelar
-        </button>
         <button
           onClick={handleDenunciar}
           disabled={!motivoDenuncia}
@@ -383,10 +407,12 @@ if (user && data.usuariosDenunciaron?.includes(user.uid)) {
           Enviar denuncia
         </button>
       </div>
+
     </div>
   </div>
 )}
 
+  
     </div>
   );
 }

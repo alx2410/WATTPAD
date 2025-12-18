@@ -103,6 +103,46 @@
   color: #333;
 }
 
+/* =========================
+   SELECTS – Escribir
+========================= */
+
+.escribir-contenido select {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 16px;          /* 👈 margen abajo */
+  border-radius: 12px;
+  border: 1.5px solid #ddd;
+  background-color: #fafafa;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* flechita custom */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='gray' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.escribir-contenido select:hover {
+  border-color: #ff6b00;
+}
+
+.escribir-contenido select:focus {
+  outline: none;
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+}
+
 /* INPUTS Y TEXTAREAS */
 .form-section input,
 .form-section textarea,
@@ -228,4 +268,46 @@
     gap: 12px;
     overflow-x: auto;
   }
+}
+
+.input-camara-mini {
+  width: 100%;
+  height: 44px;              /* 👈 poco alto */
+  border-radius: 12px;
+  border: 1.5px dashed #bbb;
+  background-color: #fafafa;
+
+  /* 📸 camarita centrada */
+  background-image: url("https://fonts.gstatic.com/s/i/materialicons/photo_camera/v6/24px.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px;
+
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* hover sutil */
+.input-camara-mini:hover {
+  border-color: #888;
+  background-color: #f1f1f1;
+}
+
+.input-camara-mini::file-selector-button {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+
+.input-camara-mini::-webkit-file-upload-button {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
 }

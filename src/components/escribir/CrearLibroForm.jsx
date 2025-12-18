@@ -83,10 +83,50 @@ await addDoc(collection(db, "libros"), {
       <label>Género</label>
       <input value={genero} onChange={(e) => setGenero(e.target.value)} required />
 
-      <label>Portada</label>
-      <input type="file" accept="image/*" onChange={handlePortadaUpload} />
-      {subiendo && <p>Subiendo portada...</p>}
-      {portada && <img src={portada} alt="portada" style={{ width: 140, borderRadius: 10, marginTop: 12 }} />}
+<label>Portada</label>
+
+<label
+  htmlFor="portada-input"
+  style={{
+    width: "100%",
+    height: "44px",
+    borderRadius: "12px",
+    border: "1.5px dashed #bbb",
+    backgroundColor: "#fafafa",
+    backgroundImage:
+      'url("https://fonts.gstatic.com/s/i/materialicons/photo_camera/v6/24px.svg")',
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundSize: "20px",
+    cursor: "pointer",
+    transition: "0.2s",
+    display: "block",
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = "#f1f1f1";
+    e.currentTarget.style.borderColor = "#888";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = "#fafafa";
+    e.currentTarget.style.borderColor = "#bbb";
+  }}
+>
+</label>
+
+<input
+  id="portada-input"
+  type="file"
+  accept="image/*"
+  onChange={handlePortadaUpload}
+  style={{ display: "none" }}
+/>
+
+{subiendo && (
+  <p style={{ fontSize: "0.85rem", color: "#777", marginTop: "6px" }}>
+    Subiendo portada...
+  </p>
+)}
+
 
       <label>Estado de publicación</label>
       <select value={estado} onChange={(e) => setEstado(e.target.value)}>

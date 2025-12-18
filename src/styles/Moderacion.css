@@ -285,3 +285,112 @@ button {
   background-color: #fef5f5;
   opacity: 0.7;
 }
+
+/* =========================
+   📢 ANUNCIOS – FORM
+========================= */
+
+.intranet-moderacion-content h3 {
+  margin-top: 10px;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.intranet-moderacion-content input,
+.intranet-moderacion-content textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1.5px solid #ddd;
+  background-color: #fafafa;
+  font-size: 0.95rem;
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.intranet-moderacion-content textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.intranet-moderacion-content input:focus,
+.intranet-moderacion-content textarea:focus {
+  outline: none;
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+}
+
+/* =========================
+   📢 BOTÓN PUBLICAR
+========================= */
+
+.intranet-moderacion-content button {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  background-color: #ff6b00;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.intranet-moderacion-content button:hover {
+  background-color: #e85f00;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   📢 TABLA ANUNCIOS
+========================= */
+
+.intranet-moderacion-content table {
+  width: 100%;
+  margin-top: 18px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.intranet-moderacion-content table tr {
+  border-bottom: 1px solid #eee;
+}
+
+.intranet-moderacion-content table td {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+}
+
+.intranet-moderacion-content table td:first-child {
+  font-weight: 600;
+  color: #333;
+}
+
+/* =========================
+   📢 ESTADO ACTIVO / INACTIVO
+========================= */
+
+.intranet-moderacion-content table td:nth-child(2) {
+  font-weight: 600;
+  color: #666;
+}
+
+/* =========================
+   📢 BOTÓN ACTIVAR / DESACTIVAR
+========================= */
+
+.intranet-moderacion-content table td button {
+  background-color: #f2f2f2;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.intranet-moderacion-content table td button:hover {
+  background-color: #e6e6e6;
+}

@@ -6,7 +6,7 @@ import Explorar from "./paginas/Explorar";
 import Comunidad from "./paginas/Comunidad";
 import Escribir from "./paginas/Escribir";
 import Biblioteca from "./paginas/Biblioteca";
-import MiniWattpad from "./paginas/MiniWattpad";
+import Fictory from "./paginas/Fictory";
 import Perfil from "./paginas/Perfil";
 import Notificaciones from "./paginas/Notificaciones";
 
@@ -41,7 +41,7 @@ export default function App() {
 />
 
       <Routes>
-        <Route path="/" element={<MiniWattpad />} />
+        <Route path="/" element={<Fictory />} />
 
         {/* RUTAS PÚBLICAS */}
         <Route path="/explorar" element={<Explorar />} />
@@ -65,7 +65,7 @@ export default function App() {
 />
         <Route path="/perfil/:uid?" element={<Perfil />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
-        <Route path="/miniwattpad" element={<MiniWattpad />} />
+        <Route path="/fictory" element={<Fictory/>} />
         <Route path="/notificaciones" element={<Notificaciones />} />
         
         <Route

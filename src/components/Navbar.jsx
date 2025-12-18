@@ -20,7 +20,8 @@ export default function Navbar() {
     user?.role === "admin" || user?.role === "moderador";
     const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
-const [lastScrollY, setLastScrollY] = useState(0);
+const lastScrollY = useRef(0);
+
 
 
   const handleSearch = (e) => {
@@ -60,28 +61,31 @@ const [lastScrollY, setLastScrollY] = useState(0);
 
  useEffect(() => {
   const handleScroll = () => {
-    // Solo aplica en móvil
-    if (window.innerWidth <= 600) {
-      if (window.scrollY > lastScrollY) {
-        setShowNavbar(false); // scroll down → ocultar
-      } else {
-        setShowNavbar(true);  // scroll up → mostrar
-      }
-      setLastScrollY(window.scrollY);
+    if (window.innerWidth > 768) {
+      setShowNavbar(true);
+      return;
+    }
+
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+      // bajando
+      setShowNavbar(false);
     } else {
-      // En escritorio siempre visible
+      // subiendo
       setShowNavbar(true);
     }
+
+    lastScrollY.current = currentScrollY;
   };
 
-  window.addEventListener("scroll", handleScroll);
-  window.addEventListener("resize", handleScroll); // para recalcular al cambiar tamaño
+  window.addEventListener("scroll", handleScroll, { passive: true });
 
   return () => {
     window.removeEventListener("scroll", handleScroll);
-    window.removeEventListener("resize", handleScroll);
   };
-}, [lastScrollY]);
+}, []);
+
 
 
   return (
@@ -102,7 +106,7 @@ const [lastScrollY, setLastScrollY] = useState(0);
 
       {/* LOGO */}
       <div className="logo-container">
-        <Link to="/miniwattpad">
+        <Link to="/fictory">
           <img src={logo} alt="MiniWattpad Logo" className="logo" />
         </Link>
       </div>

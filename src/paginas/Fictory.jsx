@@ -1,4 +1,4 @@
-import "../styles/MiniWattpad.css";
+import "../styles/Fictory.css";
 import MensajesInicio from "../components/MensajesInicio.jsx";
 import CarruselPopular from "../components/CarruselPopular.jsx";
 import AnimatedText from "../components/AnimatedText.jsx";

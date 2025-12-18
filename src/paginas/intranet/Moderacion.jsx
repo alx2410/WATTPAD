@@ -14,7 +14,10 @@ import {
   query,
   orderBy,
   onSnapshot,
+  getDocs,
   updateDoc,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import { usePresence } from "../../context/PresenceContext";
@@ -38,6 +41,30 @@ const IconModeracion = () => (
     <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" />
   </svg>
 );
+
+const IconCampanias = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="intranet-sidebar-icon"
+  >
+    {/* Diana */}
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="12" cy="12" r="1.5" />
+
+    {/* Flecha */}
+    <path d="M12 3v4" />
+    <path d="M10 5l2-2 2 2" />
+  </svg>
+);
+
 
 const IconUsuarios = () => (
   <svg
@@ -146,6 +173,8 @@ export default function Moderacion() {
 const [libroDenuncias, setLibroDenuncias] = useState(null);
 const [estadoFiltro, setEstadoFiltro] = useState("todos");
 const [presencias, setPresencias] = useState({});
+const [campanias, setCampanias] = useState([]);
+
 
 // ===============================
 // 🔧 ORDENAR LIBROS
@@ -172,6 +201,9 @@ const denunciasPorLibro = denuncias.reduce((acc, d) => {
 }, {});
 const [filtroUsuarios, setFiltroUsuarios] = useState("todos");
 
+
+
+
 // ===============================
 // NORMALIZAR PRESENCIAS
 // ===============================
@@ -195,6 +227,34 @@ useEffect(() => {
 
   return () => unsub();
 }, []);
+
+
+const crearCampaniaDemo = async () => {
+  try {
+    await addDoc(collection(db, "campañas"), {
+      nombre: "Campaña Inicial",
+      activa: true,
+      hero: {
+        titulo: "Bienvenido a Ficwin",
+        subtitulo: "Publica, comparte y crece",
+        imagen: "https://TU_IMAGEN_AQUI",
+      },
+      createdAt: serverTimestamp(),
+    });
+    alert("✅ Campaña creada");
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+const activarCampania = async (id) => {
+  for (const c of campanias) {
+    await updateDoc(doc(db, "campañas", c.id), { activa: false });
+  }
+  await updateDoc(doc(db, "campañas", id), { activa: true });
+};
+
 
 
   // ===============================
@@ -224,8 +284,7 @@ useEffect(() => {
       snap.docs.map(d => ({ id: d.id, ...d.data() }))
     );
   });
-}, []);
-
+}, []);  
 
   // ===============================
   // 👥 USUARIOS
@@ -273,6 +332,86 @@ const estaOnlineUsuario = (u) => {
   const lastChangedMs = p.lastChanged && p.lastChanged < 1e12 ? p.lastChanged * 1000 : p.lastChanged;
   return p.estado === "online" && lastChangedMs && Date.now() - lastChangedMs < TIEMPO_EXPIRACION;
 };
+
+
+
+// 🎯 CAMPAÑAS
+useEffect(() => {
+  const q = query(collection(db, "campañas"), orderBy("createdAt", "desc"));
+  return onSnapshot(q, (snap) => {
+    setCampanias(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
+}, []);
+
+const [anuncios, setAnuncios] = useState([]);
+const [nuevoAnuncio, setNuevoAnuncio] = useState({
+  titulo: "",
+  descripcion: "",
+  bannerUrl: "",
+});
+
+// ===============================
+// 📢 ANUNCIOS – LISTENER
+// ===============================
+// ===============================
+// 📢 ANUNCIOS – CARGA + LISTENER
+// ===============================
+useEffect(() => {
+  if (!user) return; // ⛔ ESPERA A AUTH
+
+  const q = query(
+    collection(db, "anuncios"),
+    orderBy("createdAt", "desc")
+  );
+  // 1️⃣ CARGA INICIAL (para refresh)
+  const cargarInicial = async () => {
+    const snap = await getDocs(q);
+    setAnuncios(
+      snap.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+      }))
+    );
+  };
+
+  cargarInicial();
+
+  // 2️⃣ TIEMPO REAL
+  const unsub = onSnapshot(q, (snap) => {
+    setAnuncios(
+      snap.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+      }))
+    );
+  });
+
+  return () => unsub();
+}, []);
+
+
+const crearAnuncio = async () => {
+  if (!nuevoAnuncio.titulo || !nuevoAnuncio.descripcion) {
+    return alert("Completa título y descripción");
+  }
+
+  await addDoc(collection(db, "anuncios"), {
+    ...nuevoAnuncio,
+    activo: true,
+    createdAt: serverTimestamp(),
+    createdBy: user.uid,
+  });
+
+  setNuevoAnuncio({ titulo: "", descripcion: "", bannerUrl: "" });
+};
+ const toggleAnuncio = async (id, estadoActual) => {
+  await updateDoc(doc(db, "anuncios", id), {
+    activo: !estadoActual,
+  });
+};
+
+
+
 
 // ===============================
 // 🔍 FILTROS USUARIOS FUNCIONAL
@@ -387,6 +526,21 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
   Usuarios
 </li>
 
+
+<li
+  className={tab === "campanias" ? "intranet-active" : ""}
+  onClick={() => setTab("campanias")}
+>
+  <IconCampanias /> Campañas
+</li>
+
+<li
+  className={tab === "anuncios" ? "intranet-active" : ""}
+  onClick={() => setTab("anuncios")}
+>
+  📢 Anuncios
+</li>
+
         </ul>
       </aside>
 
@@ -408,6 +562,7 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
       setPaginaUsuarios(1);
     }}
   />
+
 
   {tab === "moderacion" && (
 <div className="select-minimal">
@@ -443,6 +598,78 @@ const cerrarDenuncias = () => setLibroDenuncias(null);
     </select>
   </div>
 )}
+
+{/* ===== ANUNCIOS ===== */}
+        {tab === "anuncios" && (
+          <>
+            <h3>Crear anuncio</h3>
+            <input placeholder="Título" value={nuevoAnuncio.titulo}
+              onChange={e => setNuevoAnuncio({ ...nuevoAnuncio, titulo: e.target.value })} />
+            <textarea placeholder="Descripción" value={nuevoAnuncio.descripcion}
+              onChange={e => setNuevoAnuncio({ ...nuevoAnuncio, descripcion: e.target.value })} />
+            <button onClick={crearAnuncio}>Publicar</button>
+
+            <table>
+              <tbody>
+                {anuncios.map(a => (
+                  <tr key={a.id}>
+                    <td>{a.titulo}</td>
+                    <td>{a.activo ? "Activo" : "Inactivo"}</td>
+                    <td>
+                      <button onClick={() => toggleAnuncio(a.id, a.activo)}>
+                        {a.activo ? "Desactivar" : "Activar"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+
+
+{/* ================= CAMPANIAS ================= */}
+{tab === "campanias" && (
+  <>
+    <button
+      className="btn-primario"
+      onClick={crearCampaniaDemo}
+    >
+      Crear campaña inicial
+    </button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {campanias.map((c) => (
+          <tr key={c.id}>
+            <td>{c.nombre}</td>
+            <td>
+  <span className={`intranet-estado-cuenta ${c.activa ? "intranet-estado-activo" : "intranet-estado-bloqueado"}`}>
+    {c.activa ? "Activa" : "Inactiva"}
+  </span>
+</td>
+
+            <td>
+              {!c.activa && (
+                <button onClick={() => activarCampania(c.id)}>
+                  Activar
+                </button>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </>
+)}
+
 
 
         {/* ================= MODERACIÓN (LIBROS) ================= */}

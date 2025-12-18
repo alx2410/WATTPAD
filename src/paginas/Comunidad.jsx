@@ -23,6 +23,7 @@ import PopularBooksSidebar from "../components/PopularBooksSidebar";
 import AnuncioCard from "../components/AnuncioCard";
 
 
+
 export default function Comunidad() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -36,6 +37,21 @@ export default function Comunidad() {
 
    // 🔥 CAMPAÑA ACTIVA (HERO)
   const [campaniaActiva, setCampaniaActiva] = useState(null);
+  const [anuncios, setAnuncios] = useState([]);
+
+  useEffect(() => {
+  const q = query(
+    collection(db, "anuncios"),
+    where("activo", "==", true),
+    orderBy("createdAt", "desc")
+  );
+
+  return onSnapshot(q, (snap) => {
+    setAnuncios(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
+}, []);
+
+
 
 
 
@@ -197,15 +213,21 @@ export default function Comunidad() {
           {/* LEFT - Anuncios */}
          <aside className="comunidad-sidebar-left">
   <h2>📰 Anuncios</h2>
-  <AnuncioCard 
-    titulo="¡Explorar te espera!" 
-    descripcion="Date una vuelta por el apartado de Explorar y disfruta de las nuevas funciones." 
-  />
-  <AnuncioCard 
-    titulo="Amor Puro" 
-    descripcion="Próximamente en la pantalla grande." 
-  />
+
+  {anuncios.length === 0 && (
+    <p className="anuncio-vacio">No hay anuncios</p>
+  )}
+
+  {anuncios.map((a) => (
+    <AnuncioCard
+      key={a.id}
+      titulo={a.titulo}
+      descripcion={a.descripcion}
+      bannerUrl={a.bannerUrl}
+    />
+  ))}
 </aside>
+
 
 
           {/* CENTER - Posts */}

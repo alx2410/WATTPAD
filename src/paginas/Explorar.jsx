@@ -16,6 +16,21 @@ export default function Explorar() {
   const categoriaURL = queryParams.get("genero") || "";
   const searchURL = queryParams.get("search") || "";
 
+  const formatearVistas = (num = 0) => {
+  if (num < 1000) return num;
+  if (num < 1000000) return `${Math.floor(num / 1000)}K`;
+  return `${(num / 1000000).toFixed(1)}M`;
+};
+
+const IconoOjo = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+
   // Actualizar filtros desde URL
   useEffect(() => {
     if (categoriaURL) setFiltroGenero(categoriaURL);
@@ -70,28 +85,29 @@ export default function Explorar() {
           : "Todos los libros"}
       </h1>
 
+      <h3>Fictory Originales</h3>
+
       {cargando ? (
         <p>Cargando libros...</p>
       ) : (
-        <div className="grid-libros-explorar">
-          {librosFiltrados.length > 0 ? (
-            librosFiltrados.map((libro) => (
-              <Link
-                to={`/libro/${libro.id}`}
-                key={libro.id}
-                className="libro-card-explorar"
-              >
-                {libro.portada && <img src={libro.portada} alt={libro.titulo} />}
-                <div className="info-libro-explorar">
-                  <h2>{libro.titulo}</h2>
-                  <p>{libro.autorNombre || "Autor desconocido"}</p>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <p>No hay resultados.</p>
-          )}
+  <div className="grid-libros-explorar">
+  {librosFiltrados.map((libro) => (
+    <div key={libro.id} style={{ display: 'flex', alignItems: 'center' }}>
+      <Link to={`/libro/${libro.id}`}>
+        <img className="libro-portada" src={libro.portada} alt={libro.titulo} />
+      </Link>
+      <div className="libro-info">
+        <h2>{libro.titulo}</h2>
+        <p>{libro.autorNombre || "Autor desconocido"}</p>
+        <div className="detalle-stat">
+          <div className="detalle-stat-icon"><IconoOjo /></div>
+          <div className="detalle-stat-text"><strong>{formatearVistas(libro.vistas)}</strong></div>
         </div>
+      </div>
+    </div>
+  ))}
+</div>
+
       )}
     </div>
   );

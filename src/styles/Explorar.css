@@ -1,3 +1,115 @@
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+.explorar-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+}
+
+.titulo-explorar {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #111827;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* =====================================================
+   GRID DE LIBROS
+===================================================== */
+.grid-libros-explorar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* =====================================================
+   CONTENEDORES SEPARADOS (PORTADA + INFO)
+===================================================== */
+.libro-portada {
+  width: 120px;          /* ancho fijo */
+  height: 180px;         /* alto fijo (2:3) */
+  object-fit: contain;   /* no recorta la imagen */
+  border-radius: 8px;    /* esquinas redondeadas */
+  flex-shrink: 0;
+  background-color: transparent; /* sin fondo */
+}
+
+.libro-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-left: 12px;
+}
+
+.libro-info h2,
+.libro-info p {
+  text-decoration: none;
+  margin: 2px 0;
+}
+
+.libro-info h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.libro-info p {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* =====================================================
+   VISTAS CON ÍCONO
+===================================================== */
+.detalle-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.detalle-stat-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: #6b7280;
+}
+
+.detalle-stat-text strong {
+  color: #111827;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 768px) {
+  .grid-libros-explorar {
+    grid-template-columns: repeat(2, 1fr); /* 2 libros por fila */
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-libros-explorar {
+    grid-template-columns: 1fr; /* 1 libro por fila */
+  }
+}
+
+
 /* MENÚ DE CATEGORÍAS DEL NAVBAR */
 .mega-menu-modal {
   position: absolute;
@@ -34,124 +146,4 @@
 
 .mega-menu-modal .categoria-modal:hover {
   color: black;
-}
-
-
-/* =====================================================
-   GRID DE LIBROS
-===================================================== */
-
-.grid-libros-explorar {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); /* más compacto */
-  gap: 28px;
-  margin-top: 30px;
-}
-
-
-/* Card */
-.libro-card-explorar {
-  width: 100%;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.2s ease;
-}
-
-.libro-card-explorar:hover {
-  transform: translateY(-3px);
-}
-
-
-/* Imagen MÁS PEQUEÑA */
-.libro-card-explorar img {
-  width: 85%;                  /* CLAVE */
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-radius: 10px;
-  border: none;
-}
-
-
-/* Info */
-.info-libro-explorar {
-  margin-top: 6px;
-  text-align: center;
-}
-
-.info-libro-explorar h2 {
-  font-size: 0.9rem;
-  margin: 4px 0 2px;
-  color: #222;
-}
-
-.info-libro-explorar p {
-  font-size: 0.72rem;
-  color: #666;
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 600px) {
-  .grid-libros-explorar {
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 12px;
-  }
-
-  .libro-card-explorar img {
-    width: 100%;              /* aprovecha mejor la columna */
-  }
-
-  .info-libro-explorar h2 {
-    font-size: 0.82rem;
-  }
-
-  .info-libro-explorar p {
-    font-size: 0.68rem;
-  }
-}
-
-
-/* =====================================================
-   BOTONES
-===================================================== */
-
-.btn-leer {
-  background: #111;
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  margin-right: 12px;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.btn-accion:hover {
-  opacity: 0.8;
-}
-
-.btn-lista {
-  border: none;
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-icono:hover {
-  opacity: 0.8;
-}
-
-.btn-icono svg {
-  pointer-events: none;
 }
